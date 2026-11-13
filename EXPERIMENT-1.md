@@ -7,7 +7,7 @@ is described in the [top-level README](README.md#2-the-harness-common-to-both-ex
 ## Prompt
 
 The definitions and the theorem are copied from the paper as close to verbatim as possible, and every edit is
-recorded in the paper's README ("Statement rewrites"). The rules:
+recorded in `harness/NN-<paper>/NOTES.md`. The rules:
 - No proof sketch, no intermediate lemmas, no ACL2 code. Where the paper's definitions are given only as ACL2
   code, they are translated to English, and ACL2 names are replaced with mathematical notation.
 - Remove text that identifies the paper (authorial "we", citations, numbering) and text that hints at the
@@ -49,7 +49,7 @@ prompt lacks the last sentence, which was added after the pilot. The exact promp
 - Re-certification on ACL2 master (commit 1d2b39a424): all seven pass.
 - **Faithfulness of the statements is not checked by any tool.** The model chose its own definitions and
   statement. Whether these match the paper is for the reviewers to judge, and this repository gives no
-  verdict. Each paper's README records what the prompt said and where it came from.
+  verdict. `harness/NN-<paper>/NOTES.md` records where each part of the prompt came from.
 
 ## Results
 
@@ -82,14 +82,14 @@ decide whether to count it with a footnote or rerun it.
 **For comparison.** The flip-graph paper reports that its connectivity proof (19 of its 29 books) has 137
 functions and 527 theorems, and that an unassisted LLM formalization of the companion paper proved
 connectivity in 9 books with 409 theorems. For the other papers, the authors' developments prove much more
-than the one theorem posed here, so their sizes are not comparable. Each paper's README gives the authors'
-size for scale.
+than the one theorem posed here, so their sizes are not comparable. `harness/NN-<paper>/NOTES.md` gives
+the authors' size for scale.
 
 ## What the models did
 
 The model chose its own route each time. Some routes differ from the paper's: for example, Basel used the
 elementary cosecant-sum proof, and Basel and Stirling were both stated classically (ε–N) with non-standard
-analysis used only inside the proof. Each `NN-<paper>/exp1/review.md` summarizes the route and where the
+analysis used only inside the proof. Each `harness/NN-<paper>/exp1/run.md` summarizes the route and where the
 model struggled.
 
 ## Next step: reviewing the statements

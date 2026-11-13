@@ -35,7 +35,7 @@ run with `python3 -I`.
 | `check-comments-only.py` | Confirms that two Lisp files differ only in comments and whitespace. |
 
 The per-paper scripts used to compute definitional closures and to verify each package (V1–V3) are in each
-`NN-<paper>/exp2/extraction/verify/`.
+`harness/NN-<paper>/exp2/extraction/verify/`.
 
 ## Reporting
 

@@ -1,101 +1,20 @@
 # 06 — Fields
 
-**Paper:** David M. Russinoff, *A Formal Theory of Algebraic Field Extensions* (ACL2 Workshop 2026). PDF in `source/paper.pdf`.
-**Logic:** ACL2.
+**Paper:** David M. Russinoff, *A Formal Theory of Algebraic Field Extensions*. PDF: `source/paper.pdf`. **Logic:** ACL2.
 
-## The paper
+The paper represents fields as ACL2 objects: a base field is Q, F_p or a generic field F0, and a simple extension is a pair (p . f) with p a monic irreducible polynomial over f of degree ≥ 2. Field and polynomial-ring operations form one large mutual recursion. The paper proves that every such field satisfies the field axioms, then develops polynomial roots and factorization (#roots ≤ degree), minimal polynomials (via Part III linear algebra), and field embeddings with a bound on their number.
 
-The paper represents fields as ACL2 objects: a base field is Q, F_p or a generic field F0, and a
-simple extension is a pair (p . f) with p a monic irreducible polynomial over f of degree ≥ 2. Field and
-polynomial-ring operations form one large mutual recursion. The paper proves that every such field satisfies
-the field axioms, then develops polynomial roots and factorization (#roots ≤ degree), minimal polynomials (via
-Part III linear algebra), and field embeddings with a bound on their number.
+**Authors' ACL2 books:** `source/authors-books/` (copy). From ACL2 master, `books/projects/fields/`.
 
-**Contribution.** Mainly a library and representation technique (fields and embeddings as first-order
-objects), with standard algebra theorems proved along the way.
+## Experiment 1 — the model wrote the definitions, the statement and the proof
 
-**Authors' ACL2 books.** In the ACL2 community books on master, added after 8.7: `books/projects/fields/`
-(commit 1d2b39a424). A copy is in `source/authors-books/` (it also contains `galois.lisp`, a later Galois-theory
-development not described in this paper).
+The model received only `exp1/prompt.txt` (below). Its answer is `exp1/solution.lisp`; it certifies, and its last
+event is `MAIN`.
 
-## Files
-
-```
-06-russinoff-fields/
-  README.md
-  source/
-    paper.pdf
-    authors-books/        the authors' ACL2 books (copy)
-  exp1/
-    prompt.txt            the exact prompt sent to the model
-    solution.lisp         the model's final /work/solution.lisp
-    audit.txt             transcript audit (tools/audit.py)
-    review.md             short factual review of the run
-  exp2/
-    prompt.txt            the exact prompt sent to the model
-    definitions.lisp      the definitions, annotated with their source locations (comments only)
-    targets.lisp          the target theorems (the authors' names in comments)
-    checker/              the exact files the checker certifies against (hashes below)
-    model-facing/         the definitions file the model was given (see below)
-    extraction/           how definitions.lisp was built and verified (NOTES.md, scripts, logs)
-    solution.lisp         the model's final /work/solution.lisp
-    audit.txt
-    review.md
-```
-
-## Results
-
-| | Experiment 1 (English → ACL2) | Experiment 2 (ACL2 statements) |
-|---|---|---|
-| Result | proved (certified) | all 4 target(s) proved (certified, statements matched) |
-| Model time | 38 min | 1 h 57 min |
-| Tool calls | 91 | 237 |
-| Certification time of solution.lisp (ACL2 8.7) | 2.6 s | 750.5 s |
-| Audit | CLEAN | CLEAN |
-| solution.lisp: lines / definitions / theorems | 1541 / 58 / 230 | 3101 / 58 / 552 |
-
-Authors' development (for scale): 6 files without `galois.lisp`, 24,094 lines, 486 definitions, 1,616 theorems.
-
-*Model time* runs from when the model received the prompt to the end of its run (setup not included).
-Certification time is for `solution.lisp` alone, with its dependencies already certified, on our build
-(experiment 2: against `exp2/checker/`). Sizes are counted with `tools/sizes.py` (definitions = `defun`,
-`define`, `defun-sk`, `defmacro`, … and encapsulated functions; theorems = `defthm`, `defrule`, …, local
-ones included). Both experiments: first attempt, Claude Opus 5.5 at medium effort.
-
-## Experiment 1: English definitions and theorem
-
-**Theorem given:** If f is a field (a tower of simple algebraic extensions over Q, F_p or the generic field F0), then f satisfies the field axioms; in particular every nonzero element has a multiplicative inverse. Composed from §3.
-
-### Statement rewrites (paper text → prompt)
-
-The definitions and theorem were copied from the paper as close to verbatim as possible. Every edit:
-
-**THEOREM IS COMPOSED (flag).** The paper has no single English statement. Sources: the first sentence of §3 (p. 5), plus the "In particular" clause taken from §3's `fmul-frecip-**`, "the defining property of the multiplicative inverse" (pp. 6–7).
-
-#### Sources
-- F0: §1 p.1. Base fields and Q/F_p/F0: §2 pp.2–3. Extension and recursive definition: §2 ¶1 p.2 (degree ≥ 2 from the fieldp code, p.5). "Field reserved": §1 p.2. Monic: p.4. Reducible: p.5. Structure list: p.3.
-
-#### Edits (original → edited)
-1. "The first defines a generic field through seven constrained functions: (fp x), a predicate…; … The exported constraints on these functions correspond to the usual field axioms." → "A generic field F0 is defined through seven functions: … Nothing is assumed about these functions except that they satisfy the usual field axioms." The ACL2 names and "encapsulation" are removed.
-2. "Our theory" → "The theory". "Since we are interested in number fields and finite fields," is deleted.
-3. "we shall include the generic field described in Section 1 as a base field, for two reasons: …" → "the generic field F0 is included as a base field." The motivation is cut.
-4. "we shall informally refer to … as Q, Fp, and F0" → "Q, F_p, and F0 denote …".
-5. Added "of degree at least 2". It is stated only in the `fieldp` code.
-6. "A field will be recursively defined" → "is recursively defined". Added "The term field is reserved for these objects." (from §1).
-7. Monic: "(i.e., with leading coefficient (fone f))" → a full sentence.
-8. "If a polynomial p has a non-constant monic divisor of lesser degree, then the following function returns such a divisor and p is said to be reducible" → "A polynomial p over f is reducible if …; otherwise p is irreducible." The `defchoose` is removed.
-9. The structure bullet list is turned into prose, without ACL2 names.
-10. Theorem: "Our next objective is to prove that if f satisfies the predicate fieldp, then f satisfies the field axioms, i.e., …F0, and the polynomials over f satisfy the axioms for a commutative ring with unity." → "If f is a field, then f satisfies the field axioms, i.e., …F0." The ring clause is dropped because it is a supporting result. "In particular …" is added (composed).
-
-**Omitted on purpose:**
-- the encodings (0, a prime, `'f0`, (p . f));
-- polynomials as coefficient lists with leading-zero stripping;
-- the Bézout-based inverse in an extension, which is both an encoding and a proof hint.
-
-### Prompt
+**To review:** do the definitions and `MAIN` in `exp1/solution.lisp` state the theorem in the prompt?
 
 <details>
-<summary>Experiment 1 prompt (also in exp1/prompt.txt)</summary>
+<summary>Experiment 1 prompt (exp1/prompt.txt)</summary>
 
 ```text
 Formalize the definitions and the theorem below in ACL2, and prove the theorem.
@@ -125,9 +44,14 @@ questions; work until you are done. When you are done, print the final contents 
 
 </details>
 
-## Experiment 2: the authors' ACL2 definitions and statements
+## Experiment 2 — the model proved the authors' statements
 
-### Targets
+The model received `exp2/prompt.txt` (below): the authors' definitions and the target theorems. Its answer is
+`exp2/solution.lisp`; it certifies and proves every target with exactly the given statement.
+
+- `exp2/definitions.lisp`: the definitions, with a comment before each form giving where in the authors'
+  sources it comes from.
+- `exp2/targets.lisp`: the target theorems, with the authors' theorem names in comments.
 
 | Target | Authors' theorem(s) | Meaning |
 |---|---|---|
@@ -136,52 +60,8 @@ questions; work until you are done. When you are done, print the final contents 
 | MAIN-3 | `prootp-min-poly`, neutral form (polynomials.lisp:630) | every x in an extension e of f is a root of (the lift of) a monic irreducible p over f with 1 ≤ deg p ≤ [e:f] |
 | MAIN-4 | `all-embeddings` ∧ `len-embeddings`, neutral form (embeddings.lisp:644, 653) | every duplicate-free list of embeddings of e in k over f has length ≤ [e:f] |
 
-### How the definitions were extracted
-
-`definitions.lisp` is assembled from verbatim line ranges of master `extensions.lisp`,
-`vectors.lisp`, `polynomials.lisp` and `embeddings.lisp`, plus the 8.7 books `projects/groups/groups` and
-`projects/linear/field`. It contains the 21-function mutual recursion, `fieldp`, the 16 axiom predicates,
-`field-axioms-p`, polynomial evaluation, roots and factorization, `edegree`, the lifting functions and
-embeddings. Local lemmas are purely syntactic length facts needed for termination. Two predicates are new (not
-by the authors): `algebraic-witness` (for MAIN-3) and `all-embeddingp` (for MAIN-4).
-
-The general procedure, and how each package was checked, is in [`../EXPERIMENT-2.md`](../EXPERIMENT-2.md);
-the full notes for this paper are in `exp2/extraction/NOTES.md`.
-
-**What the model saw.** The checker's `definitions.lisp` needs local lemmas to admit some definitions. Those
-lemmas can contain parts of the proofs, so the model was given `exp2/model-facing/defs.lisp`
-instead: local lemmas and hints removed, comments removed, and each definition wrapped in `skip-proofs`, with
-`exp2/model-facing/cert.acl2` allowing `skip-proofs` for that one book. The model's own solution could not use
-`skip-proofs`, and the checker certifies it against the fully proved `checker/defs.lisp`. A dump of every
-name each version introduces (formals, body, guard, measure, constraints, macro bodies) was identical for the
-two versions (`tools/world-dump.lsp`).
-
-Checker files:
-
-| File | SHA-256 |
-|---|---|
-| `exp2/checker/cert.acl2` | `e39b0ab97ce3526d595a9df27a4e5a4fe42bdbbc2e6eef70ed6a782d17901975` |
-| `exp2/checker/defs.lisp` | `31fdd442fa69360e77e32dc00d02c894f9baae30e7a1e7b3162ca818cb533b6e` |
-
-`exp2/definitions.lisp` differs from `exp2/checker/defs.lisp` only in comments
-(`tools/check-comments-only.py`).
-
-### Statement rewrites (authors' ACL2 → targets)
-
-- **MAIN-3 and MAIN-4 are neutral restatements.** The authors' statements use the constructive `min-poly` and
-  `embeddings`, which would reveal the proof. MAIN-3 says instead that a suitable polynomial exists
-  (`defun-sk algebraic-witness`); MAIN-4 bounds the length of any duplicate-free list of embeddings. Both were
-  proved from the authors' theorems on master.
-- **The termination hint of `factorization` is changed.** The authors' hint uses `reduciblep-product`, which
-  needs most of the MAIN-1 theory; we prove the needed length bound locally instead. Measure and body are
-  unchanged.
-- MAIN-2 conjoins two authors' theorems with the same hypotheses. `defthmd` became `defthm`, hints dropped.
-- Package DM, with `cert.acl2` loading `projects/numbers/portcullis`.
-
-### Prompt
-
 <details>
-<summary>Experiment 2 prompt (also in exp2/prompt.txt)</summary>
+<summary>Experiment 2 prompt (exp2/prompt.txt)</summary>
 
 ```text
 Prove the theorems below in ACL2.
@@ -814,12 +694,3 @@ questions; work until you are done. When you are done, print the final contents 
 ```
 
 </details>
-
-## Notes for reviewers
-
-**Experiment 2.**
-- The model ended its first turn while waiting for a certification and was woken by its own `Monitor` tool
-  (a local wait loop); it was not prompted by anyone. The audit therefore uses the whole transcript as the run.
-- The final message claims the given `defs.lisp` had an unbalanced paren. It did not: the model dropped a paren
-  when writing the file from the prompt. The checker uses its own copy, so this does not matter.
-

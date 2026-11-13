@@ -1,99 +1,20 @@
 # 03 — Flip graph
 
-**Paper:** Quan Luu, Zeke Medley, Panagiotis Manolios, *Formalizing the Connectivity Theorem for the Matrix Multiplication Flip Graph in ACL2* (ACL2 Workshop 2026). PDF in `source/paper.pdf`.
-**Logic:** ACL2.
+**Paper:** Quan Luu, Zeke Medley, Panagiotis Manolios, *Formalizing the Connectivity Theorem for the Matrix Multiplication Flip Graph in ACL2*. PDF: `source/paper.pdf`. **Logic:** ACL2.
 
-## The paper
+Over F2, a matrix multiplication scheme is a multiset of nonzero rank-one tensors A⊗B⊗C that sum to the matrix multiplication tensor M(n). Flip and plus moves rewrite two summands without changing the sum. The paper formalizes the proof (Medley et al., arXiv:2609.17533) that for n ≥ 2 the flip graph with flip and plus edges is strongly connected. The proof is constructive: `main-path` computes a path between any two correct schemes. A side development connects schemes to bilinear algorithms (soundness, completeness, round trip).
 
-Over F2, a matrix multiplication scheme is a multiset of nonzero rank-one tensors A⊗B⊗C that sum
-to the matrix multiplication tensor M(n). Flip and plus moves rewrite two summands without changing the sum.
-The paper formalizes the proof (Medley et al., arXiv:2609.17533) that for n ≥ 2 the flip graph with flip and
-plus edges is strongly connected. The proof is constructive: `main-path` computes a path between any two
-correct schemes. A side development connects schemes to bilinear algorithms (soundness, completeness, round
-trip).
+**Authors' ACL2 books:** `source/authors-books/` (copy). From pull request acl2/acl2#2103, `books/workshops/2026/luu-medley-manolios/`.
 
-**Contribution.** A theorem: a recent (2026) combinatorial and linear-algebra result. The paper reports 29
-books, 215 definitions and 791 theorems; the connectivity proof alone is 19 books with 137 functions and 527
-theorems.
+## Experiment 1 — the model wrote the definitions, the statement and the proof
 
-**Authors' ACL2 books.** Pull request [acl2/acl2#2103](https://github.com/acl2/acl2/pull/2103) (opened 2026-11-06,
-not merged when we ran the experiments), directory `books/workshops/2026/luu-medley-manolios/`. A copy is in
-`source/authors-books/`. All books certify on ACL2 8.7.
+The model received only `exp1/prompt.txt` (below). Its answer is `exp1/solution.lisp`; it certifies, and its last
+event is `MAIN`.
 
-## Files
-
-```
-03-luu-flipgraph/
-  README.md
-  source/
-    paper.pdf
-    authors-books/        the authors' ACL2 books (copy)
-  exp1/
-    prompt.txt            the exact prompt sent to the model
-    solution.lisp         the model's final /work/solution.lisp
-    audit.txt             transcript audit (tools/audit.py)
-    review.md             short factual review of the run
-  exp2/
-    prompt.txt            the exact prompt sent to the model
-    definitions.lisp      the definitions, annotated with their source locations (comments only)
-    targets.lisp          the target theorems (the authors' names in comments)
-    checker/              the exact files the checker certifies against (hashes below)
-    model-facing/         the definitions file the model was given (see below)
-    extraction/           how definitions.lisp was built and verified (NOTES.md, scripts, logs)
-    solution.lisp         the model's final /work/solution.lisp
-    audit.txt
-    review.md
-```
-
-## Results
-
-| | Experiment 1 (English → ACL2) | Experiment 2 (ACL2 statements) |
-|---|---|---|
-| Result | proved (certified) | all 4 target(s) proved (certified, statements matched) |
-| Model time | 50 min | 58 min |
-| Tool calls | 177 | 166 |
-| Certification time of solution.lisp (ACL2 8.7) | 26.7 s | 56.1 s |
-| Audit | CLEAN | CLEAN |
-| solution.lisp: lines / definitions / theorems | 1750 / 98 / 255 | 3420 / 91 / 455 |
-
-Authors' development (for scale): 66 files (including `experiments/`), 27,404 lines, 753 definitions, 1,963 theorems.
-
-*Model time* runs from when the model received the prompt to the end of its run (setup not included).
-Certification time is for `solution.lisp` alone, with its dependencies already certified, on our build
-(experiment 2: against `exp2/checker/`). Sizes are counted with `tools/sizes.py` (definitions = `defun`,
-`define`, `defun-sk`, `defmacro`, … and encapsulated functions; theorems = `defthm`, `defrule`, …, local
-ones included). Both experiments: first attempt, Claude Opus 5.5 at medium effort.
-
-## Experiment 1: English definitions and theorem
-
-**Theorem given:** Theorem 5.1 (flip-plus connectivity): over F2, for n ≥ 2, the flip graph with flip and plus edges is strongly connected.
-
-### Statement rewrites (paper text → prompt)
-
-The definitions and theorem were copied from the paper as close to verbatim as possible. Every edit:
-
-#### Sources
-- Theorem: §5, Theorem 5.1, p. 8 (verbatim, both sentences; label "(Flip-plus connectivity [12])" dropped).
-- Notation + F2 convention: §2 opening paragraph, p. 2.
-- Rank-one tensor: Definition 2.1, p. 2.
-- M(n): Definition 2.2 (eq. (1)) and the sentence after it, p. 2.
-- Scheme: Definition 2.3, p. 3 (schemes are **multisets** of nonzero rank-one tensors).
-- Flip/plus: Definition 2.5 and the closing sentence "These transformations on the B and C positions are defined analogously.", p. 3.
-
-#### Edits
-1. "Our definitions are over F2, consistent with the proof. The definitions extend to any field, but the connectivity proof does not: it deletes identical pairs of summands, which relies on 1 + 1 = 0." → "The definitions are over F2." Reason: remove "we"/"our"; the cut text is a proof hint.
-2. Dropped "We also only consider square matrices, but our definitions can be extended to rectangular ones." (authorial voice; n × n is explicit everywhere).
-3. Removed numbering/citations from definition labels: "Definition 2.1 (Rank-one tensor)." → "Definition (Rank-one tensor)."; same for 2.2 "[12]", 2.3 "[12]", 2.5 "[12]". Dropped equation number "(1)".
-4. Dropped "The matrix multiplication tensor is defined as follows." (connective).
-5. Kept "We call such a multiset a scheme" and "we define the matrix multiplication tensor" — definitional "we", not authorial reference; reviewer may change to "Such a multiset is called a scheme."
-6. Omitted all intervening text: rank-R decomposition (eq. 2) and the algorithm discussion, unit matrices E_ij, Strassen example (Ex. 2.4), §2.3, and the paragraph after Def 2.5 ("Both transformations preserve the sum ... again a decomposition of M(n)") — the latter is an intermediate fact/lemma.
-7. Math notation transcribed to plain Unicode: F2^(n×n), subscripts as _{…}, M(n) for script-M superscript (n), A^(r) for A^{(r)}.
-8. Theorem: label removed only.
-
-### Prompt
+**To review:** do the definitions and `MAIN` in `exp1/solution.lisp` state the theorem in the prompt?
 
 <details>
-<summary>Experiment 1 prompt (also in exp1/prompt.txt)</summary>
+<summary>Experiment 1 prompt (exp1/prompt.txt)</summary>
 
 ```text
 Formalize the definitions and the theorem below in ACL2, and prove the theorem.
@@ -149,9 +70,14 @@ questions; work until you are done. When you are done, print the final contents 
 
 </details>
 
-## Experiment 2: the authors' ACL2 definitions and statements
+## Experiment 2 — the model proved the authors' statements
 
-### Targets
+The model received `exp2/prompt.txt` (below): the authors' definitions and the target theorems. Its answer is
+`exp2/solution.lisp`; it certifies and proves every target with exactly the given statement.
+
+- `exp2/definitions.lisp`: the definitions, with a comment before each form giving where in the authors'
+  sources it comes from.
+- `exp2/targets.lisp`: the target theorems, with the authors' theorem names in comments.
 
 | Target | Authors' theorem | Meaning |
 |---|---|---|
@@ -160,50 +86,8 @@ questions; work until you are done. When you are done, print the final contents 
 | MAIN-3 | `scheme-algo-correct` (scheme-algo.lisp:470) | soundness: the algorithm built from a correct scheme is correct |
 | MAIN-4 | `algo-scheme-of-scheme-algo` (scheme-algo.lisp:451) | round trip: scheme → algorithm → scheme is the identity |
 
-### How the definitions were extracted
-
-`definitions.lisp` holds 89 of the authors' definitions (`define`s and one `defun-sk`), the
-definitional closure of the four statements, computed in ACL2 from bodies, guards and measures. Each `define`
-is verbatim except that its `///` section (theorems) is removed; `:returns` theorems stay, as part of the
-definition form. It leaves out `main-path` and every path construction. Local lemmas, needed only for guard
-verification, are the authors' lemmas copied verbatim, plus a few of our own; a greedy minimization showed
-that each one is needed. The one non-author definition is `flip-plus-reachablep` (below).
-
-The general procedure, and how each package was checked, is in [`../EXPERIMENT-2.md`](../EXPERIMENT-2.md);
-the full notes for this paper are in `exp2/extraction/NOTES.md`.
-
-**What the model saw.** The checker's `definitions.lisp` needs local lemmas to admit some definitions. Those
-lemmas can contain parts of the proofs, so the model was given `exp2/model-facing/defs.lisp`
-instead: local lemmas and hints removed, comments removed, and each definition wrapped in `skip-proofs`, with
-`exp2/model-facing/cert.acl2` allowing `skip-proofs` for that one book. The model's own solution could not use
-`skip-proofs`, and the checker certifies it against the fully proved `checker/defs.lisp`. A dump of every
-name each version introduces (formals, body, guard, measure, constraints, macro bodies) was identical for the
-two versions (`tools/world-dump.lsp`).
-
-Checker files:
-
-| File | SHA-256 |
-|---|---|
-| `exp2/checker/defs.lisp` | `b8c4e6067eb732a37edf0ffe2a11b6e940fd59a5dca96ee842b23511ef23647b` |
-
-`exp2/definitions.lisp` differs from `exp2/checker/defs.lisp` only in comments
-(`tools/check-comments-only.py`).
-
-### Statement rewrites (authors' ACL2 → targets)
-
-- **MAIN-1 is existential.** The authors' theorem states that the constructive `main-path` is a valid path.
-  Giving that statement would hand over both the formalization and the proof, so MAIN-1 instead says that a
-  valid path exists, using a new `defun-sk flip-plus-reachablep` (in `definitions.lisp`, marked as not from the
-  authors). The hypotheses are the original ones: `(correct-schemep sch n) (correct-schemep sch2 n) (natp n)
-  (<= 2 n)`. We proved MAIN-1 from the authors' theorem by instantiating the witness with `main-path`.
-- **MAIN-3 and MAIN-4 are separate targets**, not one conjunction, because their hypotheses differ:
-  `scheme-algo-correct` assumes `correct-schemep`, `algo-scheme-of-scheme-algo` only `schemep`.
-- Otherwise verbatim: `defrule` written as `defthm`, hints dropped.
-
-### Prompt
-
 <details>
-<summary>Experiment 2 prompt (also in exp2/prompt.txt)</summary>
+<summary>Experiment 2 prompt (exp2/prompt.txt)</summary>
 
 ```text
 Prove the theorems below in ACL2.
@@ -1029,12 +913,3 @@ questions; work until you are done. When you are done, print the final contents 
 ```
 
 </details>
-
-## Notes for reviewers
-
-**Experiment 1.**
-- For comparison: the paper reports that its connectivity proof is 19 books with 137 functions and 527
-  theorems, and that an unassisted LLM formalization of the companion paper proved connectivity in 9 books
-  with 409 theorems.
-
-

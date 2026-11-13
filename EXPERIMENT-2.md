@@ -41,8 +41,8 @@ built as follows.
    example `main-path`, `reorder-inputs`, `min-poly`, the Stirling integrals) is absent unless a statement
    needs it.
 2. **Verbatim copy.** Each definition is copied verbatim from the authors' source, with paper-specific
-   exceptions. These are listed in each paper's README under "Statement rewrites" and in
-   `exp2/extraction/NOTES.md`: removed `///` sections (flip graph), a renaming to avoid a name clash (AC
+   exceptions. These are listed in `harness/NN-<paper>/NOTES.md` and in
+   `harness/NN-<paper>/exp2/extraction/NOTES.md`: removed `///` sections (flip graph), a renaming to avoid a name clash (AC
    machine), one changed termination hint (fields). Include-books are the authors' own, using the 8.7
    community books.
 3. **Admission only.** All of the authors' theorems are dropped, except constraints exported by
@@ -50,9 +50,9 @@ built as follows.
    (termination, guards, encapsulate witnesses), they are added as `local` events: the authors' own lemmas
    where possible, and minimal ones of ours otherwise. A greedy pass removed every local event that was not
    needed.
-4. **Annotation.** `exp2/definitions.lisp` is the same file with a comment before each form giving its
+4. **Annotation.** The paper folder's `exp2/definitions.lisp` is the same file with a comment before each form giving its
    source file and line range (`tools/annotate-defs.py`). `tools/check-comments-only.py` confirms that the
-   annotated file and the checker's `exp2/checker/defs.lisp` differ only in comments. Each paper's README
+   annotated file and the checker's `harness/NN-<paper>/exp2/checker/defs.lisp` differ only in comments. `harness/NN-<paper>/NOTES.md`
    lists the SHA-256 of the checker files.
 
 For Basel and Stirling, the authors' books are not available: they are not in the community books and there
@@ -68,14 +68,14 @@ paper's text.
 | V3 | The package means what the authors' books mean. In the authors' world, every target is proved from the authors' theorems by `:use` with `(:in-theory nil)`. Every definition is identical to the authors': a dump of formals, body, guard, measure, symbol class and constraints is byte-identical between the two worlds, or including `defs` after the authors' books succeeds because every event is redundant. Linear III and fields used ACL2 master here, where the authors' books live; for Linear III the dumps differ only in the formals and guards that master adds to the library field functions `f+ f* f- f/`. Basel and Stirling were compared token by token with the paper. |
 | Checker | `check-exp2.py` rejects a `skip-proofs` solution and a solution with a wrong statement. Where possible, it accepts a real solution. |
 
-The scripts and logs are in each `exp2/extraction/verify/`, and `exp2/extraction/NOTES.md` records the
+The scripts and logs are in each `harness/NN-<paper>/exp2/extraction/verify/`, and `extraction/NOTES.md` records the
 results. Some logs mention scratch paths, shown as `<scratch>`.
 
 ### The model-facing copy
 
 For four papers (AC machine, flip graph, Linear III, fields) `defs.lisp` contains local lemmas. Lemmas
 needed to admit a definition can be steps of the target proofs (in Linear III, for example, the local lemmas
-include `vdepp-vcomb-v0`). The model was therefore given a different copy, `exp2/model-facing/defs.lisp`,
+include `vdepp-vcomb-v0`). The model was therefore given a different copy, `harness/NN-<paper>/exp2/model-facing/defs.lisp`,
 made by `tools/make-prompt-defs.py`:
 - every top-level `local` event is dropped, and so are local theorems inside encapsulates (local definitions,
   such as encapsulate witnesses, stay);
@@ -139,7 +139,7 @@ The exact prompts (1–44 KB) are in each `NN-<paper>/exp2/prompt.txt` and in th
 5. certifies with `cert.pl`.
 
 The fourth check originally accepted only top-level theorems. It was widened after the Basel run, whose
-MAIN-1 sat inside a non-local `encapsulate` (see `01-gamboa-basel/README.md`). A local MAIN is still rejected.
+MAIN-1 sat inside a non-local `encapsulate` (see `harness/01-gamboa-basel/NOTES.md`). A local MAIN is still rejected.
 
 ## 5. Results
 
@@ -161,7 +161,7 @@ a retry, and none came near the 6-hour limit.
 Three solution files were not printed in full at the end of the run, so they had to be rebuilt from the
 transcript: flip graph (from the model's own reads of the file), Linear III and fields (by replaying all of
 the model's file-changing commands). Each rebuilt file matches the size the session recorded, and it
-certifies. Each `review.md` gives the details.
+certifies. Each `harness/NN-<paper>/exp2/run.md` gives the details.
 
 ### Why experiment 2 took longer than experiment 1
 

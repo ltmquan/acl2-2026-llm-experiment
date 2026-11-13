@@ -28,7 +28,7 @@ Both experiments succeeded on the first attempt for all seven papers: 7 of 7 the
 | 07 | [Cayuela — AC machine](07-cayuela-ac-machine/) | 6 min | 4 / 4 | 2.6 min | ACL2(r) |
 
 ⚠️ In the experiment-1 Stirling run, the model ran `pip install sympy` once (see
-[02-gamboa-stirling](02-gamboa-stirling/)). All other runs passed the internet audit.
+[harness/02-gamboa-stirling](harness/02-gamboa-stirling/NOTES.md)). All other runs passed the internet audit.
 
 **Not yet checked:** whether the experiment-1 statements are faithful to the papers. Mechanical checking
 cannot settle this. It is the reviewers' job, and this repository deliberately gives no verdicts. In
@@ -41,17 +41,20 @@ README.md            this file: papers, harness, how to reproduce
 EXPERIMENT-1.md      report: English definitions and theorem → ACL2
 EXPERIMENT-2.md      report: authors' ACL2 definitions and statements → proofs (incl. how definitions were extracted)
 tools/               every script used (setup, checkers, audit, prompt and definitions generators, …)
-NN-<paper>/          one folder per paper
-  README.md          paper summary, theorem choices, statement rewrites, prompts, results, notes
+NN-<paper>/          one folder per paper: only what reviewers need to review the Lisp files
+  README.md          short paper summary, what each experiment asked, the prompts
   source/            paper PDF, and the authors' ACL2 books where they exist
-  exp1/              prompt.txt, solution.lisp, audit.txt, review.md
-  exp2/              prompt.txt, definitions.lisp (annotated), targets.lisp, checker/, model-facing/,
-                     extraction/, solution.lisp, audit.txt, review.md
+  exp1/              prompt.txt, solution.lisp
+  exp2/              prompt.txt, definitions.lisp (annotated with source locations), targets.lisp, solution.lisp
+harness/NN-<paper>/  our records (reviewers do not need these)
+  NOTES.md           results table, how the prompt and the exp2 package were made, changes from the
+                     paper's / authors' text, checker file hashes, run notes
+  exp1/, exp2/       audit.txt, run.md (timing, audit, how the solution was recovered, the model's route);
+                     exp2 also has checker/ (exact files the checker uses), model-facing/ (the definitions
+                     file the model was given, where different) and extraction/ (scripts and logs)
 ```
 
-Session transcripts are not included. The prompts are exactly the text that was sent. Each `review.md` is
-a short factual account of one run: timing, audit, how the solution file was recovered, checker result, and
-the route the model took.
+Session transcripts are not included. The prompts are exactly the text that was sent.
 
 ## 1. Papers
 
@@ -124,8 +127,10 @@ Copies are in each paper's `source/authors-books/`.
 ### Network and leakage controls
 A fully offline sandbox was not possible. The cloud environment discards its saved setup whenever the
 network setting changes, so setup and run must share one network, and setup needs Ubuntu packages and
-GitHub. The runs therefore used the environment's "Limited" network (package registries reachable), with
-these controls:
+GitHub. The runs therefore used the environment's "Limited" network with package registries allowed, and no
+extra hosts. We did not add GitHub ourselves: in this setting it comes with the package-registry access, which
+setup needs anyway (`apt` for SBCL, GitHub for the ACL2 8.7 sources). So github.com and
+raw.githubusercontent.com stayed reachable during the runs. We used these controls:
 
 1. **The prompt forbids internet use.**
 2. **`git` access to GitHub is redirected** to an invalid host inside the container (`git config --system
@@ -167,7 +172,7 @@ All scripts are in [`tools/`](tools/); see [`tools/README.md`](tools/README.md) 
 5. **Check:**
    - Experiment 1: `tools/check-exp1.sh solution.lisp`. This scans for banned events, requires the last event
      to be `(defthm MAIN …)`, and certifies with ACL2, then ACL2(r).
-   - Experiment 2: `python3 -I tools/check-exp2.py solution.lisp NN-<paper>/exp2/checker [acl2|acl2r]`. This
+   - Experiment 2: `python3 -I tools/check-exp2.py solution.lisp harness/NN-<paper>/exp2/checker [acl2|acl2r]`. This
      copies the checker's `defs.lisp` (and `cert.acl2`) next to the solution, scans for banned events,
      allows only `(include-book "defs")` and `:dir :system` books, requires every target with exactly its
      statement, and certifies.

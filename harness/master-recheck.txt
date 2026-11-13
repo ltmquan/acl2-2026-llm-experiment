@@ -1,0 +1,20 @@
+Re-certification of all solutions on ACL2 master (commit 1d2b39a424, 2026-11-12)
+ACL2 and ACL2(r) master images; checker = tools/check-exp2.py (exp2) / tools/check-exp1.sh (exp1) pointed at master.
+
+Experiment 2 (2026-11-13):
+  task-07 cayuela-ac-machine rc=0 CERTIFIED with saved_acl2r; targets matched: main-1, main-2, main-3, main-4  (0.93 s)
+  task-01 gamboa-basel rc=0 CERTIFIED with saved_acl2r; targets matched: main-1  (11.28 s)
+  task-04 binmonjil-chandy-lamport rc=0 CERTIFIED with saved_acl2; targets matched: main-1, main-2  (3.59 s)
+  task-03 luu-flipgraph rc=0 CERTIFIED with saved_acl2; targets matched: main-1, main-2, main-3, main-4  (58.31 s)
+  task-05 russinoff-linear3 rc=0 CERTIFIED with saved_acl2; targets matched: main-1, main-2, main-3, main-4, main-5, main-6  (3.11 s)
+  task-02 gamboa-stirling rc=0 CERTIFIED with saved_acl2r; targets matched: main-1, main-2, main-3  (412.47 s)
+  task-06 russinoff-fields rc=0 CERTIFIED with saved_acl2; targets matched: main-1, main-2, main-3, main-4  (782.50 s)
+
+Experiment 1 (2026-11-12):
+  task-01: CERTIFIED (150.274s)
+  task-02: CERTIFIED (50.549s)
+  task-03: CERTIFIED (23.353s)
+  task-04: CERTIFIED (0.815s)
+  task-05: CERTIFIED (1.116s)
+  task-06: CERTIFIED (2.921s)
+  task-07: CERTIFIED (0.884s)

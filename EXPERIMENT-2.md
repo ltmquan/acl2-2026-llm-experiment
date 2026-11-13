@@ -180,6 +180,8 @@ larger solutions on six (not on the AC machine). The transcripts suggest four re
 - **Assembly.** The longer runs developed each target in separate books and then merged them. Merging alone
   took about 1.3 h for Stirling, because rules from one section made proofs in another hang.
 
-## 6. Still to do
+## 6. Re-check on ACL2 master
 
-- Re-certify the experiment-2 solutions on ACL2 master. (All experiment-1 solutions pass on master.)
+All seven solutions also certify on ACL2 master (commit 1d2b39a424, 2026-11-12), with the same checker and
+checker definitions, every target matched. Certification times on master are close to those on 8.7 (Fields 782 s vs 750 s, Stirling 412 s vs 391 s)
+(`harness/master-recheck.txt`). All experiment-1 solutions also pass on master.

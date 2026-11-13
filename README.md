@@ -183,4 +183,5 @@ them for another machine.
 ## 4. Re-checking on current ACL2
 
 Several soundness bugs were fixed after 8.7. All seven experiment-1 solutions also certify on ACL2 master
-(commit 1d2b39a424, 2026-11-12). The experiment-2 solutions have not yet been re-certified on master.
+(commit 1d2b39a424, 2026-11-12), and so do all seven experiment-2 solutions, checked by `tools/check-exp2.py`
+against the same checker definitions, with every target matched (`harness/master-recheck.txt`).

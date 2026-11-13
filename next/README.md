@@ -11,5 +11,5 @@ solutions.
 | `zfc-tasks.md` | Tractable items from Kaufmann's `zfc-future-work` list (ACL2 `books/projects/set-theory`, base commit 65589c5afd, 2026-07-05): task statements and candidate ACL2(zfc) statements. |
 | `statement-checks/` | The files used to check that the candidate statements load. |
 
-Open decisions are listed at the end of each file and in the experiment log. Please comment on the
+Please comment on the
 statements: are they faithful to what the papers or the list ask for, and are they well posed?

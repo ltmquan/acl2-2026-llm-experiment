@@ -1,0 +1,17 @@
+Formalize the definitions and the theorem below in ACL2, and prove the theorem.
+
+<definitions>
+None beyond standard mathematics.
+</definitions>
+
+<theorem>
+The sum of the squares of the reciprocals of the positive integers is exactly π²/6:
+
+    Σ_{i=1}^{∞} 1/i² = π²/6.
+</theorem>
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+Put your work in /work/solution.lisp; it must certify with `cert.pl` (add `--acl2 acl2r` for ACL2(r)), and its last
+event must be the theorem, named MAIN.
+Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done. When you are done, print the final contents of /work/solution.lisp.

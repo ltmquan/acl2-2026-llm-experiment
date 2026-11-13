@@ -1,0 +1,428 @@
+(in-package "DM")
+
+(include-book "projects/linear/reduction" :dir :system)
+
+(skip-proofs
+(encapsulate (((vp *) => *)        ;vector recognizer
+              ((v+ * *) => *)      ;vector addition
+	      ((v0) => *)          ;zero vector
+	      ((v- *) => *)        ;additive inverse
+	      ((v* * *) => *)      ;scalar multiplication
+	      ((vbasis0) => *)     ;canonical basis
+	      ((vcoords0 *) => *)) ;coordinates relative ro basis
+  (local (defun vp (x) (fp x)))
+  (local (defun v+ (x y) (f+ x y)))
+  (local (defun v0 () (f0)))
+  (local (defun v- (x) (f- x)))
+  (local (defun v* (c x) (f* c x)))
+  (local (defun vbasis0 () (list (f1))))
+  (local (defun vcoords0 (x) (list x)))
+  (defthm vp-v0
+    (vp (v0)))
+  (defthm vp-v-
+    (implies (vp x) (vp (v- x))))
+  (defthm v+closed (implies (and (vp x) (vp y)) (vp (v+ x y))))
+  (defthmd v+comm
+    (implies (and (vp x) (vp y)) (equal (v+ x y) (v+ y x)))
+    )
+  (defthmd v+assoc
+    (implies (and (vp x) (vp y) (vp z)) (equal (v+ x (v+ y z)) (v+ (v+ x y) z)))
+    )
+  (defthm v+id
+    (implies (vp x) (equal (v+ x (v0)) x)))
+  (defthm v+inv
+    (implies (vp x) (equal (v+ x (v- x)) (v0))))
+  (defthm v*closed
+    (implies (and (fp c) (vp x)) (vp (v* c x))))
+  (defthm v*id
+    (implies (vp x) (equal (v* (f1) x) x)))
+  (defthmd v*assoc
+    (implies (and (fp c) (fp d) (vp x)) (equal (v* c (v* d x)) (v* (f* c d) x)))
+    )
+  (defthmd vdistf
+    (implies (and (fp c) (fp d) (vp x)) (equal (v+ (v* c x) (v* d x)) (v* (f+ c d) x)))
+    )
+  (defthmd vdistv
+    (implies (and (fp c) (vp x) (vp y)) (equal (v+ (v* c x) (v* c y)) (v* c (v+ x y))))
+    )
+  (defun vlistnp (x n)
+    (if (zp n)
+        (null x)
+      (and (consp x)
+           (vp (car x))
+	   (vlistnp (cdr x) (1- n)))))
+  (defun vcomb (flist vlist)
+    (if (consp flist)
+        (v+ (v* (car flist) (car vlist))
+	    (vcomb (cdr flist) (cdr vlist)))
+      (v0)))
+  (defun vdim () (len (vbasis0)))
+  (defthmd posp-vdim
+    (posp (vdim)))
+  (in-theory (disable (vdim) (vlistnp) (vcomb)))
+  (defthm vlistnp-basis0
+    (vlistnp (vbasis0) (vdim)))
+  (defthm flistnp-vcoords0
+    (implies (vp x) (flistnp (vcoords0 x) (vdim))))
+  (defthm vbasis0-spans
+    (implies (vp x)
+             (equal (vcomb (vcoords0 x) (vbasis0))
+		    x)))
+  (defthmd vbasis0-lin-indep
+    (implies (and (flistnp c (vdim))
+                  (equal (vcomb c (vbasis0)) (v0)))
+	     (equal (flistn0 (vdim)) c)))
+  (in-theory (disable vdim))))
+
+(skip-proofs
+(defun vcoord-mat (l)
+  (if (consp l)
+      (cons (vcoords0 (car l))
+	    (vcoord-mat (cdr l)))
+    ())))
+
+(skip-proofs
+(defund vindepp (l)
+  (or (null l)
+      (equal (row-rank (vcoord-mat l))
+             (len l)))))
+
+(skip-proofs
+(defund vdepp (l)
+  (not (vindepp l))))
+
+(skip-proofs
+(defun vdep-coeffs (l)
+  (nth (1- (len l)) (row-reduce-mat (vcoord-mat l)))))
+
+(skip-proofs
+(defund vcoords (x l)
+  (if (null l)
+      ()
+    (let ((c (vdep-coeffs (cons x l))))
+      (flist-scalar-mul (f- (f/ (car c))) (cdr c))))))
+
+(skip-proofs
+(defund vbasisp (l)
+  (and (vlistnp l (vdim))
+       (vindepp l))))
+
+(skip-proofs
+(defund vunspanned (l)
+  (nth (car (free-inds (row-reduce (vcoord-mat l)) (vdim)))
+       (vbasis0))))
+
+(skip-proofs
+(defun extend-to-basis (l)
+  (declare (xargs :measure (nfix (- (vdim) (len l)))))
+  (if (and (vlistnp l (len l)) (vindepp l) (< (len l) (vdim)))
+      (extend-to-basis (cons (vunspanned l) l))
+    l)))
+
+(skip-proofs
+(encapsulate (((wp *) => *)        ;vector recognizer
+              ((w+ * *) => *)      ;vector addition
+	      ((w0) => *)          ;zero vector
+	      ((w- *) => *)        ;additive inverse
+	      ((w* * *) => *)      ;scalar multiplication
+	      ((wbasis0) => *)     ;canonical basis
+	      ((wcoords0 *) => *)) ;coordinates relative ro basis
+  (local (defun wp (x) (fp x)))
+  (local (defun w+ (x y) (f+ x y)))
+  (local (defun w0 () (f0)))
+  (local (defun w- (x) (f- x)))
+  (local (defun w* (c x) (f* c x)))
+  (local (defun wbasis0 () (list (f1))))
+  (local (defun wcoords0 (x) (list x)))
+  (defthm wp-w0
+    (wp (w0)))
+  (defthm wp-w-
+    (implies (wp x) (wp (w- x))))
+  (defthm w+closed (implies (and (wp x) (wp y)) (wp (w+ x y))))
+  (defthmd w+comm
+    (implies (and (wp x) (wp y)) (equal (w+ x y) (w+ y x)))
+    )
+  (defthmd w+assoc
+    (implies (and (wp x) (wp y) (wp z)) (equal (w+ x (w+ y z)) (w+ (w+ x y) z)))
+    )
+  (defthm w+id
+    (implies (wp x) (equal (w+ x (w0)) x)))
+  (defthm w+inv
+    (implies (wp x) (equal (w+ x (w- x)) (w0))))
+  (defthm w*closed
+    (implies (and (fp c) (wp x)) (wp (w* c x))))
+  (defthm w*id
+    (implies (wp x) (equal (w* (f1) x) x)))
+  (defthmd w*assoc
+    (implies (and (fp c) (fp d) (wp x)) (equal (w* c (w* d x)) (w* (f* c d) x)))
+    )
+  (defthmd wdistf
+    (implies (and (fp c) (fp d) (wp x)) (equal (w+ (w* c x) (w* d x)) (w* (f+ c d) x)))
+    )
+  (defthmd wdistw
+    (implies (and (fp c) (wp x) (wp y)) (equal (w+ (w* c x) (w* c y)) (w* c (w+ x y))))
+    )
+  (defun wlistnp (x n)
+    (if (zp n)
+        (null x)
+      (and (consp x)
+           (wp (car x))
+	   (wlistnp (cdr x) (1- n)))))
+  (defun wcomb (flist wlist)
+    (if (consp flist)
+        (w+ (w* (car flist) (car wlist))
+	    (wcomb (cdr flist) (cdr wlist)))
+      (w0)))
+  (defun wdim () (len (wbasis0)))
+  (defthmd posp-wdim
+    (posp (wdim)))
+  (in-theory (disable (wdim) (wlistnp) (wcomb)))
+  (defthm wlistnp-basis0
+    (wlistnp (wbasis0) (wdim)))
+  (defthm flistnp-wcoords0
+    (implies (wp x) (flistnp (wcoords0 x) (wdim))))
+  (defthm wbasis0-spans
+    (implies (wp x)
+             (equal (wcomb (wcoords0 x) (wbasis0))
+		    x)))
+  (defthmd wbasis0-lin-indep
+    (implies (and (flistnp c (wdim))
+                  (equal (wcomb c (wbasis0)) (w0)))
+	     (equal (flistn0 (wdim)) c)))
+  (in-theory (disable wdim))))
+
+(skip-proofs
+(defun wcoord-mat (l)
+  (if (consp l)
+      (cons (wcoords0 (car l))
+	    (wcoord-mat (cdr l)))
+    ())))
+
+(skip-proofs
+(defund windepp (l)
+  (or (null l)
+      (equal (row-rank (wcoord-mat l))
+             (len l)))))
+
+(skip-proofs
+(encapsulate (((lin *) => *))
+  (local (defun lin (x) (declare (ignore x)) (w0)))
+  (defthm lin-val
+    (implies (vp x) (wp (lin x))))
+  (defthm lin-v0
+    (equal (lin (v0)) (w0)))
+  (defthm lin-v+
+    (implies (and (vp x) (vp y))
+             (equal (lin (v+ x y))
+	            (w+ (lin x) (lin y)))))
+  (defthm lin-v*
+    (implies (and (fp c) (vp x))
+             (equal (lin (v* c x))
+	            (w* c (lin x)))))))
+
+(skip-proofs
+(defun lin-list (l)
+  (if (consp l)
+      (cons (lin (car l))
+            (lin-list (cdr l)))
+    ())))
+
+(skip-proofs
+(defund lin-mat ()
+  (wcoord-mat (lin-list (vbasis0)))))
+
+(in-theory (disable (lin-mat)))
+
+(skip-proofs
+(defun-sk lin-injective-p ()
+  (forall (x)
+    (implies (and (vp x) (equal (lin x) (w0)))
+             (equal x (v0))))))
+
+(skip-proofs
+(defchoose lin-preimage x (y)
+  (and (vp x)
+       (equal (lin x) y))))
+
+(skip-proofs
+(defun-sk lin-surjective-p ()
+  (forall (y)
+    (implies (wp y)
+             (and (vp (lin-preimage y))
+	          (equal (lin (lin-preimage y))
+		         y))))))
+
+(in-theory (disable lin-injective-p lin-surjective-p))
+
+(skip-proofs
+(defund lin-inv (y)
+  (vcomb (car (fmat* (list (wcoords0 y)) (inverse-mat (lin-mat))))
+         (vbasis0))))
+
+(skip-proofs
+(encapsulate (((sp *) => *))
+  (local (defun sp (x) (vp x)))
+  (defthm sp-vp (implies (sp x) (vp x)))
+  (defthm sp-v0 (sp (v0)))
+  (defthm sp-v- (implies (sp x) (sp (v- x))))    
+  (defthm s+closed (implies (and (sp x) (sp y)) (sp (v+ x y))))  
+  (defthm s*closed (implies (and (fp c) (sp x)) (sp (v* c x))))))
+
+(skip-proofs
+(defun slistnp (x n)
+  (if (zp n)
+      (null x)
+    (and (consp x)
+         (sp (car x))
+         (slistnp (cdr x) (1- n))))))
+
+(skip-proofs
+(defchoose sunspanned x (l)
+  (and (sp x) (vindepp (cons x l)))))
+
+(skip-proofs
+(defun sbasis0-aux (l)
+  (declare (xargs :measure (nfix (- (vdim) (len l)))
+                  ))
+  (let ((x (sunspanned l)))
+    (if (and (slistnp l (len l)) (sp x) (vindepp (cons x l)))
+        (sbasis0-aux (cons x l))
+      l))))
+
+(skip-proofs
+(defund sbasis0 ()
+  (sbasis0-aux ())))
+
+(skip-proofs
+(defun sdim () (len (sbasis0))))
+
+(in-theory (disable (slistnp) (sbasis0-aux) (sbasis0) (sdim)))
+
+(skip-proofs
+(defund scoords0 (x)
+  (vcoords x (sbasis0))))
+
+(skip-proofs
+(encapsulate (((sbasis1) => *) ((scoords1 *) => *))
+  (local (defun sbasis1 () (sbasis0)))
+  (local (defun scoords1 (x) (scoords0 x)))
+  (defun sdim1 () (len (sbasis1)))
+  (defthmd slistnp-sbasis1
+    (slistnp (sbasis1) (sdim1))
+    )
+  (defthmd flistnp-scoords1
+    (implies (and (posp (sdim)) (sp x)) (flistnp (scoords1 x) (sdim1)))
+    )
+  (defthmd sbasis1-spans
+    (implies (and (posp (sdim)) (sp x))
+             (equal (vcomb (scoords1 x) (sbasis1))
+                    x))
+    )
+  (defthm vindepp-sbasis1
+    (vindepp (sbasis1))
+    )))
+
+(skip-proofs
+(defund in-kernel-p (x)
+  (and (vp x)
+       (equal (lin x) (w0)))))
+
+(skip-proofs
+(defun klistnp (x n)
+  (if (zp n)
+      (null x)
+    (and (consp x)
+         (in-kernel-p (car x))
+         (klistnp (cdr x) (1- n))))))
+
+(skip-proofs
+(defund kbasis-coord (i j)
+  (let* ((ar (row-reduce (transpose-mat (lin-mat))))
+	 (l (lead-inds ar)))
+    (if (member i l)
+        (f- (entry (index i l) j ar))
+      (if (= i j)
+          (f1)
+        (f0))))))
+
+(skip-proofs
+(defun kbasis-coords-aux (i j)
+  (if (posp i)
+      (append (kbasis-coords-aux (1- i) j)
+              (list (kbasis-coord (1- i) j)))
+    ())))
+
+(skip-proofs
+(defund kbasis-coords (j) (kbasis-coords-aux (vdim) j)))
+
+(skip-proofs
+(defun kbasis-aux (f)
+  (if (consp f)
+      (cons (vcomb (kbasis-coords (car f)) (vbasis0))
+            (kbasis-aux (cdr f)))
+    ())))
+
+(skip-proofs
+(defund kbasis ()
+  (let ((ar (row-reduce (transpose-mat (lin-mat)))))
+    (kbasis-aux (free-inds ar (vdim))))))
+
+(in-theory (disable (kbasis)))
+
+(skip-proofs
+(defund kdim () (len (kbasis))))
+
+(in-theory (disable (kdim)))
+
+(skip-proofs
+(defun kcoords-aux (x f)
+  (if (consp f)
+      (cons (nth (car f) (vcoords0 x))
+            (kcoords-aux x (cdr f)))
+    ())))
+
+(skip-proofs
+(defund kcoords (x)
+   (let* ((ar (row-reduce (transpose-mat (lin-mat))))
+          (f (free-inds ar (vdim))))
+     (kcoords-aux x f))))
+
+(skip-proofs
+(defund in-image-p (x)
+  (let ((p (lin-preimage x)))
+    (and (vp p) (equal (lin p) x)))))
+
+(skip-proofs
+(defun idim () (- (vdim) (kdim))))
+
+(skip-proofs
+(defund extend-kbasis ()
+  (if (posp (kdim))
+      (extend-to-basis (kbasis))
+    (vbasis0))))
+
+(in-theory (disable (extend-kbasis)))
+
+(skip-proofs
+(defun firstn (n l)
+  (if (zp n)
+      ()
+    (cons (car l) (firstn (1- n) (cdr l))))))
+
+(skip-proofs
+(defund ibasis ()
+  (lin-list (firstn (idim) (extend-kbasis)))))
+
+(in-theory (disable (ibasis)))
+
+(skip-proofs
+(defun ilistnp (x n)
+  (if (zp n)
+      (null x)
+    (and (consp x)
+         (in-image-p (car x))
+         (ilistnp (cdr x) (1- n))))))
+
+(skip-proofs
+(defund icoords (x)
+  (firstn (idim) (vcoords (lin-preimage x) (extend-kbasis)))))

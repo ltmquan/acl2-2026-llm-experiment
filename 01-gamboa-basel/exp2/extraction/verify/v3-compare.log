@@ -1,0 +1,7 @@
+paper def : (defunbasel-series(in)(declare(xargs:measure(nfix(-ni))))(if(zp(-ni))0(+(expti-2)(basel-series(1+i)n))))
+given def : (defunbasel-series(in)(declare(xargs:measure(nfix(-ni))))(if(zp(-ni))0(+(expti-2)(basel-series(1+i)n))))
+DEF IDENTICAL: True
+paper thm : (implies(and(pospn)(i-largen))(i-close(basel-series1n)(/(expt(acl2-pi)2)6)))
+given thm : (implies(and(pospn)(i-largen))(i-close(basel-series1n)(/(expt(acl2-pi)2)6)))
+STMT IDENTICAL: True
+paper name line: (defthmdbasel-series-closed-form-close  (line 806; def at line 110)

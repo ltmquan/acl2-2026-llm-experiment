@@ -1,0 +1,8 @@
+(include-book "defs")
+(basel-series 1 4)
+(basel-series 1 1)
+(pe 'basel-series)
+(pe 'i-close)
+(pe 'i-large)
+(pe 'acl2-pi)
+(body 'basel-series nil (w state))

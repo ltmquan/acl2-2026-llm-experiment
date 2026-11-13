@@ -1,0 +1,1182 @@
+"-*- Mode: auto-revert -*-"
+<scratch>/given-binmonjil-chandy-lamport
+HOST: vm
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/opt/acl2/books
+ACL2=/opt/acl2/saved_acl2
+ACL2_USELESS_RUNES=-25
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+#+(and hons (not acl2-par)) (profile-fn 'include-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file :
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "misc/records.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "defs" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: defs
+STEP: certify
+Start of output:
+
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7                                                     +
+ +   built November 11, 2026  15:57:27.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* 
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !><state>
+ACL2 !> "ACL2"
+ACL2 !> (:EXIT 1)
+ACL2 !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2 !> T
+ACL2 !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.
+NIL
+ACL2 !> T
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+ "/opt/acl2/books/std/portcullis.lisp"
+ACL2 !>>Bye.
+ :EOF
+ACL2 !> :CONTINUE
+ACL2 !>
+Summary
+Form:  ( INCLUDE-BOOK "misc/records" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+"/opt/acl2/books/misc/records.lisp"
+
+Summary
+Form:  ( DEFUN MEMBERP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MEMBERP
+
+Summary
+Form:  ( DEFUN SUBSET ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SUBSET
+
+Summary
+Form:  ( DEFUN UNIQUEP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UNIQUEP
+
+Summary
+Form:  ( DEFUN SNOC ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNOC
+
+Summary
+Form:  ( DEFUN REMOVE-FROM-LIST ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+REMOVE-FROM-LIST
+
+Summary
+Form:  ( DEFMACRO PROCS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROCS
+
+Summary
+Form:  ( DEFMACRO CHANNELS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHANNELS
+
+Summary
+Form:  ( DEFMACRO PROC-IDS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROC-IDS
+
+Summary
+Form:  ( DEFMACRO LOCAL-STATE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LOCAL-STATE
+
+Summary
+Form:  ( DEFMACRO CHANNEL-STATE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHANNEL-STATE
+
+Summary
+Form:  ( DEFMACRO NBRS-TO ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NBRS-TO
+
+Summary
+Form:  ( DEFMACRO NBRS-FROM ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NBRS-FROM
+
+Summary
+Form:  ( DEFMACRO PID ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PID
+
+Summary
+Form:  ( DEFMACRO TTYPE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+TTYPE
+
+Summary
+Form:  ( DEFMACRO SENDER ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SENDER
+Goal'
+Goal''
+Subgoal 2
+Subgoal 2'
+Subgoal 1
+Subgoal 1'
+Goal'
+
+Summary
+Form:  ( DEFUN UPDATE-MACRO ...)
+Rules: ((:DEFINITION ACL2-COUNT)
+        (:DEFINITION ENDP)
+        (:DEFINITION KEYWORD-VALUE-LISTP)
+        (:DEFINITION KEYWORDP)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O<)
+        (:DEFINITION SYNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART ACL2-COUNT)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING KEYWORD-VALUE-LISTP-FORWARD-TO-TRUE-LISTP)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-2-OF-+)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION ACL2-COUNT)
+        (:TYPE-PRESCRIPTION KEYWORD-VALUE-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1198
+UPDATE-MACRO
+
+Summary
+Form:  ( DEFMACRO UPDATE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE
+
+Summary
+Form:  ( DEFMACRO >ST ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+>ST
+
+Summary
+Form:  ( DEFMACRO >P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+>P
+
+Summary
+Form:  ( DEFMACRO >_ ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+>_
+
+Summary
+Form:  ( DEFMACRO >CHANNEL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+>CHANNEL
+
+Summary
+Form:  ( DEFMACRO APPEND-TO-RECORD-LIST ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+APPEND-TO-RECORD-LIST
+
+Summary
+Form:  ( DEFMACRO PROC-STATUS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROC-STATUS
+
+Summary
+Form:  ( DEFMACRO WAITING-RECOVERY-FROM ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WAITING-RECOVERY-FROM
+
+Summary
+Form:  ( DEFMACRO COUNTER ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+COUNTER
+
+Summary
+Form:  ( DEFMACRO SNAPSHOT-IDS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOT-IDS
+
+Summary
+Form:  ( DEFMACRO SNAPSHOTS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOTS
+
+Summary
+Form:  ( DEFMACRO SNAPSHOT-ENTRY ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOT-ENTRY
+
+Summary
+Form:  ( DEFMACRO SID ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SID
+
+Summary
+Form:  ( DEFMACRO MSG-TYPE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MSG-TYPE
+
+Summary
+Form:  ( DEFMACRO SNAPSHOT-STATUS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOT-STATUS
+
+Summary
+Form:  ( DEFMACRO SNAPSHOT-LOCAL-SNAP-SHOT ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOT-LOCAL-SNAP-SHOT
+
+Summary
+Form:  ( DEFMACRO SNAPSHOT-CHANNEL-SNAPSHOTS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOT-CHANNEL-SNAPSHOTS
+
+Summary
+Form:  ( DEFMACRO SNAPSHOT-WAITING-MARKER-FROM ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SNAPSHOT-WAITING-MARKER-FROM
+
+Summary
+Form:  ( DEFUN MAKE-SNAPSHOT-ENTRY ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MAKE-SNAPSHOT-ENTRY
+
+Summary
+Form:  ( DEFUN ADD-SNAPSHOT-ID ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ADD-SNAPSHOT-ID
+
+Summary
+Form:  ( DEFUN SET-SNAPSHOT-ENTRY ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SET-SNAPSHOT-ENTRY
+
+Summary
+Form:  ( DEFUN INSTALL-SNAPSHOT-ENTRY ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+INSTALL-SNAPSHOT-ENTRY
+
+Summary
+Form:  ( DEFUN UPDATE-LOCAL-STATE-RCV ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-LOCAL-STATE-RCV
+
+Summary
+Form:  ( DEFUN UPDATE-LOCAL-STATE-NORMAL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-LOCAL-STATE-NORMAL
+
+Summary
+Form:  ( DEFUN MESSAGE-TO-SEND? ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MESSAGE-TO-SEND?
+
+Summary
+Form:  ( DEFUN CREATE-COMPUTE-MESSAGE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CREATE-COMPUTE-MESSAGE
+
+Summary
+Form:  ( DEFTHM MSG-TYPE-OF-CREATE-COMPUTE-MESSAGE ...)
+Rules: ((:DEFINITION CREATE-COMPUTE-MESSAGE)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART G)
+        (:EXECUTABLE-COUNTERPART S))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  11
+MSG-TYPE-OF-CREATE-COMPUTE-MESSAGE
+
+Summary
+Form:  ( ENCAPSULATE (((UPDATE-LOCAL-STATE-RCV * ...) ...) ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Prover steps counted:  11
+(UPDATE-LOCAL-STATE-RCV UPDATE-LOCAL-STATE-NORMAL
+                        MESSAGE-TO-SEND? CREATE-COMPUTE-MESSAGE)
+
+Summary
+Form:  ( DEFUN CREATE-MARKER-MESSAGE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CREATE-MARKER-MESSAGE
+
+Summary
+Form:  ( DEFUN CREATE-RECOVERY-MESSAGE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CREATE-RECOVERY-MESSAGE
+
+Summary
+Form:  ( DEFUN REMOVE-MESSAGE-FROM-CHANNEL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+REMOVE-MESSAGE-FROM-CHANNEL
+
+Summary
+Form:  ( DEFUN SEND-MSG-ALL-OUTGOING-CHANNELS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SEND-MSG-ALL-OUTGOING-CHANNELS
+
+Summary
+Form:  ( DEFUN UPDATE-PROC-FOR-FIRST-MARKER-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-PROC-FOR-FIRST-MARKER-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-FIRST-MARKER-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-FIRST-MARKER-MSG
+
+Summary
+Form:  ( DEFUN UPDATE-PROC-FOR-NON-FIRST-MARKER-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-PROC-FOR-NON-FIRST-MARKER-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-NON-FIRST-MARKER-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-NON-FIRST-MARKER-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-MARKER-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-MARKER-MSG
+
+Summary
+Form:  ( DEFUN REPLAY-MSGS-ON-CHANNEL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+REPLAY-MSGS-ON-CHANNEL
+
+Summary
+Form:  ( DEFUN REPLAY-CHANNEL-SNAPSHOTS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+REPLAY-CHANNEL-SNAPSHOTS
+
+Summary
+Form:  ( DEFUN UPDATE-PROC-FOR-FIRST-RECOVERY-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-PROC-FOR-FIRST-RECOVERY-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-FIRST-RECOVERY-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-FIRST-RECOVERY-MSG
+
+Summary
+Form:  ( DEFUN UPDATE-PROC-FOR-NON-FIRST-RECOVERY-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-PROC-FOR-NON-FIRST-RECOVERY-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-NON-FIRST-RECOVERY-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-NON-FIRST-RECOVERY-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-RECOVERY-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-RECOVERY-MSG
+
+Summary
+Form:  ( DEFUN RECORD-MSG-IN-SNAPSHOTS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RECORD-MSG-IN-SNAPSHOTS
+
+Summary
+Form:  ( DEFUN UPDATE-PROC-FOR-NORMAL-MSG-CORE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+UPDATE-PROC-FOR-NORMAL-MSG-CORE
+
+Summary
+Form:  ( DEFUN HANDLE-NORMAL-MSG-CORE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-NORMAL-MSG-CORE
+
+Summary
+Form:  ( DEFUN IGNORE-NORMAL-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+IGNORE-NORMAL-MSG
+
+Summary
+Form:  ( DEFUN HANDLE-NORMAL-MSG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+HANDLE-NORMAL-MSG
+
+Summary
+Form:  ( DEFUN GET-MSG-FROM-CHANNEL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GET-MSG-FROM-CHANNEL
+
+Summary
+Form:  ( DEFUN STEP-RCV ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STEP-RCV
+
+Summary
+Form:  ( DEFUN SEND-COMPUTE-MESSAGE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SEND-COMPUTE-MESSAGE
+
+Summary
+Form:  ( DEFUN STEP-NORMAL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STEP-NORMAL
+
+Summary
+Form:  ( DEFUN START-CHECKPOINT-HELPER ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+START-CHECKPOINT-HELPER
+
+Summary
+Form:  ( DEFUN STEP-CHECKPOINT ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STEP-CHECKPOINT
+
+Summary
+Form:  ( DEFUN STEP-CRASH ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STEP-CRASH
+
+Summary
+Form:  ( DEFUN RECOVERY-LOCAL-STATE-AFTER-REPLAY ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RECOVERY-LOCAL-STATE-AFTER-REPLAY
+
+Summary
+Form:  ( DEFUN START-RECOVERY-HELPER ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+START-RECOVERY-HELPER
+
+Summary
+Form:  ( DEFUN STEP-RECOVER ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STEP-RECOVER
+
+Summary
+Form:  ( DEFUN SYSTEM-STEP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SYSTEM-STEP
+
+Summary
+Form:  ( DEFUN RUN-IMP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RUN-IMP
+
+Summary
+Form:  ( DEFUN ANY-CHECKPOINTING-SNAPSHOT-IN-IDS-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ANY-CHECKPOINTING-SNAPSHOT-IN-IDS-P
+
+Summary
+Form:  ( DEFUN PROC-HAS-CHECKPOINTING-SNAPSHOT-P ...)
+Rules: ((:TYPE-PRESCRIPTION ANY-CHECKPOINTING-SNAPSHOT-IN-IDS-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROC-HAS-CHECKPOINTING-SNAPSHOT-P
+
+Summary
+Form:  ( DEFUN ANY-PROC-CHECKPOINTING-P ...)
+Rules: ((:TYPE-PRESCRIPTION PROC-HAS-CHECKPOINTING-SNAPSHOT-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ANY-PROC-CHECKPOINTING-P
+
+Summary
+Form:  ( DEFUN ANY-SNAPSHOT-CHECKPOINTING-P ...)
+Rules: ((:TYPE-PRESCRIPTION ANY-PROC-CHECKPOINTING-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ANY-SNAPSHOT-CHECKPOINTING-P
+
+Summary
+Form:  ( DEFUN ANY-PROC-RECOVERING-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ANY-PROC-RECOVERING-P
+
+Summary
+Form:  ( DEFUN ANY-PROCESS-RECOVERING-P ...)
+Rules: ((:TYPE-PRESCRIPTION ANY-PROC-RECOVERING-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ANY-PROCESS-RECOVERING-P
+
+Summary
+Form:  ( DEFUN SOME-PROC-HAS-SNAPSHOT-ID-P ...)
+Rules: ((:TYPE-PRESCRIPTION MEMBERP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SOME-PROC-HAS-SNAPSHOT-ID-P
+
+Summary
+Form:  ( DEFUN ALL-PROCS-HAVE-SNAPSHOT-ID-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALL-PROCS-HAVE-SNAPSHOT-ID-P
+
+Summary
+Form:  ( DEFUN LEGAL-INPUTP ...)
+Rules: ((:TYPE-PRESCRIPTION ALL-PROCS-HAVE-SNAPSHOT-ID-P)
+        (:TYPE-PRESCRIPTION MEMBERP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LEGAL-INPUTP
+
+Summary
+Form:  ( DEFUN LEGAL-INPUT-SEQUENCEP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LEGAL-INPUT-SEQUENCEP
+
+Summary
+Form:  ( DEFUN CL-CHECKPOINT-CONTROL-EQUIVALENT-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CL-CHECKPOINT-CONTROL-EQUIVALENT-P
+
+Summary
+Form:  ( DEFUN PROC-EQUIVALENT-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROC-EQUIVALENT-P
+
+Summary
+Form:  ( DEFUN PROCS-EQUIVALENT-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROCS-EQUIVALENT-P
+
+Summary
+Form:  ( DEFUN STATE-EQUIVALENT-P ...)
+Rules: ((:TYPE-PRESCRIPTION CL-CHECKPOINT-CONTROL-EQUIVALENT-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STATE-EQUIVALENT-P
+
+Summary
+Form:  ( DEFUN CURRENT-MSG-FOR-RECEIVE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CURRENT-MSG-FOR-RECEIVE
+
+Summary
+Form:  ( DEFMACRO CM-SID ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-SID
+
+Summary
+Form:  ( DEFUN CM-PROC-IDS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-PROC-IDS
+
+Summary
+Form:  ( DEFUN CM-CUT-NOT-TAKEN ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-CUT-NOT-TAKEN
+
+Summary
+Form:  ( DEFUN CM-WAITING-MARKER-FROM ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-WAITING-MARKER-FROM
+
+Summary
+Form:  ( DEFUN CM-AFTER-CUT-INPUT-SEQUENCE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-AFTER-CUT-INPUT-SEQUENCE
+
+Summary
+Form:  ( DEFUN CM-BEFORE-CUT-INPUT-SEQUENCE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-BEFORE-CUT-INPUT-SEQUENCE
+
+Summary
+Form:  ( DEFUN CM-WAITING-MARKER-FOR ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-WAITING-MARKER-FOR
+
+Summary
+Form:  ( DEFUN CM-SET-WAITING-MARKER-FOR ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-SET-WAITING-MARKER-FOR
+
+Summary
+Form:  ( DEFUN CM-CUT-NOT-TAKEN-P ...)
+Rules: ((:TYPE-PRESCRIPTION MEMBERP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-CUT-NOT-TAKEN-P
+
+Summary
+Form:  ( DEFUN CM-REMOVE-CUT-NOT-TAKEN ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-REMOVE-CUT-NOT-TAKEN
+
+Summary
+Form:  ( DEFUN CM-ADD-AFTER-CUT-INPUT-SEQUENCE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-ADD-AFTER-CUT-INPUT-SEQUENCE
+
+Summary
+Form:  ( DEFUN CM-ADD-BEFORE-CUT-INPUT-SEQUENCE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CM-ADD-BEFORE-CUT-INPUT-SEQUENCE
+
+Summary
+Form:  ( DEFUN MAKE-EMPTY-WAITING-MARKER-FROM ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MAKE-EMPTY-WAITING-MARKER-FROM
+
+Summary
+Form:  ( DEFUN MAKE-CUT-META ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MAKE-CUT-META
+
+Summary
+Form:  ( DEFUN ALL-WAITING-MARKER-EMPTY-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALL-WAITING-MARKER-EMPTY-P
+
+Summary
+Form:  ( DEFUN CHECKPOINT-COLLECTION-COMPLETE-P ...)
+Rules: ((:TYPE-PRESCRIPTION ALL-WAITING-MARKER-EMPTY-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-COLLECTION-COMPLETE-P
+
+Summary
+Form:  ( DEFUN PROCESS-CUT-MARKER-RECEIVE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROCESS-CUT-MARKER-RECEIVE
+
+Summary
+Form:  ( DEFUN PROCESS-CUT-RECEIVE ...)
+Rules: ((:EXECUTABLE-COUNTERPART EQUAL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROCESS-CUT-RECEIVE
+
+Summary
+Form:  ( DEFUN PROCESS-CUT-CHECKPOINT ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROCESS-CUT-CHECKPOINT
+
+Summary
+Form:  ( DEFUN PROCESS-CUT-STEP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROCESS-CUT-STEP
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN SCAN-UNTIL-CHECKPOINT-DONE ...)
+Rules: ((:DEFINITION CHECKPOINT-COLLECTION-COMPLETE-P)
+        (:DEFINITION CM-CUT-NOT-TAKEN)
+        (:DEFINITION CM-PROC-IDS)
+        (:DEFINITION ENDP)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O<)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR ACL2-COUNT-CAR-CDR-LINEAR)
+        (:TYPE-PRESCRIPTION ACL2-COUNT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  789
+SCAN-UNTIL-CHECKPOINT-DONE
+
+Summary
+Form:  ( DEFUN GOOD-PROC-STATUS-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-PROC-STATUS-P
+
+Summary
+Form:  ( DEFUN GOOD-SNAPSHOT-STATUS-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-SNAPSHOT-STATUS-P
+
+Summary
+Form:  ( DEFUN GOOD-SNAPSHOT-ID-P ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-SNAPSHOT-ID-P
+
+Summary
+Form:  ( DEFUN GOOD-SNAPSHOT-IDS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-SNAPSHOT-IDS-P
+
+Summary
+Form:  ( DEFUN GOOD-SNAPSHOT-IDS-LIST-P ...)
+Rules: ((:TYPE-PRESCRIPTION GOOD-SNAPSHOT-IDS-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-SNAPSHOT-IDS-LIST-P
+
+Summary
+Form:  ( DEFUN GOOD-MSG-P ...)
+Rules: ((:TYPE-PRESCRIPTION ALL-PROCS-HAVE-SNAPSHOT-ID-P)
+        (:TYPE-PRESCRIPTION SOME-PROC-HAS-SNAPSHOT-ID-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-MSG-P
+
+Summary
+Form:  ( DEFUN GOOD-MSG-LIST-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-MSG-LIST-P
+
+Summary
+Form:  ( DEFUN GOOD-NORMAL-MSG-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-NORMAL-MSG-P
+
+Summary
+Form:  ( DEFUN GOOD-NORMAL-MSG-LIST-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-NORMAL-MSG-LIST-P
+
+Summary
+Form:  ( DEFUN GOOD-CHANNEL-SNAPSHOT-RECORD-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CHANNEL-SNAPSHOT-RECORD-P
+
+Summary
+Form:  ( DEFUN GOOD-SNAPSHOT-ENTRY-P ...)
+Rules: ((:TYPE-PRESCRIPTION GOOD-CHANNEL-SNAPSHOT-RECORD-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-SNAPSHOT-ENTRY-P
+
+Summary
+Form:  ( DEFUN GOOD-SNAPSHOTS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-SNAPSHOTS-P
+
+Summary
+Form:  ( DEFUN GOOD-PROC-P ...)
+Rules: ((:TYPE-PRESCRIPTION GOOD-SNAPSHOTS-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-PROC-P
+
+Summary
+Form:  ( DEFUN GOOD-PROCS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-PROCS-P
+
+Summary
+Form:  ( DEFUN GOOD-CHANNEL-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION GOOD-MSG-LIST-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CHANNEL-P
+
+Summary
+Form:  ( DEFUN GOOD-CHANNEL-ROW-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CHANNEL-ROW-P
+
+Summary
+Form:  ( DEFUN GOOD-CHANNELS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CHANNELS-P
+
+Summary
+Form:  ( DEFUN NBRS-FROM-TO-CONSISTENT-FOR-ONE-DST-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NBRS-FROM-TO-CONSISTENT-FOR-ONE-DST-P
+
+Summary
+Form:  ( DEFUN NBRS-FROM-TO-CONSISTENT-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NBRS-FROM-TO-CONSISTENT-P
+
+Summary
+Form:  ( DEFUN NBRS-TO-FROM-CONSISTENT-FOR-ONE-SRC-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NBRS-TO-FROM-CONSISTENT-FOR-ONE-SRC-P
+
+Summary
+Form:  ( DEFUN NBRS-TO-FROM-CONSISTENT-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NBRS-TO-FROM-CONSISTENT-P
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SID-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SID-P
+
+Summary
+Form:  ( DEFUN STORED-SIDS-FOR-INITIATOR-HAVE-SMALLER-COUNTERS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+STORED-SIDS-FOR-INITIATOR-HAVE-SMALLER-COUNTERS-P
+
+Summary
+Form:  ( DEFUN ALL-STORED-SIDS-FOR-INITIATOR-HAVE-SMALLER-COUNTERS-P
+...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALL-STORED-SIDS-FOR-INITIATOR-HAVE-SMALLER-COUNTERS-P
+
+Summary
+Form:  ( DEFUN ALL-INITIATORS-STORED-SIDS-HAVE-SMALLER-COUNTERS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALL-INITIATORS-STORED-SIDS-HAVE-SMALLER-COUNTERS-P
+
+Summary
+Form:  ( DEFUN GOOD-STATE-P ...)
+Rules: ((:TYPE-PRESCRIPTION GOOD-CHANNELS-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-STATE-P
+
+Summary
+Form:  ( DEFUN NO-RECOVERY-MSGS-IN-CHANNEL-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NO-RECOVERY-MSGS-IN-CHANNEL-P
+
+Summary
+Form:  ( DEFUN NO-RECOVERY-MSGS-FOR-DSTS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NO-RECOVERY-MSGS-FOR-DSTS-P
+
+Summary
+Form:  ( DEFUN NO-RECOVERY-MSGS-IN-CHANNELS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+NO-RECOVERY-MSGS-IN-CHANNELS-P
+
+Summary
+Form:  ( DEFUN RECOVERY-FREE-STATE-P ...)
+Rules: ((:TYPE-PRESCRIPTION NO-RECOVERY-MSGS-IN-CHANNELS-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RECOVERY-FREE-STATE-P
+
+Summary
+Form:  ( DEFUN CL-CHECKPOINT-BODY-INPUT-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CL-CHECKPOINT-BODY-INPUT-P
+
+Summary
+Form:  ( DEFUN CL-CHECKPOINT-BODY-INPUTS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CL-CHECKPOINT-BODY-INPUTS-P
+
+Summary
+Form:  ( DEFUN CUT-META-IMP-PROCS-CONSISTENT-P ...)
+Rules: ((:TYPE-PRESCRIPTION MEMBERP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-META-IMP-PROCS-CONSISTENT-P
+
+Summary
+Form:  ( DEFUN CUT-META-IMP-INITIATOR-CONSISTENT-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-META-IMP-INITIATOR-CONSISTENT-P
+
+Summary
+Form:  ( DEFUN CUT-META-IMP-PROC-IDS-CONSISTENT-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-META-IMP-PROC-IDS-CONSISTENT-P
+
+Summary
+Form:  ( DEFUN CUT-META-IMP-CONSISTENT-P ...)
+Rules: ((:TYPE-PRESCRIPTION CUT-META-IMP-PROCS-CONSISTENT-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-META-IMP-CONSISTENT-P
+
+Summary
+Form:  ( DEFUN GOOD-CUT-META-SID-P ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CUT-META-SID-P
+
+Summary
+Form:  ( DEFUN GOOD-CUT-META-CUT-NOT-TAKEN-P ...)
+Rules: ((:TYPE-PRESCRIPTION SUBSET))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CUT-META-CUT-NOT-TAKEN-P
+
+Summary
+Form:  ( DEFUN GOOD-CUT-META-WAITING-FOR-PROCS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CUT-META-WAITING-FOR-PROCS-P
+
+Summary
+Form:  ( DEFUN GOOD-CUT-META-GLOBAL-INPUT-SEQUENCES-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CUT-META-GLOBAL-INPUT-SEQUENCES-P
+
+Summary
+Form:  ( DEFUN GOOD-CUT-META-P ...)
+Rules: ((:TYPE-PRESCRIPTION GOOD-CUT-META-GLOBAL-INPUT-SEQUENCES-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+GOOD-CUT-META-P
+
+Summary
+Form:  ( DEFUN MARKER-FOR-SID-IN-CHANNEL-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MARKER-FOR-SID-IN-CHANNEL-P
+
+Summary
+Form:  ( DEFUN CUT-MARKER-IN-TRANSIT-FOR-OUTGOING-NBRS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-MARKER-IN-TRANSIT-FOR-OUTGOING-NBRS-P
+
+Summary
+Form:  ( DEFUN CUT-MARKERS-IN-TRANSIT-FOR-SRCS-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-MARKERS-IN-TRANSIT-FOR-SRCS-P
+
+Summary
+Form:  ( DEFUN CUT-MARKERS-IN-TRANSIT-P ...)
+Rules: ((:TYPE-PRESCRIPTION CUT-MARKERS-IN-TRANSIT-FOR-SRCS-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CUT-MARKERS-IN-TRANSIT-P
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-INITIATOR ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-INITIATOR
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-SID ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-SID
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-INITIAL-META ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-INITIAL-META
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-META ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-META
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-COMPLETEP ...)
+Rules: ((:TYPE-PRESCRIPTION CHECKPOINT-COLLECTION-COMPLETE-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-COMPLETEP
+
+Summary
+Form:  ( DEFUN CHECKPOINT-COMPLETES-AT-SEGMENT-END-P ...)
+Rules: ((:TYPE-PRESCRIPTION CHECKPOINT-COLLECTION-COMPLETE-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-COMPLETES-AT-SEGMENT-END-P
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-BEFORE-CUT-INPUTS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-BEFORE-CUT-INPUTS
+
+Summary
+Form:  ( DEFUN CHECKPOINT-SEGMENT-AFTER-CUT-INPUTS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-SEGMENT-AFTER-CUT-INPUTS
+
+Summary
+Form:  ( DEFUN CHECKPOINT-START-END-SEGMENT-P ...)
+Rules: ((:TYPE-PRESCRIPTION CHECKPOINT-COMPLETES-AT-SEGMENT-END-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CHECKPOINT-START-END-SEGMENT-P
+
+Summary
+Form:  ( DEFUN POST-PRE-SWAP-START-P ...)
+Rules: ((:TYPE-PRESCRIPTION CM-CUT-NOT-TAKEN-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+POST-PRE-SWAP-START-P
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "defs" ...)
+Rules: NIL
+Time:  0.46 seconds (prove: 0.00, print: 0.00, other: 0.46)
+Prover steps counted:  1998
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 0.46 seconds realtime, 0.46 seconds runtime
+; (163,628,992 bytes allocated).
+Exit code from ACL2 is 43
+-rw-r--r-- 1 root root 48891 Nov 12 22:57 defs.cert

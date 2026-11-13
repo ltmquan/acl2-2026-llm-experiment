@@ -1,0 +1,49 @@
+Formalize the definitions and the theorem below in ACL2, and prove the theorem.
+
+<definitions>
+Throughout, ⊎ is multiset union, ∪ set union, and \ both multiset and set difference. The definitions are over F2.
+
+Definition (Rank-one tensor). Rank-one tensors are non-zero tensors that can be written as A ⊗ B ⊗ C for some matrices A, B, C ∈ F2^(n×n).
+
+Definition (Matrix Multiplication Tensor). For n ∈ N, we define the matrix multiplication tensor M(n) ∈ F2^(n×n) ⊗ F2^(n×n) ⊗ F2^(n×n) such that for all n × n matrices D, F ∈ F2^(n×n) and all k, ℓ,
+
+    (DF)_{k,ℓ} = Σ_{g,h,i,j=1}^{n} M(n)_{g,h,i,j,k,ℓ} D_{g,h} F_{i,j}.
+
+Equivalently, M(n) records which products of entries of D and F contribute to each entry of DF.
+
+Definition (Schemes and vertices). The vertices of the matrix multiplication flip graph for n × n matrix multiplication are multisets
+
+    S = { A^(1) ⊗ B^(1) ⊗ C^(1), …, A^(|S|) ⊗ B^(|S|) ⊗ C^(|S|) }
+
+of nonzero rank-one tensors satisfying
+
+    Σ_{s∈S} s = M(n).
+
+We call such a multiset a scheme. The size |S| is the rank of the scheme.
+
+Definition (Flip and plus transformations). Let S be a scheme. If S can be transformed into S′ by one of the following operations, then there is a directed edge from S to S′.
+
+Flip. Flip on the A position applies to two summands A ⊗ B ⊗ C, A′ ⊗ B′ ⊗ C′ with A = A′ and replaces them by A ⊗ B ⊗ (C + C′), A′ ⊗ (B′ − B) ⊗ C′. Equivalently,
+
+    S′ = S \ {A ⊗ B ⊗ C, A′ ⊗ B′ ⊗ C′} ⊎ {A ⊗ B ⊗ (C + C′), A′ ⊗ (B′ − B) ⊗ C′},
+
+with any zero summands deleted.
+
+Plus. Plus on the A position takes two summands A ⊗ B ⊗ C, A′ ⊗ B′ ⊗ C′, and replaces the second summand by two summands: (A′ − A) ⊗ B′ ⊗ C′, and A ⊗ B′ ⊗ C′. Equivalently,
+
+    S′ = S \ {A′ ⊗ B′ ⊗ C′} ⊎ {(A′ − A) ⊗ B′ ⊗ C′, A ⊗ B′ ⊗ C′},
+
+with any zero summands deleted.
+
+These transformations on the B and C positions are defined analogously.
+</definitions>
+
+<theorem>
+Over F2, for every n ≥ 2, the directed matrix multiplication flip graph whose edges are ordinary flip and plus transformations is strongly connected. Equivalently, for any two schemes S and S′ for M(n), there is a directed path from S to S′ using only flip and plus transformations.
+</theorem>
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+Put your work in /work/solution.lisp; it must certify with `cert.pl` (add `--acl2 acl2r` for ACL2(r)), and its last
+event must be the theorem, named MAIN.
+Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done. When you are done, print the final contents of /work/solution.lisp.

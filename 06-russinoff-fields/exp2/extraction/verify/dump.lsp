@@ -1,0 +1,13 @@
+(defun dump-defs (names wrld)
+  (declare (xargs :mode :program))
+  (if (endp names) nil
+    (prog2$ (cw "~%@@ ~x0~%~x1~%~x2~%~x3~%~x4~%" (car names)
+               (getpropc (car names) 'formals nil wrld)
+               (getpropc (car names) 'unnormalized-body nil wrld)
+               (getpropc (car names) 'defchoose-axiom nil wrld)
+               (let ((j (getpropc (car names) 'justification nil wrld)))
+                 (and j (access justification j :measure))))
+             (dump-defs (cdr names) wrld))))
+(set-print-length nil state)
+(set-print-level nil state)
+(dump-defs '(dm::primep dm::ninit dm::dlistp dm::fbasep dm::beltp dm::badd dm::bmul dm::bzero dm::bone dm::bneg dm::brecip dm::fzero dm::fone dm::pzero dm::pone dm::monicp dm::pconstp dm::degree dm::pstrip dm::pshift dm::monomial dm::feltp dm::feltsp dm::polyp dm::fadd dm::fneg dm::pneg dm::faddl dm::padd dm::fmul dm::cmul dm::pmul dm::frecip dm::pgcd-aux dm::r$-aux dm::s$-aux dm::pgcd dm::r$ dm::s$ dm::pdivide dm::pquot dm::prem dm::pdivides dm::pfactor dm::reduciblep dm::irreduciblep dm::fieldp dm::fadd-closed-p dm::fadd-closed-p-witness dm::fmul-closed-p dm::fmul-closed-p-witness dm::fadd-comm-p dm::fadd-comm-p-witness dm::fmul-comm-p dm::fmul-comm-p-witness dm::fadd-assoc-p dm::fadd-assoc-p-witness dm::fmul-assoc-p dm::fmul-assoc-p-witness dm::feltp-fzero-p dm::feltp-fone-p dm::fone-fzero-p dm::fzero-id-p dm::fzero-id-p-witness dm::fone-id-p dm::fone-id-p-witness dm::feltp-fneg-p dm::feltp-fneg-p-witness dm::fadd-fneg-p dm::fadd-fneg-p-witness dm::feltp-frecip-p dm::feltp-frecip-p-witness dm::fmul-frecip-p dm::fmul-frecip-p-witness dm::fdistrib-p dm::fdistrib-p-witness dm::field-axioms-p dm::extends dm::extensionp dm::fliftn dm::flift dm::plift dm::edegree dm::fpower dm::peval dm::prootp dm::factorization dm::proots-aux dm::proots dm::embed dm::pembed dm::embeddingp dm::algebraic-witness dm::algebraic-witness-witness dm::all-embeddingp ) (w state))

@@ -1,0 +1,48 @@
+Formalize the definitions and the theorem below in ACL2, and prove the theorem.
+
+<definitions>
+Let F be an arbitrary field. V is an arbitrary finite-dimensional vector space over F. Elements of V and F are called vectors and scalars, respectively. The vector space V is given by the following:
+
+  • a predicate that recognizes vectors;
+  • a constant that is the zero vector, 0;
+  • the unary additive inverse;
+  • the binary operations of vector addition and multiplication by a scalar.
+
+These satisfy the closure properties of the operations along with the other standard vector space axioms, which guarantee that the space forms an abelian group under vector addition and that the associative and distributive properties of scalar multiplication are satisfied.
+
+Finite dimensionality is formalized by means of two additional functions:
+
+  • a list of vectors called the canonical basis of V;
+  • a unary function that returns the list of coordinates of a given vector with respect to this basis.
+
+The length of the canonical basis is the dimension of V, written dim V. The following axioms pertaining to the canonical basis hold:
+
+  • dim V is a positive integer; this ensures that V is a nontrivial vector space;
+  • the canonical basis is a list of dim V vectors;
+  • for every vector x, the list of coordinates of x is a list of dim V scalars;
+  • every vector x is a linear combination of the canonical basis with coefficients given by the coordinates of x;
+  • if a linear combination of the canonical basis evaluates to 0, then all coefficients are 0.
+
+W is a second vector space over the same field F, essentially the same as V: it is given by its own recognizer, zero vector, additive inverse, vector addition, scalar multiplication, canonical basis and coordinate function, subject to the same axioms, and its dimension dim W is the length of its canonical basis.
+
+T is a generic linear transformation mapping V to W, i.e., a function satisfying:
+
+  • if x is in V, then T(x) is in W;
+  • T(0) = 0;
+  • if x and y are in V, then T(x + y) = T(x) + T(y);
+  • if c is a scalar and x is in V, then T(c·x) = c·T(x).
+
+T is injective if for every x in V, T(x) = 0 implies x = 0.
+
+T is surjective if for every y in W there exists x in V such that T(x) = y.
+</definitions>
+
+<theorem>
+If T is injective, then dim V ≤ dim W. Moreover, if T is injective, then T is surjective iff dim V = dim W.
+</theorem>
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+Put your work in /work/solution.lisp; it must certify with `cert.pl` (add `--acl2 acl2r` for ACL2(r)), and its last
+event must be the theorem, named MAIN.
+Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done. When you are done, print the final contents of /work/solution.lisp.

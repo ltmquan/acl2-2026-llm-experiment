@@ -1,0 +1,28 @@
+(set-inhibit-output-lst '(prove event summary proof-tree observation warning))
+(defun dump-names (names wrld)
+  (declare (xargs :mode :program))
+  (if (endp names) nil
+    (let ((n (car names)))
+      (prog2$ (cw "~%@@ ~x0~%~x1~%" n
+                  (list :formals (getpropc n 'formals nil wrld)
+                        :body (getpropc n 'unnormalized-body nil wrld)
+                        :theorem (getpropc n 'theorem nil wrld)
+                        :constraint (getpropc n 'constraint-lst nil wrld)
+                        :guard (getpropc n 'guard nil wrld)
+                        :class (getpropc n 'symbol-class nil wrld)
+                        :just (let ((j (getpropc n 'justification nil wrld)))
+                                (and j (list (access justification j :measure)
+                                             (access justification j :rel))))
+                        :macro (getpropc n 'macro-body nil wrld)
+                        :const (getpropc n 'const nil wrld)))
+              (dump-names (cdr names) wrld)))))
+(deflabel dump-start)
+(include-book "defs")
+(set-fmt-hard-right-margin 100000 state)
+(set-fmt-soft-right-margin 100000 state)
+(make-event
+ (let* ((world (w state)) (wrld world)
+        (names (merge-sort-symbol< (remove-duplicates-eq
+                 (strip-base-symbols (set-difference-equal (universal-theory :here)
+                                                           (universal-theory 'dump-start)))))))
+   (prog2$ (cw "~%BEGIN-DUMP~%") (prog2$ (dump-names names wrld) (prog2$ (cw "~%END-DUMP~%") '(value-triple :ok))))))

@@ -1,0 +1,32 @@
+cplxp: IDENTICAL
+cplx: IDENTICAL
+re: IDENTICAL
+imz: IDENTICAL
+cconj: IDENTICAL
+cadd: IDENTICAL
+cscale: IDENTICAL
+cmul: IDENTICAL
+dotp: IDENTICAL
+crossp: IDENTICAL
+encapsulate cosine/sine: IDENTICAL
+eiz: IDENTICAL
+e0: IDENTICAL
+e1: IDENTICAL
+e2: IDENTICAL
+torque-w: IDENTICAL
+g-cplxp: IDENTICAL modulo G- renaming
+g-re: IDENTICAL modulo G- renaming
+g-im: IDENTICAL modulo G- renaming
+g-cplx: IDENTICAL modulo G- renaming
+g-realpairp: IDENTICAL modulo G- renaming
+g-c+: IDENTICAL modulo G- renaming
+g-cscale: IDENTICAL modulo G- renaming
+g-c*: IDENTICAL modulo G- renaming
+g-vdot: IDENTICAL modulo G- renaming
+g-omega-pow: IDENTICAL modulo G- renaming
+[defthm g-cplxp-of-g-omega-pow] (local admission scaffolding)
+[verify-guards g-omega-pow]
+g-collapse-sum: IDENTICAL modulo G- renaming
+g-gamma-val: DIFFERENT authors=['defun', 'gamma-val', [], ['+', ['*', '1/3', ['acl2-pi']], ['*', '1/3', ['acl2-pi']]]] given=['defun', 'g-gamma-val', [], ['*', '2/3', ['acl2-pi']]]
+g-omega-real: IDENTICAL modulo G- renaming
+ALL IDENTICAL except g-gamma-val (intended)

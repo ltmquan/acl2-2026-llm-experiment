@@ -1,0 +1,585 @@
+"-*- Mode: auto-revert -*-"
+<scratch>pad/given-cayuela
+HOST: vm
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/opt/acl2r/books
+ACL2=/opt/acl2r/saved_acl2r
+ACL2_USELESS_RUNES=-25
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+#+(and hons (not acl2-par)) (profile-fn 'include-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file :
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "arithmetic-5/top.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "nonstd/nsa/trig.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "defs" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: defs
+STEP: certify
+Start of output:
+
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7(r)                                                  +
+ +   built November 11, 2026  16:06:05.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* 
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !><state>
+ACL2(r) !> "ACL2"
+ACL2(r) !> (:EXIT 1)
+ACL2(r) !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2(r) !> T
+ACL2(r) !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.
+NIL
+ACL2(r) !> T
+ACL2(r) !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
+ "/opt/acl2r/books/std/portcullis.lisp"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2r/books/cowles/portcullis.lisp"
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !> :CONTINUE
+ACL2(r) !>
+Summary
+Form:  ( INCLUDE-BOOK "arithmetic-5/top" ...)
+Rules: NIL
+Time:  0.26 seconds (prove: 0.00, print: 0.00, other: 0.26)
+"/opt/acl2r/books/arithmetic-5/top.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "nonstd/nsa/trig" ...)
+Rules: NIL
+Time:  0.09 seconds (prove: 0.00, print: 0.00, other: 0.09)
+"/opt/acl2r/books/nonstd/nsa/trig.lisp"
+
+Summary
+Form:  ( DEFUN CPLXP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CPLXP
+
+Summary
+Form:  ( DEFUN CPLX ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CPLX
+
+Summary
+Form:  ( DEFUN RE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+RE
+
+Summary
+Form:  ( DEFUN IMZ ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+IMZ
+
+Summary
+Form:  ( DEFUN CCONJ ...)
+Rules: ((:DEFINITION CPLXP)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  82
+CCONJ
+
+Summary
+Form:  ( DEFUN CADD ...)
+Rules: ((:DEFINITION CPLXP)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+CADD
+
+Summary
+Form:  ( DEFUN CSCALE ...)
+Rules: ((:DEFINITION CPLXP)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  112
+CSCALE
+
+Summary
+Form:  ( DEFUN CMUL ...)
+Rules: ((:DEFINITION CPLXP)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+CMUL
+
+Summary
+Form:  ( DEFUN DOTP ...)
+Rules: ((:DEFINITION CPLXP)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+DOTP
+
+Summary
+Form:  ( DEFUN CROSSP ...)
+Rules: ((:DEFINITION CPLXP)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+CROSSP
+
+Summary
+Form:  ( DEFUN COSINE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+COSINE
+
+Summary
+Form:  ( DEFUN SINE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SINE
+
+Summary
+Form:  ( DEFTHM PYTHAGOREAN-COS-SIN ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION COSINE)
+        (:TYPE-PRESCRIPTION SINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PYTHAGOREAN-COS-SIN
+
+Summary
+Form:  ( DEFTHM COSINE-EVEN ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION COSINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+COSINE-EVEN
+
+Summary
+Form:  ( DEFTHM SINE-ODD ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION SINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SINE-ODD
+
+Summary
+Form:  ( DEFTHM COSINE-DIFFERENCE ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION COSINE)
+        (:TYPE-PRESCRIPTION SINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+COSINE-DIFFERENCE
+
+Summary
+Form:  ( DEFTHM SINE-DIFFERENCE ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION COSINE)
+        (:TYPE-PRESCRIPTION SINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SINE-DIFFERENCE
+
+Summary
+Form:  ( DEFTHM ACL2-NUMBERP-COSINE ...)
+Rules: ((:TYPE-PRESCRIPTION COSINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ACL2-NUMBERP-COSINE
+
+Summary
+Form:  ( DEFTHM ACL2-NUMBERP-SINE ...)
+Rules: ((:TYPE-PRESCRIPTION SINE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ACL2-NUMBERP-SINE
+
+Summary
+Form:  ( ENCAPSULATE (((COSINE * ...) ...) ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+(COSINE SINE)
+
+Summary
+Form:  ( DEFUN EIZ ...)
+Rules: ((:EXECUTABLE-COUNTERPART IF)
+        (:REWRITE ACL2-NUMBERP-COSINE)
+        (:REWRITE ACL2-NUMBERP-SINE)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  10
+EIZ
+
+Summary
+Form:  ( DEFUN E0 ...)
+Rules: ((:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+E0
+
+Summary
+Form:  ( DEFUN E1 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+E1
+
+Summary
+Form:  ( DEFUN E2 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+E2
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN TORQUE-W ...)
+Rules: ((:DEFINITION CCONJ)
+        (:DEFINITION CMUL)
+        (:DEFINITION CPLX)
+        (:DEFINITION CPLXP)
+        (:DEFINITION EIZ)
+        (:DEFINITION IMZ)
+        (:DEFINITION NOT)
+        (:DEFINITION RE)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(- (+ x y))|)
+        (:REWRITE ACL2-NUMBERP-COSINE)
+        (:REWRITE ACL2-NUMBERP-SINE)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION CMUL))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1086
+TORQUE-W
+
+Summary
+Form:  ( DEFUN G-CPLXP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-CPLXP
+
+Summary
+Form:  ( DEFUN G-RE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-RE
+
+Summary
+Form:  ( DEFUN G-IM ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-IM
+
+Summary
+Form:  ( DEFUN G-CPLX ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-CPLX
+
+Summary
+Form:  ( DEFUN G-REALPAIRP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-REALPAIRP
+
+Summary
+Form:  ( DEFUN G-C+ ...)
+Rules: ((:DEFINITION G-CPLXP)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-RE)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION G-CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+G-C+
+
+Summary
+Form:  ( DEFUN G-CSCALE ...)
+Rules: ((:DEFINITION G-CPLXP)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-RE)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION G-CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  112
+G-CSCALE
+
+Summary
+Form:  ( DEFUN G-C* ...)
+Rules: ((:DEFINITION G-CPLXP)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-RE)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION G-CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+G-C*
+
+Summary
+Form:  ( DEFUN G-VDOT ...)
+Rules: ((:DEFINITION G-CPLXP)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-RE)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  298
+G-VDOT
+
+Summary
+Form:  ( DEFUN G-OMEGA-POW ...)
+Rules: ((:TYPE-PRESCRIPTION G-C*)
+        (:TYPE-PRESCRIPTION G-CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-OMEGA-POW
+Goal'
+Subgoal 2
+Subgoal 2'
+Subgoal 2''
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM G-CPLXP-OF-G-OMEGA-POW ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION G-C*)
+        (:DEFINITION G-CPLX)
+        (:DEFINITION G-CPLXP)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-OMEGA-POW)
+        (:DEFINITION G-RE)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART G-CPLX)
+        (:EXECUTABLE-COUNTERPART G-CPLXP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION G-OMEGA-POW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION G-CPLXP)
+        (:TYPE-PRESCRIPTION G-OMEGA-POW))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  2674
+G-CPLXP-OF-G-OMEGA-POW
+Goal'
+
+Summary
+Form:  ( VERIFY-GUARDS G-OMEGA-POW)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION G-CPLXP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE G-CPLXP-OF-G-OMEGA-POW))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  622
+G-OMEGA-POW
+Subgoal 7
+Subgoal 6
+Subgoal 6.4
+Subgoal 6.3
+Subgoal 6.2
+Subgoal 6.1
+Subgoal 5
+Subgoal 4
+Subgoal 4.4
+Subgoal 4.3
+Subgoal 4.2
+Subgoal 4.1
+Subgoal 3
+Subgoal 2
+Subgoal 1
+Subgoal 1.4
+Subgoal 1.3
+Subgoal 1.2
+Subgoal 1.1
+
+Summary
+Form:  ( DEFUN G-COLLAPSE-SUM ...)
+Rules: ((:DEFINITION G-C*)
+        (:DEFINITION G-C+)
+        (:DEFINITION G-CPLX)
+        (:DEFINITION G-CPLXP)
+        (:DEFINITION G-CSCALE)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-OMEGA-POW)
+        (:DEFINITION G-RE)
+        (:DEFINITION G-VDOT)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART G-CPLX)
+        (:EXECUTABLE-COUNTERPART G-CPLXP)
+        (:EXECUTABLE-COUNTERPART G-IM)
+        (:EXECUTABLE-COUNTERPART G-RE)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* (* x y) z)|)
+        (:REWRITE |(* 0 x)|)
+        (:REWRITE |(* 1 x)|)
+        (:REWRITE |(* x (+ y z))|)
+        (:REWRITE |(* x (- y))|)
+        (:REWRITE |(* x (if a b c))|)
+        (:REWRITE |(* x x)|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE |(+ (+ x y) z)|)
+        (:REWRITE |(+ (if a b c) x)|)
+        (:REWRITE |(+ 0 x)|)
+        (:REWRITE |(+ x (if a b c))|)
+        (:REWRITE |(+ y (+ x z))|)
+        (:REWRITE |(+ y x)|)
+        (:REWRITE |(- (* c x))|)
+        (:REWRITE |(- (+ x y))|)
+        (:REWRITE |(- (if a b c))|)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-1)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-3)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE CONS-CAR-CDR)
+        (:REWRITE DEFAULT-TIMES-2)
+        (:REWRITE G-CPLXP-OF-G-OMEGA-POW)
+        (:REWRITE NORMALIZE-ADDENDS)
+        (:REWRITE NORMALIZE-FACTORS-GATHER-EXPONENTS)
+        (:TYPE-PRESCRIPTION G-C+)
+        (:TYPE-PRESCRIPTION G-VDOT))
+Time:  0.39 seconds (prove: 0.39, print: 0.00, other: 0.00)
+Prover steps counted:  31017
+G-COLLAPSE-SUM
+
+Summary
+Form:  ( DEFUN G-GAMMA-VAL ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION ACL2-PI-TYPE-PRESCRIPTION))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-GAMMA-VAL
+
+Summary
+Form:  ( DEFUN G-OMEGA-REAL ...)
+Rules: ((:TYPE-PRESCRIPTION G-CPLX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+G-OMEGA-REAL
+
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "defs" ...)
+Rules: NIL
+Time:  0.94 seconds (prove: 0.46, print: 0.01, other: 0.48)
+Prover steps counted:  37801
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 0.94 seconds realtime, 0.84 seconds runtime
+; (186,812,496 bytes allocated).
+Exit code from ACL2 is 43
+-rw-r--r-- 1 root root 18370 Nov 12 22:57 defs.cert

@@ -1,0 +1,12 @@
+== test-solution
+BANNED: skip-proofs
+/tmp/exp2-fwa6d6eu
+exit=2
+== test-solution-match
+FAILED: did not certify; see /tmp/exp2-h01n0arg/check.log
+/tmp/exp2-h01n0arg
+exit=1
+== test-solution-wrong
+TARGET-MISMATCH: statement of main-1 differs from the target
+/tmp/exp2-ur7z3hdb
+exit=4

@@ -1,0 +1,1204 @@
+@@ DM::PRIMEP
+(N)
+(IF (INTEGERP N)
+    (IF (NOT (< N '2))
+        (EQUAL (DM::LEAST-DIVISOR '2 N) N)
+      'NIL)
+  'NIL)
+
+NIL
+NIL
+
+@@ DM::NINIT
+(N)
+(IF (ZP N)
+    'NIL
+  (BINARY-APPEND (DM::NINIT (BINARY-+ '-1 N))
+                 (CONS (BINARY-+ '-1 N) 'NIL)))
+
+NIL
+(ACL2-COUNT N)
+
+@@ DM::DLISTP
+(L)
+(IF (CONSP L)
+    (IF (NOT (MEMBER-EQUAL (CAR L) (CDR L)))
+        (DM::DLISTP (CDR L))
+      'NIL)
+  (NULL L))
+
+NIL
+(ACL2-COUNT L)
+
+@@ DM::FBASEP
+(F)
+(IF (ZEROP F) (ZEROP F) (IF (DM::PRIMEP F) (DM::PRIMEP F) (EQUAL F 'DM::F0)))
+NIL
+NIL
+
+@@ DM::BELTP
+(X F)
+(IF (ZEROP F)
+    (RATIONALP X)
+  (IF (DM::PRIMEP F)
+      ((LAMBDA (X L)
+         (RETURN-LAST 'MBE1-RAW
+                      (MEMBER-EQL-EXEC X L)
+                      (RETURN-LAST 'PROGN
+                                   (MEMBER-EQL-EXEC$GUARD-CHECK X L)
+                                   (MEMBER-EQUAL X L))))
+       X (DM::NINIT F))
+    (DM::FP X)))
+
+NIL
+NIL
+
+@@ DM::BADD
+(X Y F)
+(IF (ZEROP F)
+    (BINARY-+ X Y)
+  (IF (DM::PRIMEP F)
+      (MOD (BINARY-+ X Y) F)
+    (DM::F+ X Y)))
+
+NIL
+NIL
+
+@@ DM::BMUL
+(X Y F)
+(IF (ZEROP F)
+    (BINARY-* X Y)
+  (IF (DM::PRIMEP F)
+      (MOD (BINARY-* X Y) F)
+    (DM::F* X Y)))
+
+NIL
+NIL
+
+@@ DM::BZERO
+(F)
+(IF (INTEGERP F) '0 (DM::F0))
+NIL
+NIL
+
+@@ DM::BONE
+(F)
+(IF (INTEGERP F) '1 (DM::F1))
+NIL
+NIL
+
+@@ DM::BNEG
+(X F)
+(IF (ZEROP F) (UNARY-- X) (IF (DM::PRIMEP F) (MOD (UNARY-- X) F) (DM::F- X)))
+NIL
+NIL
+
+@@ DM::BRECIP
+(X F)
+(IF (ZEROP F)
+    (UNARY-/ X)
+  (IF (DM::PRIMEP F)
+      (MOD (EXPT X (BINARY-+ '-2 F)) F)
+    (DM::F/ X)))
+
+NIL
+NIL
+
+@@ DM::FZERO
+(F)
+(IF (CONSP F) (CONS (DM::FZERO (CDR F)) 'NIL) (DM::BZERO F))
+NIL
+(ACL2-COUNT F)
+
+@@ DM::FONE
+(F)
+(IF (CONSP F) (CONS (DM::FONE (CDR F)) 'NIL) (DM::BONE F))
+NIL
+(ACL2-COUNT F)
+
+@@ DM::PZERO
+(F)
+(CONS (DM::FZERO F) 'NIL)
+NIL
+NIL
+
+@@ DM::PONE
+(F)
+(CONS (DM::FONE F) 'NIL)
+NIL
+NIL
+
+@@ DM::MONICP
+(P F)
+(EQUAL (CAR P) (DM::FONE F))
+NIL
+NIL
+
+@@ DM::PCONSTP
+(P)
+(NOT (CONSP (CDR P)))
+NIL
+NIL
+
+@@ DM::DEGREE
+(P)
+(BINARY-+ '-1 (LEN P))
+NIL
+NIL
+
+@@ DM::PSTRIP
+(L F)
+(IF (IF (CONSP L)
+        (IF (CONSP (CDR L))
+            (EQUAL (CAR L) (DM::FZERO F))
+          'NIL)
+      'NIL)
+    (DM::PSTRIP (CDR L) F)
+  L)
+
+NIL
+(ACL2-COUNT L)
+
+@@ DM::PSHIFT
+(P K F)
+(IF (ZP K)
+    P
+  (DM::PSHIFT (BINARY-APPEND P (CONS (DM::FZERO F) 'NIL))
+              (BINARY-+ '-1 K)
+              F))
+
+NIL
+(ACL2-COUNT K)
+
+@@ DM::MONOMIAL
+(C K F)
+(DM::PSHIFT (CONS C 'NIL) K F)
+NIL
+NIL
+
+@@ DM::FELTP
+(X F)
+(IF (CONSP F)
+    (IF (DM::POLYP X (CDR F))
+        (< (DM::DEGREE X) (DM::DEGREE (CAR F)))
+      'NIL)
+  (DM::BELTP X F))
+
+NIL
+(CONS (LEN F) (CONS '0 (CONS '0 'NIL)))
+
+@@ DM::FELTSP
+(L F)
+(IF (CONSP L)
+    (IF (DM::FELTP (CAR L) F)
+        (DM::FELTSP (CDR L) F)
+      'NIL)
+  (NULL L))
+
+NIL
+(CONS (LEN F) (CONS '1 (CONS (LEN L) 'NIL)))
+
+@@ DM::POLYP
+(P F)
+(IF (DM::FELTSP P F)
+    (IF (CONSP P)
+        (IF (NULL (CDR P))
+            (NULL (CDR P))
+          (NOT (EQUAL (CAR P) (DM::FZERO F))))
+      'NIL)
+  'NIL)
+
+NIL
+(CONS (LEN F) (CONS '2 (CONS '0 'NIL)))
+
+@@ DM::FADD
+(X Y F)
+(IF (CONSP F) (DM::PADD X Y (CDR F)) (DM::BADD X Y F))
+NIL
+(CONS (LEN F) (CONS '2 (CONS '0 'NIL)))
+
+@@ DM::FNEG
+(X F)
+(IF (CONSP F) (DM::PNEG X (CDR F)) (DM::BNEG X F))
+NIL
+(CONS (LEN F) (CONS '2 (CONS '0 'NIL)))
+
+@@ DM::PNEG
+(X F)
+(IF (CONSP X) (CONS (DM::FNEG (CAR X) F) (DM::PNEG (CDR X) F)) 'NIL)
+NIL
+(CONS (LEN F) (CONS '3 (CONS (LEN X) 'NIL)))
+
+@@ DM::FADDL
+(X Y F)
+(IF (< (LEN Y) (LEN X))
+    (CONS (CAR X) (DM::FADDL (CDR X) Y F))
+  (IF (< (LEN X) (LEN Y))
+      (CONS (CAR Y) (DM::FADDL X (CDR Y) F))
+    (IF (CONSP X)
+        (CONS (DM::FADD (CAR X) (CAR Y) F)
+              (DM::FADDL (CDR X) (CDR Y) F))
+      'NIL)))
+
+NIL
+(CONS (LEN F) (CONS '3 (CONS (BINARY-+ (LEN X) (LEN Y)) 'NIL)))
+
+@@ DM::PADD
+(P Q F)
+(DM::PSTRIP (DM::FADDL P Q F) F)
+NIL
+(CONS (LEN F) (CONS '4 (CONS '0 'NIL)))
+
+@@ DM::FMUL
+(X Y F)
+(IF (CONSP F)
+    (DM::PREM (DM::PMUL X Y (CDR F))
+              (CAR F)
+              (CDR F))
+  (DM::BMUL X Y F))
+
+NIL
+(CONS (LEN F) (CONS '4 (CONS '0 'NIL)))
+
+@@ DM::CMUL
+(X P F)
+(IF (EQUAL X (DM::FZERO F))
+    (CONS (DM::FZERO F) 'NIL)
+  (IF (CONSP P)
+      (CONS (DM::FMUL X (CAR P) F)
+            (DM::CMUL X (CDR P) F))
+    'NIL))
+
+NIL
+(CONS (LEN F) (CONS '5 (CONS (LEN P) 'NIL)))
+
+@@ DM::PMUL
+(P Q F)
+(IF (IF (EQUAL P (DM::PZERO F))
+        (EQUAL P (DM::PZERO F))
+      (EQUAL Q (DM::PZERO F)))
+    (DM::PZERO F)
+  (IF (CONSP P)
+      (IF (CONSP (CDR P))
+          (DM::PADD (DM::PSHIFT (DM::CMUL (CAR P) Q F)
+                                (DM::DEGREE P)
+                                F)
+                    (DM::PMUL (DM::PSTRIP (CDR P) F) Q F)
+                    F)
+        (DM::CMUL (CAR P) Q F))
+    'NIL))
+
+NIL
+(CONS (LEN F) (CONS '6 (CONS (LEN P) 'NIL)))
+
+@@ DM::FRECIP
+(X F)
+(IF (CONSP F)
+    (DM::PREM (DM::R$ X (CAR F) (CDR F))
+              (CAR F)
+              (CDR F))
+  (DM::BRECIP X F))
+
+NIL
+(CONS (LEN F) (CONS '6 (CONS '0 'NIL)))
+
+@@ DM::PGCD-AUX
+(P Q F)
+(IF (EQUAL P (DM::PZERO F))
+    Q
+  (IF (IF (EQUAL Q (DM::PZERO F))
+          (EQUAL Q (DM::PZERO F))
+        (DM::PCONSTP P))
+      P
+    (IF (DM::PCONSTP Q)
+        Q
+      (IF (NOT (< (DM::DEGREE P) (DM::DEGREE Q)))
+          ((LAMBDA (C F Q P)
+             ((LAMBDA (A F Q P)
+                ((LAMBDA (DM::PNEW F Q P)
+                   (IF (< (LEN DM::PNEW) (LEN P))
+                       (DM::PGCD-AUX DM::PNEW Q F)
+                     'NIL))
+                 (DM::PADD P (DM::PNEG (DM::PMUL A Q F) F)
+                           F)
+                 F Q P))
+              (DM::MONOMIAL C
+                            (BINARY-+ (DM::DEGREE P)
+                                      (UNARY-- (DM::DEGREE Q)))
+                            F)
+              F Q P))
+           (DM::FMUL (CAR P)
+                     (DM::FRECIP (CAR Q) F)
+                     F)
+           F Q P)
+        ((LAMBDA (C F P Q)
+           ((LAMBDA (A F P Q)
+              ((LAMBDA (DM::QNEW F P Q)
+                 (IF (< (LEN DM::QNEW) (LEN Q))
+                     (DM::PGCD-AUX P DM::QNEW F)
+                   'NIL))
+               (DM::PADD Q (DM::PNEG (DM::PMUL A P F) F)
+                         F)
+               F P Q))
+            (DM::MONOMIAL C
+                          (BINARY-+ (DM::DEGREE Q)
+                                    (UNARY-- (DM::DEGREE P)))
+                          F)
+            F P Q))
+         (DM::FMUL (CAR Q)
+                   (DM::FRECIP (CAR P) F)
+                   F)
+         F P Q)))))
+
+NIL
+(CONS (LEN F) (CONS '7 (CONS (BINARY-+ (LEN P) (LEN Q)) 'NIL)))
+
+@@ DM::R$-AUX
+(P Q F)
+(IF (EQUAL P (DM::PZERO F))
+    (DM::PZERO F)
+ (IF (IF (EQUAL Q (DM::PZERO F))
+         (EQUAL Q (DM::PZERO F))
+       (DM::PCONSTP P))
+     (DM::PONE F)
+  (IF (DM::PCONSTP Q)
+      (DM::PZERO F)
+   (IF (NOT (< (DM::DEGREE P) (DM::DEGREE Q)))
+       ((LAMBDA (C F Q P)
+          ((LAMBDA (A F Q P)
+             ((LAMBDA (DM::PNEW F Q P)
+                (IF (< (LEN DM::PNEW) (LEN P))
+                    (DM::R$-AUX DM::PNEW Q F)
+                  'NIL))
+              (DM::PADD P (DM::PNEG (DM::PMUL A Q F) F)
+                        F)
+              F Q P))
+           (DM::MONOMIAL C
+                         (BINARY-+ (DM::DEGREE P)
+                                   (UNARY-- (DM::DEGREE Q)))
+                         F)
+           F Q P))
+        (DM::FMUL (CAR P)
+                  (DM::FRECIP (CAR Q) F)
+                  F)
+        F Q P)
+    ((LAMBDA (C F P Q)
+       ((LAMBDA (A F P Q)
+          ((LAMBDA (DM::QNEW A F P Q)
+             (IF (< (LEN DM::QNEW) (LEN Q))
+                 (DM::PADD (DM::R$-AUX P DM::QNEW F)
+                           (DM::PNEG (DM::PMUL A (DM::S$-AUX P DM::QNEW F) F)
+                                     F)
+                           F)
+               'NIL))
+           (DM::PADD Q (DM::PNEG (DM::PMUL A P F) F)
+                     F)
+           A F P Q))
+        (DM::MONOMIAL C
+                      (BINARY-+ (DM::DEGREE Q)
+                                (UNARY-- (DM::DEGREE P)))
+                      F)
+        F P Q))
+     (DM::FMUL (CAR Q)
+               (DM::FRECIP (CAR P) F)
+               F)
+     F P Q)))))
+
+NIL
+(CONS (LEN F) (CONS '7 (CONS (BINARY-+ (LEN P) (LEN Q)) 'NIL)))
+
+@@ DM::S$-AUX
+(P Q F)
+(IF (EQUAL P (DM::PZERO F))
+    (DM::PONE F)
+ (IF (IF (EQUAL Q (DM::PZERO F))
+         (EQUAL Q (DM::PZERO F))
+       (DM::PCONSTP P))
+     (DM::PZERO F)
+  (IF (DM::PCONSTP Q)
+      (DM::PONE F)
+   (IF
+    (NOT (< (DM::DEGREE P) (DM::DEGREE Q)))
+    ((LAMBDA (C F Q P)
+       ((LAMBDA (A F Q P)
+          ((LAMBDA (DM::PNEW A F Q P)
+             (IF (< (LEN DM::PNEW) (LEN P))
+                 (DM::PADD (DM::S$-AUX DM::PNEW Q F)
+                           (DM::PNEG (DM::PMUL A (DM::R$-AUX DM::PNEW Q F) F)
+                                     F)
+                           F)
+               'NIL))
+           (DM::PADD P (DM::PNEG (DM::PMUL A Q F) F)
+                     F)
+           A F Q P))
+        (DM::MONOMIAL C
+                      (BINARY-+ (DM::DEGREE P)
+                                (UNARY-- (DM::DEGREE Q)))
+                      F)
+        F Q P))
+     (DM::FMUL (CAR P)
+               (DM::FRECIP (CAR Q) F)
+               F)
+     F Q P)
+    ((LAMBDA (C F P Q)
+       ((LAMBDA (A F P Q)
+          ((LAMBDA (DM::QNEW F P Q)
+             (IF (< (LEN DM::QNEW) (LEN Q))
+                 (DM::S$-AUX P DM::QNEW F)
+               'NIL))
+           (DM::PADD Q (DM::PNEG (DM::PMUL A P F) F)
+                     F)
+           F P Q))
+        (DM::MONOMIAL C
+                      (BINARY-+ (DM::DEGREE Q)
+                                (UNARY-- (DM::DEGREE P)))
+                      F)
+        F P Q))
+     (DM::FMUL (CAR Q)
+               (DM::FRECIP (CAR P) F)
+               F)
+     F P Q)))))
+
+NIL
+(CONS (LEN F) (CONS '7 (CONS (BINARY-+ (LEN P) (LEN Q)) 'NIL)))
+
+@@ DM::PGCD
+(P Q F)
+((LAMBDA (DM::G F)
+   (DM::CMUL (DM::FRECIP (CAR DM::G) F)
+             DM::G F))
+ (DM::PGCD-AUX P Q F)
+ F)
+
+NIL
+(CONS (LEN F) (CONS '8 (CONS '0 'NIL)))
+
+@@ DM::R$
+(P Q F)
+((LAMBDA (DM::G DM::R F)
+   (DM::CMUL (DM::FRECIP (CAR DM::G) F)
+             DM::R F))
+ (DM::PGCD-AUX P Q F)
+ (DM::R$-AUX P Q F)
+ F)
+
+NIL
+(CONS (LEN F) (CONS '8 (CONS '0 'NIL)))
+
+@@ DM::S$
+(P Q F)
+((LAMBDA (DM::G DM::S F)
+   (DM::CMUL (DM::FRECIP (CAR DM::G) F)
+             DM::S F))
+ (DM::PGCD-AUX P Q F)
+ (DM::S$-AUX P Q F)
+ F)
+
+NIL
+(CONS (LEN F) (CONS '8 (CONS '0 'NIL)))
+
+@@ DM::PDIVIDE
+(X Y F)
+(IF (DM::PCONSTP Y)
+    (CONS (DM::CMUL (DM::FRECIP (CAR Y) F) X F)
+          (CONS (DM::PZERO F) 'NIL))
+  (IF (< (DM::DEGREE X) (DM::DEGREE Y))
+      (CONS (DM::PZERO F) (CONS X 'NIL))
+    ((LAMBDA (C F Y X)
+       ((LAMBDA (M F Y X)
+          ((LAMBDA (DM::X1 M F Y X)
+             (IF (< (LEN DM::X1) (LEN X))
+                 ((LAMBDA (MV F M)
+                    ((LAMBDA (Q DM::R F M)
+                       (CONS (DM::PADD Q M F)
+                             (CONS DM::R 'NIL)))
+                     (MV-NTH '0 MV)
+                     (MV-NTH '1 MV)
+                     F M))
+                  (DM::PDIVIDE DM::X1 Y F)
+                  F M)
+               (CONS 'NIL (CONS 'NIL 'NIL))))
+           (DM::PADD X (DM::PNEG (DM::PMUL M Y F) F)
+                     F)
+           M F Y X))
+        (DM::MONOMIAL C
+                      (BINARY-+ (DM::DEGREE X)
+                                (UNARY-- (DM::DEGREE Y)))
+                      F)
+        F Y X))
+     (DM::FMUL (CAR X)
+               (DM::FRECIP (CAR Y) F)
+               F)
+     F Y X)))
+
+NIL
+(CONS (LEN F) (CONS '7 (CONS (LEN X) 'NIL)))
+
+@@ DM::PQUOT
+(X Y F)
+(MV-NTH '0 (MV-LIST '2 (DM::PDIVIDE X Y F)))
+NIL
+(CONS (LEN F) (CONS '8 (CONS '0 'NIL)))
+
+@@ DM::PREM
+(X Y F)
+(MV-NTH '1 (MV-LIST '2 (DM::PDIVIDE X Y F)))
+NIL
+(CONS (LEN F) (CONS '8 (CONS '0 'NIL)))
+
+@@ DM::PDIVIDES
+(Q P F)
+(EQUAL (DM::PREM P Q F) (DM::PZERO F))
+NIL
+NIL
+
+@@ DM::PFACTOR
+(P F)
+NIL
+(IMPLIES (IF (DM::POLYP Q F)
+             (IF (DM::MONICP Q F)
+                 (IF (< '0 (DM::DEGREE Q))
+                     (IF (< (DM::DEGREE Q) (DM::DEGREE P))
+                         (DM::PDIVIDES Q P F)
+                       'NIL)
+                   'NIL)
+               'NIL)
+           'NIL)
+         ((LAMBDA (Q P F)
+            (IF (DM::POLYP Q F)
+                (IF (DM::MONICP Q F)
+                    (IF (< '0 (DM::DEGREE Q))
+                        (IF (< (DM::DEGREE Q) (DM::DEGREE P))
+                            (DM::PDIVIDES Q P F)
+                          'NIL)
+                      'NIL)
+                  'NIL)
+              'NIL))
+          (DM::PFACTOR P F)
+          P F))
+
+NIL
+
+@@ DM::REDUCIBLEP
+(P F)
+((LAMBDA (Q P F)
+   (IF (DM::POLYP Q F)
+       (IF (DM::MONICP Q F)
+           (IF (< '0 (DM::DEGREE Q))
+               (IF (< (DM::DEGREE Q) (DM::DEGREE P))
+                   (DM::PDIVIDES Q P F)
+                 'NIL)
+             'NIL)
+         'NIL)
+     'NIL))
+ (DM::PFACTOR P F)
+ P F)
+
+NIL
+NIL
+
+@@ DM::IRREDUCIBLEP
+(P F)
+(NOT (DM::REDUCIBLEP P F))
+NIL
+NIL
+
+@@ DM::FIELDP
+(F)
+(IF (CONSP F)
+    (IF (DM::FIELDP (CDR F))
+        (IF (DM::POLYP (CAR F) (CDR F))
+            (IF (DM::MONICP (CAR F) (CDR F))
+                (IF (DM::IRREDUCIBLEP (CAR F) (CDR F))
+                    (NOT (< (DM::DEGREE (CAR F)) '2))
+                  'NIL)
+              'NIL)
+          'NIL)
+      'NIL)
+  (DM::FBASEP F))
+
+NIL
+(ACL2-COUNT F)
+
+@@ DM::FADD-CLOSED-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FADD-CLOSED-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (DM::FELTP Y F)
+                              'NIL)
+                            (DM::FELTP (DM::FADD X Y F) F)))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 F))
+              (DM::FADD-CLOSED-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FADD-CLOSED-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FMUL-CLOSED-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FMUL-CLOSED-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (DM::FELTP Y F)
+                              'NIL)
+                            (DM::FELTP (DM::FMUL X Y F) F)))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 F))
+              (DM::FMUL-CLOSED-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FMUL-CLOSED-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FADD-COMM-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FADD-COMM-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (DM::FELTP Y F)
+                              'NIL)
+                            (EQUAL (DM::FADD X Y F)
+                                   (DM::FADD Y X F))))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 F))
+              (DM::FADD-COMM-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FADD-COMM-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FMUL-COMM-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FMUL-COMM-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (DM::FELTP Y F)
+                              'NIL)
+                            (EQUAL (DM::FMUL X Y F)
+                                   (DM::FMUL Y X F))))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 F))
+              (DM::FMUL-COMM-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FMUL-COMM-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FADD-ASSOC-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FADD-ASSOC-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y Z F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (IF (DM::FELTP Y F)
+                                    (DM::FELTP Z F)
+                                  'NIL)
+                              'NIL)
+                            (EQUAL (DM::FADD (DM::FADD X Y F) Z F)
+                                   (DM::FADD X (DM::FADD Y Z F) F))))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 (MV-NTH '2 MV)
+                 F))
+              (DM::FADD-ASSOC-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FADD-ASSOC-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FMUL-ASSOC-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FMUL-ASSOC-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y Z F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (IF (DM::FELTP Y F)
+                                    (DM::FELTP Z F)
+                                  'NIL)
+                              'NIL)
+                            (EQUAL (DM::FMUL (DM::FMUL X Y F) Z F)
+                                   (DM::FMUL X (DM::FMUL Y Z F) F))))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 (MV-NTH '2 MV)
+                 F))
+              (DM::FMUL-ASSOC-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FMUL-ASSOC-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FELTP-FZERO-P
+(F)
+(DM::FELTP (DM::FZERO F) F)
+NIL
+NIL
+
+@@ DM::FELTP-FONE-P
+(F)
+(DM::FELTP (DM::FONE F) F)
+NIL
+NIL
+
+@@ DM::FONE-FZERO-P
+(F)
+(NOT (EQUAL (DM::FZERO F) (DM::FONE F)))
+NIL
+NIL
+
+@@ DM::FZERO-ID-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FZERO-ID-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (X F)
+                (IMPLIES (DM::FELTP X F)
+                         (EQUAL (DM::FADD (DM::FZERO F) X F) X)))
+              (DM::FZERO-ID-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FZERO-ID-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FONE-ID-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FONE-ID-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (X F)
+                (IMPLIES (DM::FELTP X F)
+                         (EQUAL (DM::FMUL (DM::FONE F) X F) X)))
+              (DM::FONE-ID-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FONE-ID-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FELTP-FNEG-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FELTP-FNEG-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (X F)
+                (IMPLIES (DM::FELTP X F)
+                         (DM::FELTP (DM::FNEG X F) F)))
+              (DM::FELTP-FNEG-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FELTP-FNEG-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FADD-FNEG-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FADD-FNEG-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (X F)
+                (IMPLIES (DM::FELTP X F)
+                         (EQUAL (DM::FADD X (DM::FNEG X F) F)
+                                (DM::FZERO F))))
+              (DM::FADD-FNEG-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FADD-FNEG-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FELTP-FRECIP-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FELTP-FRECIP-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (X F)
+                (IMPLIES (IF (DM::FELTP X F)
+                             (NOT (EQUAL X (DM::FZERO F)))
+                           'NIL)
+                         (DM::FELTP (DM::FRECIP X F) F)))
+              (DM::FELTP-FRECIP-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FELTP-FRECIP-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FMUL-FRECIP-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FMUL-FRECIP-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (X F)
+                (IMPLIES (IF (DM::FELTP X F)
+                             (NOT (EQUAL X (DM::FZERO F)))
+                           'NIL)
+                         (EQUAL (DM::FMUL X (DM::FRECIP X F) F)
+                                (DM::FONE F))))
+              (DM::FMUL-FRECIP-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FMUL-FRECIP-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FDISTRIB-P
+(F)
+(RETURN-LAST 'PROGN
+             (THROW-NONEXEC-ERROR 'DM::FDISTRIB-P
+                                  (CONS F 'NIL))
+             ((LAMBDA (MV F)
+                ((LAMBDA (X Y Z F)
+                   (IMPLIES (IF (DM::FELTP X F)
+                                (IF (DM::FELTP Y F)
+                                    (DM::FELTP Z F)
+                                  'NIL)
+                              'NIL)
+                            (EQUAL (DM::FMUL X (DM::FADD Y Z F) F)
+                                   (DM::FADD (DM::FMUL X Y F)
+                                             (DM::FMUL X Z F)
+                                             F))))
+                 (MV-NTH '0 MV)
+                 (MV-NTH '1 MV)
+                 (MV-NTH '2 MV)
+                 F))
+              (DM::FDISTRIB-P-WITNESS F)
+              F))
+
+NIL
+NIL
+
+@@ DM::FDISTRIB-P-WITNESS
+(X1)
+NIL
+NIL
+NIL
+
+@@ DM::FIELD-AXIOMS-P
+(F)
+(IF
+ (DM::FADD-CLOSED-P F)
+ (IF
+   (DM::FMUL-CLOSED-P F)
+   (IF (DM::FADD-COMM-P F)
+       (IF (DM::FMUL-COMM-P F)
+           (IF (DM::FADD-ASSOC-P F)
+               (IF (DM::FMUL-ASSOC-P F)
+                   (IF (DM::FELTP-FZERO-P F)
+                       (IF (DM::FELTP-FONE-P F)
+                           (IF (DM::FONE-FZERO-P F)
+                               (IF (DM::FZERO-ID-P F)
+                                   (IF (DM::FONE-ID-P F)
+                                       (IF (DM::FELTP-FNEG-P F)
+                                           (IF (DM::FADD-FNEG-P F)
+                                               (IF (DM::FELTP-FRECIP-P F)
+                                                   (IF (DM::FMUL-FRECIP-P F)
+                                                       (DM::FDISTRIB-P F)
+                                                     'NIL)
+                                                 'NIL)
+                                             'NIL)
+                                         'NIL)
+                                     'NIL)
+                                 'NIL)
+                             'NIL)
+                         'NIL)
+                     'NIL)
+                 'NIL)
+             'NIL)
+         'NIL)
+     'NIL)
+   'NIL)
+ 'NIL)
+
+NIL
+NIL
+
+@@ DM::EXTENDS
+(E F)
+(IF (EQUAL E F) (EQUAL E F) (IF (CONSP E) (DM::EXTENDS (CDR E) F) 'NIL))
+NIL
+(ACL2-COUNT E)
+
+@@ DM::EXTENSIONP
+(E F)
+(IF (DM::FIELDP F) (IF (DM::FIELDP E) (DM::EXTENDS E F) 'NIL) 'NIL)
+NIL
+NIL
+
+@@ DM::FLIFTN
+(X N)
+(IF (ZP N) X (CONS (DM::FLIFTN X (BINARY-+ '-1 N)) 'NIL))
+NIL
+(ACL2-COUNT N)
+
+@@ DM::FLIFT
+(X F E)
+(DM::FLIFTN X (BINARY-+ (LEN E) (UNARY-- (LEN F))))
+NIL
+NIL
+
+@@ DM::PLIFT
+(P F E)
+(IF (CONSP P) (CONS (DM::FLIFT (CAR P) F E) (DM::PLIFT (CDR P) F E)) 'NIL)
+NIL
+(ACL2-COUNT P)
+
+@@ DM::EDEGREE
+(E F)
+(IF (EQUAL E F)
+    '1
+  (IF (CONSP E)
+      (BINARY-* (DM::DEGREE (CAR E))
+                (DM::EDEGREE (CDR E) F))
+    'NIL))
+
+NIL
+(ACL2-COUNT E)
+
+@@ DM::FPOWER
+(X N F)
+(IF (ZP N) (DM::FONE F) (DM::FMUL X (DM::FPOWER X (BINARY-+ '-1 N) F) F))
+NIL
+(ACL2-COUNT N)
+
+@@ DM::PEVAL
+(P X F)
+(IF (CONSP P)
+    (IF (DM::PCONSTP P)
+        (CAR P)
+      (DM::FADD (DM::FMUL (CAR P)
+                          (DM::FPOWER X (DM::DEGREE P) F)
+                          F)
+                (DM::PEVAL (DM::PSTRIP (CDR P) F) X F)
+                F))
+  'NIL)
+
+NIL
+(LEN P)
+
+@@ DM::PROOTP
+(X P F)
+(IF (DM::FELTP X F) (EQUAL (DM::PEVAL P X F) (DM::FZERO F)) 'NIL)
+NIL
+NIL
+
+@@ DM::FACTORIZATION
+(P F)
+(IF (IF (DM::FIELDP F)
+        (IF (DM::POLYP P F)
+            (IF (DM::MONICP P F)
+                (IF (NOT (< (DM::DEGREE P) '2))
+                    (DM::REDUCIBLEP P F)
+                  'NIL)
+              'NIL)
+          'NIL)
+      'NIL)
+    ((LAMBDA (D P F)
+       (BINARY-APPEND (DM::FACTORIZATION D F)
+                      (DM::FACTORIZATION (DM::PQUOT P D F)
+                                         F)))
+     (DM::PFACTOR P F)
+     P F)
+  (CONS P 'NIL))
+
+NIL
+(LEN P)
+
+@@ DM::PROOTS-AUX
+(L F)
+(IF
+ (CONSP L)
+ ((LAMBDA (D DM::R L)
+    (IF
+      (IF (= (DM::DEGREE (CAR L)) '1)
+          (NOT ((LAMBDA (X L)
+                  (RETURN-LAST 'MBE1-RAW
+                               (MEMBER-EQL-EXEC X L)
+                               (RETURN-LAST 'PROGN
+                                            (MEMBER-EQL-EXEC$GUARD-CHECK X L)
+                                            (MEMBER-EQUAL X L))))
+                DM::R D))
+        'NIL)
+      (CONS DM::R D)
+      D))
+  (DM::PROOTS-AUX (CDR L) F)
+  (DM::FNEG (CAR (CDR (CAR L))) F)
+  L)
+ 'NIL)
+
+NIL
+(ACL2-COUNT L)
+
+@@ DM::PROOTS
+(P F)
+(DM::PROOTS-AUX (DM::FACTORIZATION P F) F)
+NIL
+NIL
+
+@@ DM::EMBED
+(X DM::PHI K F)
+(IF (CONSP DM::PHI)
+    (DM::PEVAL (DM::PEMBED X (CDR DM::PHI) K F)
+               (CAR DM::PHI)
+               K)
+  (DM::FLIFT X F K))
+
+NIL
+(CONS (LEN DM::PHI) (CONS (ACL2-COUNT X) 'NIL))
+
+@@ DM::PEMBED
+(P DM::PHI K F)
+(IF (CONSP P)
+    (CONS (DM::EMBED (CAR P) DM::PHI K F)
+          (DM::PEMBED (CDR P) DM::PHI K F))
+  'NIL)
+
+NIL
+(CONS (LEN DM::PHI) (CONS (ACL2-COUNT P) 'NIL))
+
+@@ DM::EMBEDDINGP
+(DM::PHI E K F)
+(IF (EQUAL E F)
+    (NULL DM::PHI)
+  (IF (CONSP DM::PHI)
+      (IF (DM::PROOTP (CAR DM::PHI)
+                      (DM::PEMBED (CAR E) (CDR DM::PHI) K F)
+                      K)
+          (DM::EMBEDDINGP (CDR DM::PHI)
+                          (CDR E)
+                          K F)
+        'NIL)
+    'NIL))
+
+NIL
+(ACL2-COUNT DM::PHI)
+
+@@ DM::ALGEBRAIC-WITNESS
+(X E F)
+(RETURN-LAST
+     'PROGN
+     (THROW-NONEXEC-ERROR 'DM::ALGEBRAIC-WITNESS
+                          (CONS X (CONS E (CONS F 'NIL))))
+     ((LAMBDA (P X E F)
+        (IF (DM::POLYP P F)
+            (IF (DM::MONICP P F)
+                (IF (DM::IRREDUCIBLEP P F)
+                    (IF (NOT (< (DM::DEGREE P) '1))
+                        (IF (NOT (< (DM::EDEGREE E F) (DM::DEGREE P)))
+                            (DM::PROOTP X (DM::PLIFT P F E) E)
+                          'NIL)
+                      'NIL)
+                  'NIL)
+              'NIL)
+          'NIL))
+      (DM::ALGEBRAIC-WITNESS-WITNESS X E F)
+      X E F))
+
+NIL
+NIL
+
+@@ DM::ALGEBRAIC-WITNESS-WITNESS
+(X1 X2 X3)
+NIL
+NIL
+NIL
+
+@@ DM::ALL-EMBEDDINGP
+(L E K F)
+(IF (CONSP L)
+    (IF (DM::EMBEDDINGP (CAR L) E K F)
+        (DM::ALL-EMBEDDINGP (CDR L) E K F)
+      'NIL)
+  'T)
+
+NIL
+(ACL2-COUNT L)
+NIL

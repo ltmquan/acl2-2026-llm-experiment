@@ -1,0 +1,88 @@
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7(r)                                                  +
+ +   built November 11, 2026  16:06:05.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>
+ACL2 Warning [Compiled file] in ( INCLUDE-BOOK "defs" ...):  Unable
+to load compiled file for book
+  /home/user/acl2-exp/exp2/given/gamboa-basel/defs.lisp
+because that book is not certified.  See :DOC include-book.  No load
+was in progress for any parent book.
+
+
+ACL2 Warning [Uncertified] in ( INCLUDE-BOOK "defs" ...):  There is
+no certificate on file for 
+"/home/user/acl2-exp/exp2/given/gamboa-basel/defs.lisp".  See :DOC
+uncertified-books.
+
+
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Warnings:  Uncertified and Compiled file
+Time:  0.37 seconds (prove: 0.00, print: 0.00, other: 0.37)
+ "/home/user/acl2-exp/exp2/given/gamboa-basel/defs.lisp"
+ACL2(r) !>49/36
+ACL2(r) !>0
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "/home/user/acl2-exp/exp2/given/gamboa-basel/defs.lisp"
+              ]
+              \
+>L             (DEFUN BASEL-SERIES (I N)
+                 (DECLARE (XARGS :MEASURE (NFIX (- N I))))
+                 (IF (ZP (- N I))
+                     0
+                   (+ (EXPT I -2)
+                      (BASEL-SERIES (1+ I) N))))
+ACL2(r) !>   d   -7531  (PROGN (DEFUN I-SMALL # ...)
+                     (DEFUN I-CLOSE # ...)
+                     ...)
+              \
+>V d           (DEFUN I-CLOSE (X Y)
+                 (DECLARE (XARGS :GUARD T :MODE :LOGIC))
+                 (AND (ACL2-NUMBERP X)
+                      (ACL2-NUMBERP Y)
+                      (I-SMALL (- X Y))))
+ACL2(r) !>   d   -7531  (PROGN (DEFUN I-SMALL # ...)
+                     (DEFUN I-CLOSE # ...)
+                     ...)
+              \
+>V d           (DEFUN I-LARGE (X)
+                 (DECLARE (XARGS :GUARD T :MODE :LOGIC))
+                 (AND (ACL2-NUMBERP X)
+                      (NOT (EQUAL X 0))
+                      (I-SMALL (/ X))))
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "/home/user/acl2-exp/exp2/given/gamboa-basel/defs.lisp"
+               "/opt/acl2r/books/nonstd/nsa/trig.lisp"
+              ]
+              \
+>L d           (DEFUN ACL2-PI NIL
+                 (* 2 (FIND-ZERO-COS-2 0 2 0)))
+ACL2(r) !>(IF (ZP (BINARY-+ N (UNARY-- I)))
+    '0
+  (BINARY-+ (EXPT I '-2)
+            (BASEL-SERIES (BINARY-+ '1 I) N)))
+ACL2(r) !>Bye.

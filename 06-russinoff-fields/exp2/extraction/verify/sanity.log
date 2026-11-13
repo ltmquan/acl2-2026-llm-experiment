@@ -1,0 +1,14 @@
+DM !>>
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+DM !>>(1)
+DM !>>T
+DM !>>
+Q.E.D.
+
+DM !>>7
+DM !>>2
+DM !>>T
+DM !>>Bye.
+ :EOF
+ACL2 !>Bye.

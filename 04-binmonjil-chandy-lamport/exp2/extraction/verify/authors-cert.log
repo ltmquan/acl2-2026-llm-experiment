@@ -1,0 +1,19 @@
+System books directory is /opt/acl2/books
+Making <scratch>/authors/model.cert on 12-Nov-2026 22:55:54.963
+[32mBuilt <scratch>/authors/model.cert (0.661s) at 12-Nov-2026 22:55:55.634[0m
+Making <scratch>/authors/scan.cert on 12-Nov-2026 22:55:55.660
+Making <scratch>/authors/basic.cert on 12-Nov-2026 22:55:55.660
+[32mBuilt <scratch>/authors/scan.cert (0.307s) at 12-Nov-2026 22:55:55.972[0m
+[32mBuilt <scratch>/authors/basic.cert (0.307s) at 12-Nov-2026 22:55:55.972[0m
+Making <scratch>/authors/good_state_inv.cert on 12-Nov-2026 22:55:55.998
+[32mBuilt <scratch>/authors/good_state_inv.cert (5.393s) at 12-Nov-2026 22:56:01.425[0m
+Making <scratch>/authors/recovery_inv.cert on 12-Nov-2026 22:56:01.452
+Making <scratch>/authors/channel_equivalence.cert on 12-Nov-2026 22:56:01.452
+Making <scratch>/authors/cut_meta_inv.cert on 12-Nov-2026 22:56:01.451
+[32mBuilt <scratch>/authors/recovery_inv.cert (0.558s) at 12-Nov-2026 22:56:02.016[0m
+[32mBuilt <scratch>/authors/channel_equivalence.cert (1.260s) at 12-Nov-2026 22:56:02.723[0m
+[32;1mBuilt <scratch>/authors/cut_meta_inv.cert (18.066s) at 12-Nov-2026 22:56:19.536[0m
+Making <scratch>/authors/local_swap.cert on 12-Nov-2026 22:56:19.562
+[31mBuilt <scratch>/authors/local_swap.cert (75.128s) at 12-Nov-2026 22:57:34.706[0m
+Making <scratch>/authors/global_reorder.cert on 12-Nov-2026 22:57:34.734
+[31mBuilt <scratch>/authors/global_reorder.cert (205.014s) at 12-Nov-2026 23:00:59.784[0m

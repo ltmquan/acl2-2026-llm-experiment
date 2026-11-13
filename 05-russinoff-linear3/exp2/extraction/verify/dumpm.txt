@@ -1,0 +1,680 @@
+NIL
+DM p!>>@@ APPLY-ROW-OP
+  formals (OP A)
+  body ((LAMBDA (ACL2::CASE-DO-NOT-USE-ELSEWHERE OP A) (IF (EQL ACL2::CASE-DO-NOT-USE-ELSEWHERE '1) (ERO1 A (CAR (CDR OP)) (CAR (CDR (CDR OP)))) (IF (EQL ACL2::CASE-DO-NOT-USE-ELSEWHERE '2) (ERO2 A (CAR (CDR OP)) (CAR (CDR (CDR OP))) (CAR (CDR (CDR (CDR OP))))) (IF (EQL ACL2::CASE-DO-NOT-USE-ELSEWHERE '3) (ERO3 A (CAR (CDR OP)) (CAR (CDR (CDR OP)))) 'NIL)))) (CAR OP) OP A)
+  constraint ((EQUAL (APPLY-ROW-OP OP A) ((LAMBDA (ACL2::CASE-DO-NOT-USE-ELSEWHERE OP A) (IF (EQL ACL2::CASE-DO-NOT-USE-ELSEWHERE '1) (ERO1 A (CAR (CDR OP)) (CAR (CDR (CDR OP)))) (IF (EQL ACL2::CASE-DO-NOT-USE-ELSEWHERE '2) (ERO2 A (CAR (CDR OP)) (CAR (CDR (CDR OP))) (CAR (CDR (CDR (CDR OP))))) (IF (EQL ACL2::CASE-DO-NOT-USE-ELSEWHERE '3) (ERO3 A (CAR (CDR OP)) (CAR (CDR (CDR OP)))) 'NIL)))) (CAR OP) OP A)))
+  guard T
+  measure NIL
+@@ CLEAR-COLUMN
+  formals (A K J M)
+  body (IF (ZP M) A (IF (= (BINARY-+ '-1 M) K) (CLEAR-COLUMN A K J (BINARY-+ '-1 M)) (CLEAR-COLUMN (ERO2 A (F- (NTH J (NTH (BINARY-+ '-1 M) A))) K (BINARY-+ '-1 M)) K J (BINARY-+ '-1 M))))
+  constraint ((EQUAL (CLEAR-COLUMN A K J M) (IF (ZP M) A (IF (= (BINARY-+ '-1 M) K) (CLEAR-COLUMN A K J (BINARY-+ '-1 M)) (CLEAR-COLUMN (ERO2 A (F- (NTH J (NTH (BINARY-+ '-1 M) A))) K (BINARY-+ '-1 M)) K J (BINARY-+ '-1 M))))))
+  guard T
+  measure (ACL2-COUNT M)
+@@ CLEAR-COLUMN-OPS
+  formals (A K J M)
+  body (IF (ZP M) 'NIL (IF (= K (BINARY-+ '-1 M)) (CLEAR-COLUMN-OPS A K J (BINARY-+ '-1 M)) (CONS (CONS '2 (CONS (F- (NTH J (NTH (BINARY-+ '-1 M) A))) (CONS K (CONS (BINARY-+ '-1 M) 'NIL)))) (CLEAR-COLUMN-OPS (ERO2 A (F- (NTH J (NTH (BINARY-+ '-1 M) A))) K (BINARY-+ '-1 M)) K J (BINARY-+ '-1 M)))))
+  constraint ((EQUAL (CLEAR-COLUMN-OPS A K J M) (IF (ZP M) 'NIL (IF (= K (BINARY-+ '-1 M)) (CLEAR-COLUMN-OPS A K J (BINARY-+ '-1 M)) (CONS (CONS '2 (CONS (F- (NTH J (NTH (BINARY-+ '-1 M) A))) (CONS K (CONS (BINARY-+ '-1 M) 'NIL)))) (CLEAR-COLUMN-OPS (ERO2 A (F- (NTH J (NTH (BINARY-+ '-1 M) A))) K (BINARY-+ '-1 M)) K J (BINARY-+ '-1 M)))))))
+  guard T
+  measure (ACL2-COUNT M)
+@@ COL
+  formals (J A)
+  body (IF (CONSP A) (CONS (NTH J (CAR A)) (COL J (CDR A))) 'NIL)
+  constraint ((EQUAL (COL J A) (IF (CONSP A) (CONS (NTH J (CAR A)) (COL J (CDR A))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT A)
+@@ ELEM-MAT
+  formals (OP M)
+  body (APPLY-ROW-OP OP (ID-FMAT M))
+  constraint ((EQUAL (ELEM-MAT OP M) (APPLY-ROW-OP OP (ID-FMAT M))))
+  guard T
+  measure NIL
+@@ ENTRY
+  formals (I J MAT)
+  body (NTH J (NTH I MAT))
+  constraint ((EQUAL (ENTRY I J MAT) (NTH J (NTH I MAT))))
+  guard T
+  measure NIL
+@@ ERO1
+  formals (A C K)
+  body (REPLACE-ROW A K (FLIST-SCALAR-MUL C (NTH K A)))
+  constraint ((EQUAL (ERO1 A C K) (REPLACE-ROW A K (FLIST-SCALAR-MUL C (NTH K A)))))
+  guard T
+  measure NIL
+@@ ERO2
+  formals (A C J K)
+  body (REPLACE-ROW A K (FLIST-ADD (FLIST-SCALAR-MUL C (NTH J A)) (NTH K A)))
+  constraint ((EQUAL (ERO2 A C J K) (REPLACE-ROW A K (FLIST-ADD (FLIST-SCALAR-MUL C (NTH J A)) (NTH K A)))))
+  guard T
+  measure NIL
+@@ ERO3
+  formals (A J K)
+  body (REPLACE-ROW (REPLACE-ROW A K (NTH J A)) J (NTH K A))
+  constraint ((EQUAL (ERO3 A J K) (REPLACE-ROW (REPLACE-ROW A K (NTH J A)) J (NTH K A))))
+  guard T
+  measure NIL
+@@ EXTEND-KBASIS
+  formals NIL
+  body (IF (POSP (KDIM)) (EXTEND-TO-BASIS (KBASIS)) (VBASIS0))
+  constraint ((EQUAL (EXTEND-KBASIS) (IF (POSP (KDIM)) (EXTEND-TO-BASIS (KBASIS)) (VBASIS0))))
+  guard T
+  measure NIL
+@@ EXTEND-TO-BASIS
+  formals (L)
+  body (IF (IF (VLISTNP L (LEN L)) (IF (VINDEPP L) (< (LEN L) (VDIM)) 'NIL) 'NIL) (EXTEND-TO-BASIS (CONS (VUNSPANNED L) L)) L)
+  constraint ((EQUAL (EXTEND-TO-BASIS L) (IF (IF (VLISTNP L (LEN L)) (IF (VINDEPP L) (< (LEN L) (VDIM)) 'NIL) 'NIL) (EXTEND-TO-BASIS (CONS (VUNSPANNED L) L)) L)))
+  guard T
+  measure (NFIX (BINARY-+ (VDIM) (UNARY-- (LEN L))))
+@@ F*
+  formals (X Y)
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard (IF (FP X) (FP Y) 'NIL)
+  measure NIL
+@@ F+
+  formals (X Y)
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard (IF (FP X) (FP Y) 'NIL)
+  measure NIL
+@@ F-
+  formals (X)
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard (FP X)
+  measure NIL
+@@ F/
+  formals (X)
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard (IF (FP X) (NOT (EQUAL X (F0))) 'NIL)
+  measure NIL
+@@ F0
+  formals NIL
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard 'T
+  measure NIL
+@@ F1
+  formals NIL
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard 'T
+  measure NIL
+@@ FDOT
+  formals (X Y)
+  body (IF (CONSP X) (F+ (F* (CAR X) (CAR Y)) (FDOT (CDR X) (CDR Y))) (F0))
+  constraint ((EQUAL (FDOT X Y) (IF (CONSP X) (F+ (F* (CAR X) (CAR Y)) (FDOT (CDR X) (CDR Y))) (F0))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ FDOT-LIST
+  formals (X L)
+  body (IF (CONSP L) (CONS (FDOT X (CAR L)) (FDOT-LIST X (CDR L))) 'NIL)
+  constraint ((EQUAL (FDOT-LIST X L) (IF (CONSP L) (CONS (FDOT X (CAR L)) (FDOT-LIST X (CDR L))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT L)
+@@ FIRST-NONZERO
+  formals (R)
+  body (IF (CONSP R) (IF (= (CAR R) (F0)) (BINARY-+ '1 (FIRST-NONZERO (CDR R))) '0) 'NIL)
+  constraint ((EQUAL (FIRST-NONZERO R) (IF (CONSP R) (IF (= (CAR R) (F0)) (BINARY-+ '1 (FIRST-NONZERO (CDR R))) '0) 'NIL)))
+  guard T
+  measure (ACL2-COUNT R)
+@@ FIRSTN
+  formals (N L)
+  body (IF (ZP N) 'NIL (CONS (CAR L) (FIRSTN (BINARY-+ '-1 N) (CDR L))))
+  constraint ((EQUAL (FIRSTN N L) (IF (ZP N) 'NIL (CONS (CAR L) (FIRSTN (BINARY-+ '-1 N) (CDR L))))))
+  guard T
+  measure (ACL2-COUNT N)
+@@ FLIST-ADD
+  formals (X Y)
+  body (IF (CONSP X) (CONS (F+ (CAR X) (CAR Y)) (FLIST-ADD (CDR X) (CDR Y))) 'NIL)
+  constraint ((EQUAL (FLIST-ADD X Y) (IF (CONSP X) (CONS (F+ (CAR X) (CAR Y)) (FLIST-ADD (CDR X) (CDR Y))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT X)
+@@ FLIST-SCALAR-MUL
+  formals (C X)
+  body (IF (CONSP X) (CONS (F* C (CAR X)) (FLIST-SCALAR-MUL C (CDR X))) 'NIL)
+  constraint ((EQUAL (FLIST-SCALAR-MUL C X) (IF (CONSP X) (CONS (F* C (CAR X)) (FLIST-SCALAR-MUL C (CDR X))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT X)
+@@ FLIST0P
+  formals (X)
+  body (IF (CONSP X) (IF (= (CAR X) (F0)) (FLIST0P (CDR X)) 'NIL) (NULL X))
+  constraint ((EQUAL (FLIST0P X) (IF (CONSP X) (IF (= (CAR X) (F0)) (FLIST0P (CDR X)) 'NIL) (NULL X))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ FLISTN0
+  formals (N)
+  body (IF (ZP N) 'NIL (CONS (F0) (FLISTN0 (BINARY-+ '-1 N))))
+  constraint ((EQUAL (FLISTN0 N) (IF (ZP N) 'NIL (CONS (F0) (FLISTN0 (BINARY-+ '-1 N))))))
+  guard T
+  measure (ACL2-COUNT N)
+@@ FLISTNP
+  formals (X N)
+  body (IF (ZP N) (NULL X) (IF (CONSP X) (IF (FP (CAR X)) (FLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))
+  constraint ((EQUAL (FLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (FP (CAR X)) (FLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ FMAT*
+  formals (A B)
+  body (IF (CONSP A) (CONS (FDOT-LIST (CAR A) (TRANSPOSE-MAT B)) (FMAT* (CDR A) B)) 'NIL)
+  constraint ((EQUAL (FMAT* A B) (IF (CONSP A) (CONS (FDOT-LIST (CAR A) (TRANSPOSE-MAT B)) (FMAT* (CDR A) B)) 'NIL)))
+  guard T
+  measure (ACL2-COUNT A)
+@@ FP
+  formals (ACL2::X1)
+  body NIL
+  constraint ((IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F+ X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (FP (F* X Y))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F+ X Y) (F+ Y X))) (IMPLIES (IF (FP X) (FP Y) 'NIL) (EQUAL (F* X Y) (F* Y X))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F+ X (F+ Y Z)) (F+ (F+ X Y) Z))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F* Y Z)) (F* (F* X Y) Z))) (FP (F0)) (FP (F1)) (NOT (EQUAL (F1) (F0))) (IMPLIES (FP X) (EQUAL (F+ X (F0)) X)) (IMPLIES (FP X) (EQUAL (F* X (F1)) X)) (IMPLIES (FP X) (FP (F- X))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (FP (F/ X))) (IMPLIES (FP X) (EQUAL (F+ X (F- X)) (F0))) (IMPLIES (IF (FP X) (NOT (EQUAL X (F0))) 'NIL) (EQUAL (F* X (F/ X)) (F1))) (IMPLIES (IF (FP X) (IF (FP Y) (FP Z) 'NIL) 'NIL) (EQUAL (F* X (F+ Y Z)) (F+ (F* X Y) (F* X Z)))))
+  guard 'T
+  measure NIL
+@@ FREE-INDS
+  formals (A N)
+  body (SET-DIFFERENCE-EQUAL (NINIT N) (LEAD-INDS A))
+  constraint ((EQUAL (FREE-INDS A N) (SET-DIFFERENCE-EQUAL (NINIT N) (LEAD-INDS A))))
+  guard T
+  measure NIL
+@@ FUNIT
+  formals (J N)
+  body (IF (ZP N) 'NIL (IF (ZP J) (CONS (F1) (FLISTN0 (BINARY-+ '-1 N))) (CONS (F0) (FUNIT (BINARY-+ '-1 J) (BINARY-+ '-1 N)))))
+  constraint ((EQUAL (FUNIT J N) (IF (ZP N) 'NIL (IF (ZP J) (CONS (F1) (FLISTN0 (BINARY-+ '-1 N))) (CONS (F0) (FUNIT (BINARY-+ '-1 J) (BINARY-+ '-1 N)))))))
+  guard T
+  measure (ACL2-COUNT J)
+@@ IBASIS
+  formals NIL
+  body (LIN-LIST (FIRSTN (IDIM) (EXTEND-KBASIS)))
+  constraint ((EQUAL (IBASIS) (LIN-LIST (FIRSTN (IDIM) (EXTEND-KBASIS)))))
+  guard T
+  measure NIL
+@@ ICOORDS
+  formals (X)
+  body (FIRSTN (IDIM) (VCOORDS (LIN-PREIMAGE X) (EXTEND-KBASIS)))
+  constraint ((EQUAL (ICOORDS X) (FIRSTN (IDIM) (VCOORDS (LIN-PREIMAGE X) (EXTEND-KBASIS)))))
+  guard T
+  measure NIL
+@@ ID-FMAT
+  formals (N)
+  body (ID-FMAT-AUX '0 N)
+  constraint ((EQUAL (ID-FMAT N) (ID-FMAT-AUX '0 N)))
+  guard T
+  measure NIL
+@@ ID-FMAT-AUX
+  formals (J N)
+  body (IF (IF (NATP J) (IF (NATP N) (< J N) 'NIL) 'NIL) (CONS (FUNIT J N) (ID-FMAT-AUX (BINARY-+ '1 J) N)) 'NIL)
+  constraint ((EQUAL (ID-FMAT-AUX J N) (IF (IF (NATP J) (IF (NATP N) (< J N) 'NIL) 'NIL) (CONS (FUNIT J N) (ID-FMAT-AUX (BINARY-+ '1 J) N)) 'NIL)))
+  guard T
+  measure (NFIX (BINARY-+ N (UNARY-- J)))
+@@ IDIM
+  formals NIL
+  body (BINARY-+ (VDIM) (UNARY-- (KDIM)))
+  constraint ((EQUAL (IDIM) (BINARY-+ (VDIM) (UNARY-- (KDIM)))))
+  guard T
+  measure NIL
+@@ ILISTNP
+  formals (X N)
+  body (IF (ZP N) (NULL X) (IF (CONSP X) (IF (IN-IMAGE-P (CAR X)) (ILISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))
+  constraint ((EQUAL (ILISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (IN-IMAGE-P (CAR X)) (ILISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ IN-IMAGE-P
+  formals (X)
+  body ((LAMBDA (P X) (IF (VP P) (EQUAL (LIN P) X) 'NIL)) (LIN-PREIMAGE X) X)
+  constraint ((EQUAL (IN-IMAGE-P X) ((LAMBDA (P X) (IF (VP P) (EQUAL (LIN P) X) 'NIL)) (LIN-PREIMAGE X) X)))
+  guard T
+  measure NIL
+@@ IN-KERNEL-P
+  formals (X)
+  body (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL)
+  constraint ((EQUAL (IN-KERNEL-P X) (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL)))
+  guard T
+  measure NIL
+@@ INDEX
+  formals (X L)
+  body (IF (CONSP L) (IF (EQUAL X (CAR L)) '0 (BINARY-+ '1 (INDEX X (CDR L)))) '0)
+  constraint ((EQUAL (INDEX X L) (IF (CONSP L) (IF (EQUAL X (CAR L)) '0 (BINARY-+ '1 (INDEX X (CDR L)))) '0)))
+  guard T
+  measure (ACL2-COUNT L)
+@@ INVERSE-MAT
+  formals (A)
+  body (ROW-REDUCE-MAT A)
+  constraint ((EQUAL (INVERSE-MAT A) (ROW-REDUCE-MAT A)))
+  guard T
+  measure NIL
+@@ KBASIS
+  formals NIL
+  body ((LAMBDA (AR) (KBASIS-AUX (FREE-INDS AR (VDIM)))) (ROW-REDUCE (TRANSPOSE-MAT (LIN-MAT))))
+  constraint ((EQUAL (KBASIS) ((LAMBDA (AR) (KBASIS-AUX (FREE-INDS AR (VDIM)))) (ROW-REDUCE (TRANSPOSE-MAT (LIN-MAT))))))
+  guard T
+  measure NIL
+@@ KBASIS-AUX
+  formals (F)
+  body (IF (CONSP F) (CONS (VCOMB (KBASIS-COORDS (CAR F)) (VBASIS0)) (KBASIS-AUX (CDR F))) 'NIL)
+  constraint ((EQUAL (KBASIS-AUX F) (IF (CONSP F) (CONS (VCOMB (KBASIS-COORDS (CAR F)) (VBASIS0)) (KBASIS-AUX (CDR F))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT F)
+@@ KBASIS-COORD
+  formals (I J)
+  body ((LAMBDA (AR I J) ((LAMBDA (L AR J I) (IF ((LAMBDA (X L) (RETURN-LAST 'ACL2::MBE1-RAW (ACL2::MEMBER-EQL-EXEC X L) (RETURN-LAST 'PROGN (ACL2::MEMBER-EQL-EXEC$GUARD-CHECK X L) (MEMBER-EQUAL X L)))) I L) (F- (ENTRY (INDEX I L) J AR)) (IF (= I J) (F1) (F0)))) (LEAD-INDS AR) AR J I)) (ROW-REDUCE (TRANSPOSE-MAT (LIN-MAT))) I J)
+  constraint ((EQUAL (KBASIS-COORD I J) ((LAMBDA (AR I J) ((LAMBDA (L AR J I) (IF ((LAMBDA (X L) (RETURN-LAST 'ACL2::MBE1-RAW (ACL2::MEMBER-EQL-EXEC X L) (RETURN-LAST 'PROGN (ACL2::MEMBER-EQL-EXEC$GUARD-CHECK X L) (MEMBER-EQUAL X L)))) I L) (F- (ENTRY (INDEX I L) J AR)) (IF (= I J) (F1) (F0)))) (LEAD-INDS AR) AR J I)) (ROW-REDUCE (TRANSPOSE-MAT (LIN-MAT))) I J)))
+  guard T
+  measure NIL
+@@ KBASIS-COORDS
+  formals (J)
+  body (KBASIS-COORDS-AUX (VDIM) J)
+  constraint ((EQUAL (KBASIS-COORDS J) (KBASIS-COORDS-AUX (VDIM) J)))
+  guard T
+  measure NIL
+@@ KBASIS-COORDS-AUX
+  formals (I J)
+  body (IF (POSP I) (BINARY-APPEND (KBASIS-COORDS-AUX (BINARY-+ '-1 I) J) (CONS (KBASIS-COORD (BINARY-+ '-1 I) J) 'NIL)) 'NIL)
+  constraint ((EQUAL (KBASIS-COORDS-AUX I J) (IF (POSP I) (BINARY-APPEND (KBASIS-COORDS-AUX (BINARY-+ '-1 I) J) (CONS (KBASIS-COORD (BINARY-+ '-1 I) J) 'NIL)) 'NIL)))
+  guard T
+  measure (ACL2-COUNT I)
+@@ KCOORDS
+  formals (X)
+  body ((LAMBDA (AR X) ((LAMBDA (F X) (KCOORDS-AUX X F)) (FREE-INDS AR (VDIM)) X)) (ROW-REDUCE (TRANSPOSE-MAT (LIN-MAT))) X)
+  constraint ((EQUAL (KCOORDS X) ((LAMBDA (AR X) ((LAMBDA (F X) (KCOORDS-AUX X F)) (FREE-INDS AR (VDIM)) X)) (ROW-REDUCE (TRANSPOSE-MAT (LIN-MAT))) X)))
+  guard T
+  measure NIL
+@@ KCOORDS-AUX
+  formals (X F)
+  body (IF (CONSP F) (CONS (NTH (CAR F) (VCOORDS0 X)) (KCOORDS-AUX X (CDR F))) 'NIL)
+  constraint ((EQUAL (KCOORDS-AUX X F) (IF (CONSP F) (CONS (NTH (CAR F) (VCOORDS0 X)) (KCOORDS-AUX X (CDR F))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT F)
+@@ KDIM
+  formals NIL
+  body (LEN (KBASIS))
+  constraint ((EQUAL (KDIM) (LEN (KBASIS))))
+  guard T
+  measure NIL
+@@ KLISTNP
+  formals (X N)
+  body (IF (ZP N) (NULL X) (IF (CONSP X) (IF (IN-KERNEL-P (CAR X)) (KLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))
+  constraint ((EQUAL (KLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (IN-KERNEL-P (CAR X)) (KLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ LEAD-INDS
+  formals (A)
+  body (IF (IF (CONSP A) (NOT (FLIST0P (CAR A))) 'NIL) (CONS (FIRST-NONZERO (CAR A)) (LEAD-INDS (CDR A))) 'NIL)
+  constraint ((EQUAL (LEAD-INDS A) (IF (IF (CONSP A) (NOT (FLIST0P (CAR A))) 'NIL) (CONS (FIRST-NONZERO (CAR A)) (LEAD-INDS (CDR A))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT A)
+@@ LIN
+  formals (ACL2::X1)
+  body NIL
+  constraint ((IMPLIES (VP X) (WP (LIN X))) (EQUAL (LIN (V0)) (W0)) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (LIN (V+ X Y)) (W+ (LIN X) (LIN Y)))) (IMPLIES (IF (FP C) (VP X) 'NIL) (EQUAL (LIN (V* C X)) (W* C (LIN X)))))
+  guard 'T
+  measure NIL
+@@ LIN-INJECTIVE-P
+  formals NIL
+  body (RETURN-LAST 'PROGN (ACL2::THROW-NONEXEC-ERROR 'LIN-INJECTIVE-P 'NIL) ((LAMBDA (X) (IMPLIES (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL) (EQUAL X (V0)))) (LIN-INJECTIVE-P-WITNESS)))
+  constraint ((EQUAL (LIN-INJECTIVE-P) ((LAMBDA (X) (IMPLIES (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL) (EQUAL X (V0)))) (LIN-INJECTIVE-P-WITNESS))) (IMPLIES (NOT (IMPLIES (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL) (EQUAL X (V0)))) (NOT (LIN-INJECTIVE-P))))
+  guard T
+  measure NIL
+@@ LIN-INJECTIVE-P-WITNESS
+  formals NIL
+  body NIL
+  constraint ((EQUAL (LIN-INJECTIVE-P) ((LAMBDA (X) (IMPLIES (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL) (EQUAL X (V0)))) (LIN-INJECTIVE-P-WITNESS))) (IMPLIES (NOT (IMPLIES (IF (VP X) (EQUAL (LIN X) (W0)) 'NIL) (EQUAL X (V0)))) (NOT (LIN-INJECTIVE-P))))
+  guard 'T
+  measure NIL
+@@ LIN-INV
+  formals (Y)
+  body (VCOMB (CAR (FMAT* (CONS (WCOORDS0 Y) 'NIL) (INVERSE-MAT (LIN-MAT)))) (VBASIS0))
+  constraint ((EQUAL (LIN-INV Y) (VCOMB (CAR (FMAT* (CONS (WCOORDS0 Y) 'NIL) (INVERSE-MAT (LIN-MAT)))) (VBASIS0))))
+  guard T
+  measure NIL
+@@ LIN-LIST
+  formals (L)
+  body (IF (CONSP L) (CONS (LIN (CAR L)) (LIN-LIST (CDR L))) 'NIL)
+  constraint ((EQUAL (LIN-LIST L) (IF (CONSP L) (CONS (LIN (CAR L)) (LIN-LIST (CDR L))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT L)
+@@ LIN-MAT
+  formals NIL
+  body (WCOORD-MAT (LIN-LIST (VBASIS0)))
+  constraint ((EQUAL (LIN-MAT) (WCOORD-MAT (LIN-LIST (VBASIS0)))))
+  guard T
+  measure NIL
+@@ LIN-PREIMAGE
+  formals (Y)
+  body NIL
+  constraint ((IMPLIES (IF (VP X) (EQUAL (LIN X) Y) 'NIL) ((LAMBDA (X Y) (IF (VP X) (EQUAL (LIN X) Y) 'NIL)) (LIN-PREIMAGE Y) Y)))
+  guard T
+  measure NIL
+@@ LIN-SURJECTIVE-P
+  formals NIL
+  body (RETURN-LAST 'PROGN (ACL2::THROW-NONEXEC-ERROR 'LIN-SURJECTIVE-P 'NIL) ((LAMBDA (Y) (IMPLIES (WP Y) (IF (VP (LIN-PREIMAGE Y)) (EQUAL (LIN (LIN-PREIMAGE Y)) Y) 'NIL))) (LIN-SURJECTIVE-P-WITNESS)))
+  constraint ((EQUAL (LIN-SURJECTIVE-P) ((LAMBDA (Y) (IMPLIES (WP Y) (IF (VP (LIN-PREIMAGE Y)) (EQUAL (LIN (LIN-PREIMAGE Y)) Y) 'NIL))) (LIN-SURJECTIVE-P-WITNESS))) (IMPLIES (NOT (IMPLIES (WP Y) (IF (VP (LIN-PREIMAGE Y)) (EQUAL (LIN (LIN-PREIMAGE Y)) Y) 'NIL))) (NOT (LIN-SURJECTIVE-P))))
+  guard T
+  measure NIL
+@@ LIN-SURJECTIVE-P-WITNESS
+  formals NIL
+  body NIL
+  constraint ((EQUAL (LIN-SURJECTIVE-P) ((LAMBDA (Y) (IMPLIES (WP Y) (IF (VP (LIN-PREIMAGE Y)) (EQUAL (LIN (LIN-PREIMAGE Y)) Y) 'NIL))) (LIN-SURJECTIVE-P-WITNESS))) (IMPLIES (NOT (IMPLIES (WP Y) (IF (VP (LIN-PREIMAGE Y)) (EQUAL (LIN (LIN-PREIMAGE Y)) Y) 'NIL))) (NOT (LIN-SURJECTIVE-P))))
+  guard 'T
+  measure NIL
+@@ NINIT
+  formals (N)
+  body (IF (ZP N) 'NIL (BINARY-APPEND (NINIT (BINARY-+ '-1 N)) (CONS (BINARY-+ '-1 N) 'NIL)))
+  constraint ((EQUAL (NINIT N) (IF (ZP N) 'NIL (BINARY-APPEND (NINIT (BINARY-+ '-1 N)) (CONS (BINARY-+ '-1 N) 'NIL)))))
+  guard T
+  measure (ACL2-COUNT N)
+@@ NUM-NONZERO-ROWS
+  formals (A)
+  body (IF (CONSP A) (IF (FLIST0P (CAR A)) '0 (BINARY-+ '1 (NUM-NONZERO-ROWS (CDR A)))) '0)
+  constraint ((EQUAL (NUM-NONZERO-ROWS A) (IF (CONSP A) (IF (FLIST0P (CAR A)) '0 (BINARY-+ '1 (NUM-NONZERO-ROWS (CDR A)))) '0)))
+  guard T
+  measure (ACL2-COUNT A)
+@@ REPLACE-ROW
+  formals (A K R)
+  body (IF (ZP K) (CONS R (CDR A)) (CONS (CAR A) (REPLACE-ROW (CDR A) (BINARY-+ '-1 K) R)))
+  constraint ((EQUAL (REPLACE-ROW A K R) (IF (ZP K) (CONS R (CDR A)) (CONS (CAR A) (REPLACE-ROW (CDR A) (BINARY-+ '-1 K) R)))))
+  guard T
+  measure (ACL2-COUNT K)
+@@ ROW-OPS-MAT
+  formals (OPS M)
+  body (IF (CONSP OPS) (FMAT* (ROW-OPS-MAT (CDR OPS) M) (ELEM-MAT (CAR OPS) M)) (ID-FMAT M))
+  constraint ((EQUAL (ROW-OPS-MAT OPS M) (IF (CONSP OPS) (FMAT* (ROW-OPS-MAT (CDR OPS) M) (ELEM-MAT (CAR OPS) M)) (ID-FMAT M))))
+  guard T
+  measure (ACL2-COUNT OPS)
+@@ ROW-RANK
+  formals (A)
+  body (NUM-NONZERO-ROWS (ROW-REDUCE A))
+  constraint ((EQUAL (ROW-RANK A) (NUM-NONZERO-ROWS (ROW-REDUCE A))))
+  guard T
+  measure NIL
+@@ ROW-REDUCE
+  formals (A)
+  body (ROW-REDUCE-AUX A (LEN A) '0)
+  constraint ((EQUAL (ROW-REDUCE A) (ROW-REDUCE-AUX A (LEN A) '0)))
+  guard T
+  measure NIL
+@@ ROW-REDUCE-AUX
+  formals (A M K)
+  body ((LAMBDA (I A M K) (IF (IF (NATP K) (IF (NATP M) (IF (< K M) I 'NIL) 'NIL) 'NIL) (ROW-REDUCE-AUX (ROW-REDUCE-STEP A M K I (FIRST-NONZERO (NTH I A))) M (BINARY-+ '1 K)) A)) (ROW-WITH-NONZERO-AT-LEAST-INDEX A M K) A M K)
+  constraint ((EQUAL (ROW-REDUCE-AUX A M K) ((LAMBDA (I A M K) (IF (IF (NATP K) (IF (NATP M) (IF (< K M) I 'NIL) 'NIL) 'NIL) (ROW-REDUCE-AUX (ROW-REDUCE-STEP A M K I (FIRST-NONZERO (NTH I A))) M (BINARY-+ '1 K)) A)) (ROW-WITH-NONZERO-AT-LEAST-INDEX A M K) A M K)))
+  guard T
+  measure (NFIX (BINARY-+ M (UNARY-- K)))
+@@ ROW-REDUCE-AUX-OPS
+  formals (A M K)
+  body ((LAMBDA (I K M A) ((LAMBDA (J A I M K) (IF (IF (NATP K) (IF (NATP M) (IF (< K M) I 'NIL) 'NIL) 'NIL) (BINARY-APPEND (ROW-REDUCE-STEP-OPS A M K I J) (ROW-REDUCE-AUX-OPS (ROW-REDUCE-STEP A M K I J) M (BINARY-+ '1 K))) 'NIL)) (IF I (FIRST-NONZERO (NTH I A)) 'NIL) A I M K)) (ROW-WITH-NONZERO-AT-LEAST-INDEX A M K) K M A)
+  constraint ((EQUAL (ROW-REDUCE-AUX-OPS A M K) ((LAMBDA (I K M A) ((LAMBDA (J A I M K) (IF (IF (NATP K) (IF (NATP M) (IF (< K M) I 'NIL) 'NIL) 'NIL) (BINARY-APPEND (ROW-REDUCE-STEP-OPS A M K I J) (ROW-REDUCE-AUX-OPS (ROW-REDUCE-STEP A M K I J) M (BINARY-+ '1 K))) 'NIL)) (IF I (FIRST-NONZERO (NTH I A)) 'NIL) A I M K)) (ROW-WITH-NONZERO-AT-LEAST-INDEX A M K) K M A)))
+  guard T
+  measure (NFIX (BINARY-+ M (UNARY-- K)))
+@@ ROW-REDUCE-MAT
+  formals (A)
+  body (ROW-OPS-MAT (ROW-REDUCE-OPS A) (LEN A))
+  constraint ((EQUAL (ROW-REDUCE-MAT A) (ROW-OPS-MAT (ROW-REDUCE-OPS A) (LEN A))))
+  guard T
+  measure NIL
+@@ ROW-REDUCE-OPS
+  formals (A)
+  body (ROW-REDUCE-AUX-OPS A (LEN A) '0)
+  constraint ((EQUAL (ROW-REDUCE-OPS A) (ROW-REDUCE-AUX-OPS A (LEN A) '0)))
+  guard T
+  measure NIL
+@@ ROW-REDUCE-STEP
+  formals (A M K I J)
+  body (CLEAR-COLUMN (ERO3 (ERO1 A (F/ (NTH J (NTH I A))) I) I K) K J M)
+  constraint ((EQUAL (ROW-REDUCE-STEP A M K I J) (CLEAR-COLUMN (ERO3 (ERO1 A (F/ (NTH J (NTH I A))) I) I K) K J M)))
+  guard T
+  measure NIL
+@@ ROW-REDUCE-STEP-OPS
+  formals (A M K I J)
+  body (CONS (CONS '1 (CONS (F/ (NTH J (NTH I A))) (CONS I 'NIL))) (CONS (CONS '3 (CONS I (CONS K 'NIL))) (CLEAR-COLUMN-OPS (ERO3 (ERO1 A (F/ (NTH J (NTH I A))) I) I K) K J M)))
+  constraint ((EQUAL (ROW-REDUCE-STEP-OPS A M K I J) (CONS (CONS '1 (CONS (F/ (NTH J (NTH I A))) (CONS I 'NIL))) (CONS (CONS '3 (CONS I (CONS K 'NIL))) (CLEAR-COLUMN-OPS (ERO3 (ERO1 A (F/ (NTH J (NTH I A))) I) I K) K J M)))))
+  guard T
+  measure NIL
+@@ ROW-WITH-NONZERO-AT-LEAST-INDEX
+  formals (A M K)
+  body (IF (IF (NATP K) (IF (NATP M) (< K M) 'NIL) 'NIL) ((LAMBDA (I A M) (IF (IF (FLIST0P (NTH (BINARY-+ '-1 M) A)) (FLIST0P (NTH (BINARY-+ '-1 M) A)) (IF I (NOT (< (FIRST-NONZERO (NTH (BINARY-+ '-1 M) A)) (FIRST-NONZERO (NTH I A)))) 'NIL)) I (BINARY-+ '-1 M))) (ROW-WITH-NONZERO-AT-LEAST-INDEX A (BINARY-+ '-1 M) K) A M) 'NIL)
+  constraint ((EQUAL (ROW-WITH-NONZERO-AT-LEAST-INDEX A M K) (IF (IF (NATP K) (IF (NATP M) (< K M) 'NIL) 'NIL) ((LAMBDA (I A M) (IF (IF (FLIST0P (NTH (BINARY-+ '-1 M) A)) (FLIST0P (NTH (BINARY-+ '-1 M) A)) (IF I (NOT (< (FIRST-NONZERO (NTH (BINARY-+ '-1 M) A)) (FIRST-NONZERO (NTH I A)))) 'NIL)) I (BINARY-+ '-1 M))) (ROW-WITH-NONZERO-AT-LEAST-INDEX A (BINARY-+ '-1 M) K) A M) 'NIL)))
+  guard T
+  measure (ACL2-COUNT M)
+@@ SBASIS0
+  formals NIL
+  body (SBASIS0-AUX 'NIL)
+  constraint ((EQUAL (SBASIS0) (SBASIS0-AUX 'NIL)))
+  guard T
+  measure NIL
+@@ SBASIS0-AUX
+  formals (L)
+  body ((LAMBDA (X L) (IF (IF (SLISTNP L (LEN L)) (IF (SP X) (VINDEPP (CONS X L)) 'NIL) 'NIL) (SBASIS0-AUX (CONS X L)) L)) (SUNSPANNED L) L)
+  constraint ((EQUAL (SBASIS0-AUX L) ((LAMBDA (X L) (IF (IF (SLISTNP L (LEN L)) (IF (SP X) (VINDEPP (CONS X L)) 'NIL) 'NIL) (SBASIS0-AUX (CONS X L)) L)) (SUNSPANNED L) L)))
+  guard T
+  measure (NFIX (BINARY-+ (VDIM) (UNARY-- (LEN L))))
+@@ SBASIS1
+  formals NIL
+  body NIL
+  constraint ((EQUAL (SDIM1) (LEN (SBASIS1))) (SLISTNP (SBASIS1) (SDIM1)) (IMPLIES (IF (POSP (SDIM)) (SP X) 'NIL) (FLISTNP (SCOORDS1 X) (SDIM1))) (IMPLIES (IF (POSP (SDIM)) (SP X) 'NIL) (EQUAL (VCOMB (SCOORDS1 X) (SBASIS1)) X)) (VINDEPP (SBASIS1)))
+  guard 'T
+  measure NIL
+@@ SCOORDS0
+  formals (X)
+  body (VCOORDS X (SBASIS0))
+  constraint ((EQUAL (SCOORDS0 X) (VCOORDS X (SBASIS0))))
+  guard T
+  measure NIL
+@@ SCOORDS1
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (SDIM1) (LEN (SBASIS1))) (SLISTNP (SBASIS1) (SDIM1)) (IMPLIES (IF (POSP (SDIM)) (SP X) 'NIL) (FLISTNP (SCOORDS1 X) (SDIM1))) (IMPLIES (IF (POSP (SDIM)) (SP X) 'NIL) (EQUAL (VCOMB (SCOORDS1 X) (SBASIS1)) X)) (VINDEPP (SBASIS1)))
+  guard 'T
+  measure NIL
+@@ SDIM
+  formals NIL
+  body (LEN (SBASIS0))
+  constraint ((EQUAL (SDIM) (LEN (SBASIS0))))
+  guard T
+  measure NIL
+@@ SDIM1
+  formals NIL
+  body (LEN (SBASIS1))
+  constraint ((EQUAL (SDIM1) (LEN (SBASIS1))) (SLISTNP (SBASIS1) (SDIM1)) (IMPLIES (IF (POSP (SDIM)) (SP X) 'NIL) (FLISTNP (SCOORDS1 X) (SDIM1))) (IMPLIES (IF (POSP (SDIM)) (SP X) 'NIL) (EQUAL (VCOMB (SCOORDS1 X) (SBASIS1)) X)) (VINDEPP (SBASIS1)))
+  guard T
+  measure NIL
+@@ SLISTNP
+  formals (X N)
+  body (IF (ZP N) (NULL X) (IF (CONSP X) (IF (SP (CAR X)) (SLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))
+  constraint ((EQUAL (SLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (SP (CAR X)) (SLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ SP
+  formals (ACL2::X1)
+  body NIL
+  constraint ((IMPLIES (SP X) (VP X)) (SP (V0)) (IMPLIES (SP X) (SP (V- X))) (IMPLIES (IF (SP X) (SP Y) 'NIL) (SP (V+ X Y))) (IMPLIES (IF (FP C) (SP X) 'NIL) (SP (V* C X))))
+  guard 'T
+  measure NIL
+@@ SUNSPANNED
+  formals (L)
+  body NIL
+  constraint ((IMPLIES (IF (SP X) (VINDEPP (CONS X L)) 'NIL) ((LAMBDA (X L) (IF (SP X) (VINDEPP (CONS X L)) 'NIL)) (SUNSPANNED L) L)))
+  guard T
+  measure NIL
+@@ TRANSPOSE-MAT
+  formals (A)
+  body (TRANSPOSE-MAT-AUX A '0 (LEN (CAR A)))
+  constraint ((EQUAL (TRANSPOSE-MAT A) (TRANSPOSE-MAT-AUX A '0 (LEN (CAR A)))))
+  guard T
+  measure NIL
+@@ TRANSPOSE-MAT-AUX
+  formals (A J N)
+  body (IF (IF (NATP J) (IF (NATP N) (< J N) 'NIL) 'NIL) (CONS (COL J A) (TRANSPOSE-MAT-AUX A (BINARY-+ '1 J) N)) 'NIL)
+  constraint ((EQUAL (TRANSPOSE-MAT-AUX A J N) (IF (IF (NATP J) (IF (NATP N) (< J N) 'NIL) 'NIL) (CONS (COL J A) (TRANSPOSE-MAT-AUX A (BINARY-+ '1 J) N)) 'NIL)))
+  guard T
+  measure (NFIX (BINARY-+ N (UNARY-- J)))
+@@ V*
+  formals (ACL2::X1 ACL2::X2)
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ V+
+  formals (ACL2::X1 ACL2::X2)
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ V-
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ V0
+  formals NIL
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ VBASIS0
+  formals NIL
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ VBASISP
+  formals (L)
+  body (IF (VLISTNP L (VDIM)) (VINDEPP L) 'NIL)
+  constraint ((EQUAL (VBASISP L) (IF (VLISTNP L (VDIM)) (VINDEPP L) 'NIL)))
+  guard T
+  measure NIL
+@@ VCOMB
+  formals (FLIST VLIST)
+  body (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT FLIST)
+@@ VCOORD-MAT
+  formals (L)
+  body (IF (CONSP L) (CONS (VCOORDS0 (CAR L)) (VCOORD-MAT (CDR L))) 'NIL)
+  constraint ((EQUAL (VCOORD-MAT L) (IF (CONSP L) (CONS (VCOORDS0 (CAR L)) (VCOORD-MAT (CDR L))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT L)
+@@ VCOORDS
+  formals (X L)
+  body (IF (NULL L) 'NIL ((LAMBDA (C) (FLIST-SCALAR-MUL (F- (F/ (CAR C))) (CDR C))) (VDEP-COEFFS (CONS X L))))
+  constraint ((EQUAL (VCOORDS X L) (IF (NULL L) 'NIL ((LAMBDA (C) (FLIST-SCALAR-MUL (F- (F/ (CAR C))) (CDR C))) (VDEP-COEFFS (CONS X L))))))
+  guard T
+  measure NIL
+@@ VCOORDS0
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ VDEP-COEFFS
+  formals (L)
+  body (NTH (BINARY-+ '-1 (LEN L)) (ROW-REDUCE-MAT (VCOORD-MAT L)))
+  constraint ((EQUAL (VDEP-COEFFS L) (NTH (BINARY-+ '-1 (LEN L)) (ROW-REDUCE-MAT (VCOORD-MAT L)))))
+  guard T
+  measure NIL
+@@ VDEPP
+  formals (L)
+  body (NOT (VINDEPP L))
+  constraint ((EQUAL (VDEPP L) (NOT (VINDEPP L))))
+  guard T
+  measure NIL
+@@ VDIM
+  formals NIL
+  body (LEN (VBASIS0))
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure NIL
+@@ VINDEPP
+  formals (L)
+  body (IF (NULL L) (NULL L) (EQUAL (ROW-RANK (VCOORD-MAT L)) (LEN L)))
+  constraint ((EQUAL (VINDEPP L) (IF (NULL L) (NULL L) (EQUAL (ROW-RANK (VCOORD-MAT L)) (LEN L)))))
+  guard T
+  measure NIL
+@@ VLISTNP
+  formals (X N)
+  body (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ VP
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (VCOMB FLIST VLIST) (IF (CONSP FLIST) (V+ (V* (CAR FLIST) (CAR VLIST)) (VCOMB (CDR FLIST) (CDR VLIST))) (V0))) (EQUAL (VDIM) (LEN (VBASIS0))) (VP (V0)) (IMPLIES (VP X) (VP (V- X))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (VP (V+ X Y))) (IMPLIES (IF (VP X) (VP Y) 'NIL) (EQUAL (V+ X Y) (V+ Y X))) (IMPLIES (IF (VP X) (IF (VP Y) (VP Z) 'NIL) 'NIL) (EQUAL (V+ X (V+ Y Z)) (V+ (V+ X Y) Z))) (IMPLIES (VP X) (EQUAL (V+ X (V0)) X)) (IMPLIES (VP X) (EQUAL (V+ X (V- X)) (V0))) (IMPLIES (IF (FP C) (VP X) 'NIL) (VP (V* C X))) (IMPLIES (VP X) (EQUAL (V* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V* C (V* D X)) (V* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (VP X) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* D X)) (V* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (VP X) (VP Y) 'NIL) 'NIL) (EQUAL (V+ (V* C X) (V* C Y)) (V* C (V+ X Y)))) (POSP (VDIM)) (VLISTNP (VBASIS0) (VDIM)) (IMPLIES (VP X) (FLISTNP (VCOORDS0 X) (VDIM))) (IMPLIES (VP X) (EQUAL (VCOMB (VCOORDS0 X) (VBASIS0)) X)) (IMPLIES (IF (FLISTNP C (VDIM)) (EQUAL (VCOMB C (VBASIS0)) (V0)) 'NIL) (EQUAL (FLISTN0 (VDIM)) C)) (EQUAL (VLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (VP (CAR X)) (VLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ VUNSPANNED
+  formals (L)
+  body (NTH (CAR (FREE-INDS (ROW-REDUCE (VCOORD-MAT L)) (VDIM))) (VBASIS0))
+  constraint ((EQUAL (VUNSPANNED L) (NTH (CAR (FREE-INDS (ROW-REDUCE (VCOORD-MAT L)) (VDIM))) (VBASIS0))))
+  guard T
+  measure NIL
+@@ W*
+  formals (ACL2::X1 ACL2::X2)
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ W+
+  formals (ACL2::X1 ACL2::X2)
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ W-
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ W0
+  formals NIL
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ WBASIS0
+  formals NIL
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ WCOMB
+  formals (FLIST WLIST)
+  body (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT FLIST)
+@@ WCOORD-MAT
+  formals (L)
+  body (IF (CONSP L) (CONS (WCOORDS0 (CAR L)) (WCOORD-MAT (CDR L))) 'NIL)
+  constraint ((EQUAL (WCOORD-MAT L) (IF (CONSP L) (CONS (WCOORDS0 (CAR L)) (WCOORD-MAT (CDR L))) 'NIL)))
+  guard T
+  measure (ACL2-COUNT L)
+@@ WCOORDS0
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+@@ WDIM
+  formals NIL
+  body (LEN (WBASIS0))
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure NIL
+@@ WINDEPP
+  formals (L)
+  body (IF (NULL L) (NULL L) (EQUAL (ROW-RANK (WCOORD-MAT L)) (LEN L)))
+  constraint ((EQUAL (WINDEPP L) (IF (NULL L) (NULL L) (EQUAL (ROW-RANK (WCOORD-MAT L)) (LEN L)))))
+  guard T
+  measure NIL
+@@ WLISTNP
+  formals (X N)
+  body (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard T
+  measure (ACL2-COUNT X)
+@@ WP
+  formals (ACL2::X1)
+  body NIL
+  constraint ((EQUAL (WCOMB FLIST WLIST) (IF (CONSP FLIST) (W+ (W* (CAR FLIST) (CAR WLIST)) (WCOMB (CDR FLIST) (CDR WLIST))) (W0))) (EQUAL (WDIM) (LEN (WBASIS0))) (WP (W0)) (IMPLIES (WP X) (WP (W- X))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (WP (W+ X Y))) (IMPLIES (IF (WP X) (WP Y) 'NIL) (EQUAL (W+ X Y) (W+ Y X))) (IMPLIES (IF (WP X) (IF (WP Y) (WP Z) 'NIL) 'NIL) (EQUAL (W+ X (W+ Y Z)) (W+ (W+ X Y) Z))) (IMPLIES (WP X) (EQUAL (W+ X (W0)) X)) (IMPLIES (WP X) (EQUAL (W+ X (W- X)) (W0))) (IMPLIES (IF (FP C) (WP X) 'NIL) (WP (W* C X))) (IMPLIES (WP X) (EQUAL (W* (F1) X) X)) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W* C (W* D X)) (W* (F* C D) X))) (IMPLIES (IF (FP C) (IF (FP D) (WP X) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* D X)) (W* (F+ C D) X))) (IMPLIES (IF (FP C) (IF (WP X) (WP Y) 'NIL) 'NIL) (EQUAL (W+ (W* C X) (W* C Y)) (W* C (W+ X Y)))) (POSP (WDIM)) (WLISTNP (WBASIS0) (WDIM)) (IMPLIES (WP X) (FLISTNP (WCOORDS0 X) (WDIM))) (IMPLIES (WP X) (EQUAL (WCOMB (WCOORDS0 X) (WBASIS0)) X)) (IMPLIES (IF (FLISTNP C (WDIM)) (EQUAL (WCOMB C (WBASIS0)) (W0)) 'NIL) (EQUAL (FLISTN0 (WDIM)) C)) (EQUAL (WLISTNP X N) (IF (ZP N) (NULL X) (IF (CONSP X) (IF (WP (CAR X)) (WLISTNP (CDR X) (BINARY-+ '-1 N)) 'NIL) 'NIL))))
+  guard 'T
+  measure NIL
+NIL

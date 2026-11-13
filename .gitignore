@@ -1,0 +1,9 @@
+*.cert
+*.cert.out.tmp
+*.fasl
+*.lx64fsl
+*.port
+*.pcert0
+*.pcert1
+*.acl2x
+.DS_Store

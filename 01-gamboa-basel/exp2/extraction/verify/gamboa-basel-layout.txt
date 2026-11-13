@@ -1,0 +1,842 @@
+    An Alternative Proof in ACL2(r) of Euler’s Solution to the
+                         Basel Problem
+
+                                                Ruben Gamboa
+                                              University of Wyoming
+                                                Laramie, Wyoming
+                                                & Kestrel Institute
+                                               Palo Alto, California
+                                                ruben@uwyo.edu
+
+
+
+      Leonhard Euler showed in 1735 that the sum of the squares of the reciprocals of the positive integers
+                   2
+      is exactly π6 . The problem was originally posed in 1650, but it eluded even the greatest mathematical
+      minds of the time, including the Bernoullis, Leibniz, Stirling, and de Moivre. When a young Euler
+      solved this problem, his reputation as a top mathematician was ensured. In this paper, we present a
+      proof in ACL2(r) of this remarkable result. Rather than formalizing Euler’s original proof, we use a
+      more modern argument that is more suitable to the logic of ACL2(r). This proof is an entirely alge-
+      braic version of the “Lighthouse Proof” which uses a geometric argument to motivate the appearance
+      of π in the final formula.
+
+
+1    Introduction
+                             1
+The harmonic series ∑∞   i=1 i is well known to be divergent, but what if the terms are squared? That is,
+            1
+does ∑∞ i=1 i2 converge, and if so, what does it converge to?
+    The convergence of this series is not difficult to establish. The series has only positive terms, so it is
+increasing. Moreover, it is not too difficult to find an upper bound for it. In Sec. 3, we show that 2 is a
+suitable upper bound. Those two facts are enough to guarantee convergence.
+    But the actual limit is much more difficult to find. Euler was the first mathematician to find this limit,
+and he did so in 1734, nearly 100 years after the problem was posed. At the time, Euler was living in the
+city of Basel, Switzerland, as did the Bernoullis, who had tried and failed to find this limit. Hence the
+problem of finding this limit became known as the “Basel Problem.”
+                                                      2
+    What Euler found is that the sum converges to π6 , which is remarkable since the sum itself is a simple
+recursive function entirely in the language of ACL2, but the right-hand side introduces the irrational
+number π, which (being irrational) is entirely outside the language of ACL2. Hence, ACL2(r) is required
+even to state the theorem.
+    The ACL2(r) variant of ACL2 introduces the irrational numbers into ACL2. It is based on non-
+standard analysis, which provides a rigorous framework for reasoning about notions such as “nearly
+zero,” “infinitely large,” and “almost equal” (i-small, i-large, and i-close in ACL2(r)). Sec. 2
+provides a brief overview of the concepts from non-standard analysis that are relevant to this paper.
+Note that in the sequel we will use the terms ACL2 and ACL2(r) interchangeably, but that this entire
+formalization must be carried out in ACL2(r).
+                                                                       1     π2
+    In this paper we formalize in ACL2 a modern proof of ∑∞        i=1 i2 = 6 that is based not on Euler’s
+original approach but on more geometric ideas [1]. We note that this limit is Problem #14 in Freek
+Wiedijk’s list “Formalizing 100 Theorems” [7].
+
+                                                                             © Gamboa
+A. Coglio and S. Srinivasan (Eds.): 20th ACL2 Workshop (ACL2-2026)
+                                                                             This work is licensed under the
+EPTCS ??, 2026, pp. 1–14, doi:10.4204/EPTCS.??.??
+                                                                             Creative Commons Attribution License.
+2                                                                                                  Basel Problem
+
+
+    Sec. 3 establishes some important results about the series itself, including its upper bound and the
+important result that the partial sums are close to each other for large values of n. It is worth noting
+that the upper bound follows by considering the integral version of the sum and using induction, which
+is well-suited for ACL2. Perhaps surprisingly, the results in this section are key lemmas needed in the
+proof of Stirling’s approximation to the factorial function, which is presented in a companion paper [3].
+    Sec. 4 introduces the key lemma in the proof. The lemma states that a particular sum involving
+powers of the complex roots of unity is equal to 22n−3 . Although it is not immediately obvious why this
+sum is related to the Basel series, it is a crucial step in the proof.
+    Sec. 5 shows how the key lemma is used to establish the sum of a real-valued series that is closely
+related to the Basel series. This series adds the squares of the reciprocals of the odd integers, so it appears
+to be roughly half of the original series. In fact, it is not exactly half, but 3/4 of the original series, as
+shown in Sec. 6. That section also shows how to combine all the pieces developed thus far to show that
+                                           2
+the limit of the Basel series is exactly π6 .
+
+
+2    Preliminaries
+Non-standard analysis is a rigorous framework for reasoning about analysis, using the intuitive notions of
+“infinitely small” and “infinitely large” numbers that Newton and Leibniz used in their original develop-
+ment of calculus. This formalization of analysis is better suited to ACL2 than Cauchy and Weierstrass’s
+ε-δ approach, because it replaces quantifier reasoning (e.g., ∀ε > 0, ∃δ > 0 such that . . . ), with simpler
+arguments that rely only on algebra and induction. There are a number of excellent introductions to
+non-standard analysis, including [6, 5]. This brief section provides a high-level overview of the concepts
+that are most relevant to this paper.
+     The non-standard real line looks just like the normal real line, but some real numbers are called
+“standard.” All the real numbers we’ve ever encountered in “normal” mathematics, e.g., 0, 1, π, e, etc.,
+are standard. But there are also non-standard numbers, some of which are larger than all the standard
+positive numbers, and some of which are positive, yet smaller than all the standard positive numbers.
+These small numbers are sometimes called “infinitesimals” and are suggestive of the ε in the ε-δ defini-
+tion of limits. All numbers that are limited, that is bounded by some standard number, can be written as
+x = ∗ x + ε, where ∗ x is a standard number called the (unique) standard part of x, and ε is an infinitesimal.
+The standard part of a standard number is the number itself, and the standard part function obeys nice
+algebraic properties, such as ∗ (x + y) = ∗ x + ∗ y and x ≤ y ⇒ ∗ x ≤ ∗ y. However, ∗ (x · y) = ∗ x · ∗ y only holds
+if x and y are limited.
+     A sequence a1 , a2 , a3 , . . . of real numbers converges to a limit L if ∗ an = L for all infinitely large n.
+Equivalently, the sequence converges if ai is limited and ai ≈ a j for all infinitely large i and j. Once
+the basic concept of limit is established, the rest of calculus follows. I.e., the property of continuity,
+derivatives, and integrals are all defined in terms of limits, just as in the ε-δ approach.
+
+
+3    Exploring the Series
+We begin by defining the function ∑ni=0 i12 in ACL2. Traditionally, recursive definitions over the natural
+numbers start at n and work down to 0. However, we chose to follow the more traditional mathematical
+direction of starting at 1 and ending at n, because that lines up better with the mathematical presentation
+of the problem.
+Gamboa                                                                                                  3
+
+
+( defun basel-series ( i n )
+   ( declare ( xargs : measure ( nfix (- n i ))))
+   ( if ( zp (- n i ))
+        0
+        (+ ( expt i -2)
+            ( basel-series (1+ i ) n ))))
+
+Aside: note that the function computes the Basel series from i to n − 1, where 1 ≤ i < n. This does not
+change anything, but it keeps the notation simpler when equating sums to integrals as we’ll do next.
+    In order to estimate the value of this series, we will use the corresponding integral, which is much
+easier to compute. Calculating integrals in ACL2 is tedious, but using the facts that x12 and − 1x are
+continuous for positive x and the fundamental theorem of calculus, we can introduce the integral from a
+to b of x12 in ACL2 as
+                                                       Z b
+                                                            1        1 1
+                               (int-expt-2 a b) ≜            2
+                                                               dx = − .
+                                                         a x         a b
+    We proceed by breaking down the integral into unit integrals with limits of i and i + 1 where i is an
+integer. Since x12 is a decreasing function for positive x, we can prove in ACL2 that for i ≥ 1,
+                                                       Z i+1
+                                              1                1        1
+                                                   ≤               dx ≤ 2 .
+                                          (i + 1)2        i    x 2      i
+
+Consequently, for i ≥ 2,
+                                         Z i+1                  Z i
+                                                 1        1          1
+                                                   2
+                                                     dx ≤ 2 ≤          2
+                                                                         dx.
+                                          i      x        i      i−1 x
+
+And adding up these terms gives
+
+                                 n−1 Z i+1             n−1
+                                              1            1 n−1 i 1
+                                                                           Z
+                                 ∑              2
+                                                  dx ≤ ∑ 2 ≤ ∑         2
+                                                                         dx.
+                                 i=2 i        x        i=2 i i=2 i−1 x
+
+The summation of the integrals can be defined in ACL2 easily. Then, using induction, it is straightforward
+to show that for i ≥ 1,
+
+                                              n−1 Z k+1               Z n
+                                                          1                 1
+            (sum-int-expt-2 i n) ≜ ∑                         dx =              dx ≜ (int-expt-2 i n).
+                                              k=i k       x2           i    x2
+
+It follows that
+                                     Z n         n−1            Z n−1
+                                        1            1                      1
+                                          2
+                                            dx ≤ ∑     2
+                                                         ≤                     dx.
+                                      2 x        i=2 i            1         x2
+
+Evaluating the last integral gives
+
+                       n−1         n−1         n−1 1
+                            1          1                          1
+                                                      Z
+                        ∑ i2 = 1 + ∑ i2 ≤ 1 + 1 x2 dx = 1 + 1 − n − 1 ≤ 2.
+                        i=1        i=2
+
+And this is summarized in the following ACL2 theorem, which provides a gross bound on the value of
+the Basel series:
+4                                                                                                Basel Problem
+
+
+( defthmd b a s e l - s e r i e s - g r o s s - b o u n d s
+      ( implies ( and ( posp i )
+                            ( posp n )
+                            ( <= i n ))
+                  ( and ( <= 0 ( basel-series i n ))
+                            ( <= ( basel-series i n ) 2)))
+   : hints ...)
+
+    An important consequence of this result is that the series is limited in the sense of non-standard
+analysis. That’s one of two criteria for a series to be convergent, so we now turn our attention to the
+second criterion, namely that when m and n are large integers, the series result in close values. That is,
+                                                        m           n
+                                                             1           1
+                                                        ∑ i2 ≈ ∑ i2 .
+                                                       i=1         i=1
+
+We emphasize here that the words “small,” “large,” “limited,” and “close” are all used in the precise,
+technical sense of non-standard analysis.
+    To prove this result, we start by splitting the series into two parts. For ease of presentation, suppose
+that m ≤ n. Then we can write
+                                           n        m         n
+                                              1        1          1
+                                         ∑ i2 = ∑ i2 + ∑ i2 .
+                                         i=1       i=1      i=m+1
+
+As before, we use the integral equivalent to get a bound on the last series:
+                                                n            Z n
+                                                   1            1       1 1
+                                               ∑ i2 ≤         m x
+                                                                  2
+                                                                    dx = − .
+                                                                        m n
+                                             i=m+1
+
+
+At this point, we simply observe that since m and n are large, m1 and n1 are small, so m1 − 1n is small.
+Therefore, ∑ni=m+1 i12 is also small. This establishes the second main result of this section:
+( defthmd b a s e l - s e r i e s - c l o s e - f o r - l a r g e - v a l u e s
+       ( implies ( and ( posp m )
+                              ( posp n )
+                              ( posp i )
+                              ( <= i m )
+                              ( <= i n )
+                              ( i-large m )
+                              ( i-large n ))
+                    ( i-close ( basel-series i m )
+                                      ( basel-series i n )))
+   : hints ...)
+
+Thus, both criteria for convergence are satisfied, and we can now conclude that the Basel series converges
+                                                                                                          2
+to some limit that is at most 2. We will show in the remainder of this paper that this limit is exactly π6 .
+
+
+4     The Key Lemma
+The “Lighthouse Proof”, which we follow in this paper, uses properties of the powers of the complex
+roots of unity. Let ζm be the mth complex root of unity, and ζmk be the kth power of ζm ; i.e., ζmk = (e2πi/m )k .
+Gamboa                                                                                                 5
+
+
+
+
+                       Figure 1: Relevant powers of the roots of unity for n = 3.
+
+
+For a fixed value of n, we will consider the following sum:
+                                               2n−1
+                                                          1
+                                         ωn ≜ ∑                    2
+                                                                                                      (1)
+                                               k=1    1 − ζ22k−1
+                                                             n+1
+
+
+This summation is a function of n, and it adds some but not all the powers of unity. For a fixed value of
+n, ωn adds up powers of ζ2n+1 , but only the odd powers with positive imaginary parts. As Fig. 1 shows,
+                                           1 , ζ 3 , ζ 5 , and ζ 7 .
+the relevant roots of unity for n = 3 are ζ16   16 16           16
+    We define ωn in ACL2 in steps. First, we define the function (zeta n) as the nth complex root of
+unity:
+( defun zeta ( n )
+   ( acl2-exp (* 2 ( acl2-pi ) # c (0 1) (/ n ))))
+Then we define the term inside the summation in Eq. 1 as (omega-term k n):
+( defun omega-term ( k n )
+   (/ ( expt ( norm-2c (- 1 ( expt ( zeta ( expt 2 (1+ n )))
+                                   (- (* 2 k ) 1))))
+             2)))
+It is worth noting that these definitions use both acl2-exp and expt. The former returns the exponential
+function of a real or complex number, while the latter returns the integer power of a number. We need
+both to capture the integer powers of the complex roots of unity.
+     Finally, we define the function
+                                                               m
+                                                                           1
+                            (omega-series k0 m n) ≜ ∑                               2
+                                                                                        .
+                                                              k=k0     1 − ζ22k−1
+                                                                              n+1
+
+
+  The key lemma of the Lighthouse Proof is that ωn is equal to 22n−3 for all n ≥ 1. We prove this in
+ACL2 by induction on n. The base case, when n = 1, is straightforward, since both sides of the equation
+6                                                                                          Basel Problem
+
+
+
+
+                              Figure 2: Conjugate roots of unity for n = 3.
+
+
+
+
+are equal to 1/2. For the induction step, we need the more complicated lemma that ωn+1 = 4ωn . To do
+so, we first extend the sum in ωn to include all the odd powers of ζ2n+1 . As Fig. 2 suggests, the points
+in the lower quadrants are very much related to the ones in upper quadrants. For n = 3, we get that
+                                                                    2n
+  11 = −ζ 3 . Indeed, for arbitrary n, we have that ζ 2n = e2πi/2n+1
+ζ16                                                                      = eiπ = −1. (The last part of that
+          16                                          2n+1
+
+equation, first established by the same Euler who solved the Basel problem, was proved in ACL2 in [2].)
+In this case, we have that ζ1611 = ζ 8 × ζ 3 = −ζ 3 . The following ACL2 lemma establishes this more
+                                     16    16       16
+generally:
+
+
+
+( defthmd pa ir ed -o me ga -t er ms
+      ( implies ( and ( posp n )
+                       ( posp j )
+                       ( <= j ( expt 2 (1- n ))))
+                ( equal ( omega-term (+ ( expt 2 (1- n )) j ) n )
+                          ( omega-term (- ( expt 2 (1- n )) (- j 1)) n )))
+   : hints ...)
+
+
+
+
+The theorem above immediately implies that the sum of the powers in the upper quadrants is the same
+as the sum of the powers in the lower quadrants. So we can now extend the sum in ωn to include all the
+Gamboa                                                                                                                   7
+
+
+odd powers of ζ2n+1 as follows:
+                                                                                                                     !
+                      2n−1                       2n−1                            2n
+                                 1      1                      1                                     1
+                ωn = ∑              2
+                                      =            ∑                  2
+                                                                          +      ∑                               2
+                     k=1 1 − ζ
+                               2k−1     2        k=1    1 − ζ22k−1            k=2n−1 +1      1 − ζ22k−1
+                                 2n+1                          n+1                                  n+1
+                                                                                                                    
+                                                 2n−1                         2n−1
+                                             1         1                                            1
+                                         =                      +∑
+                                                                                                                     
+                                              ∑              2
+                                             2 k=1                                         2(2n−1 +k)−1 2
+                                                                                                                     
+                                                   1 − ζ 2k−1    k=1
+                                                               2n+1                   1 − ζ2n+1
+                                                                                                             !
+                                                 2n−1                         2n−1
+                                           1                   1                             1
+                                         =         ∑                  2
+                                                                          +∑                             2
+                                           2     k=1    1 − ζ22k−1            k=1     1 + ζ22k−1
+                                                               n+1                           n+1
+                                               n−1
+                                                                                               !
+                                             12                1                       1
+                                         =     ∑                      2
+                                                                          +                      2
+                                             2 k=1      1 − ζ22k−1             1 + ζ22k−1
+                                                               n+1                    n+1
+
+It is now time to define omega-series-dual similarly to omega-series.
+                                                                           m
+                                                                                         1
+                             (omega-series-dual k0 m n) ≜ ∑                                          2
+                                                                                                         .
+                                                                          k=k0   1 + ζ22k−1
+                                                                                        n+1
+
+With this function, we can now state the corresponding theorem in ACL2:
+( defthmd p a i r e d - o m e g a - s e r i e s - h a l f
+      ( implies ( posp n )
+                  ( equal ( omega-series 1 ( expt 2 (1- n )) n )
+                                (* 1/2 (+ ( omega-series 1 ( expt 2 (1- n )) n )
+                                                    ( omega -serie s-dual 1 ( expt 2 (1- n )) n )))))
+   : hints ...)
+    To proceed, we need some basic facts about complex numbers. Although many facts regarding the
+functions acl2-exp and expt had already been formalized in ACL2, we had to prove a number of new
+theorems about their interaction, including the following one, which is critical here:
+( defthm expt-acl2-exp
+      ( implies ( and ( integerp n )
+                      ( <= 0 ( imagpart x ))
+                      ( < ( imagpart x ) (* 2 ( acl2-pi )))
+                      ( acl2-numberp x ))
+                ( equal ( expt ( acl2-exp x ) n )
+                         ( acl2-exp (* x n ))))
+   : hints ...)
+Next, note that eiθ = cos(θ ) + i sin(θ ) is real only when sin(θ ) = 0, which means θ = 0 or θ = π for
+θ ∈ [0, 2π). This means that for 1 ≤ k ≤ 2n
+                                     n                                                                            o
+                    2πi(2k−1)/2n+1     2πi×1/2n+1 2πi×3/2n+1            2πi×5/2n+1             2πi×(2n+1 −1)/2n+1
+         ζ22k−1
+            n+1 = e                ∈  e          , e         , . . . , e           , . . . , e
+
+Since the coefficients of iπ in the exponent are all of the form j/2n for an odd integer j, ζ22k−1 n+1   is
+                                            2k−1         2k−1
+never real, and in particular neither 1 − ζ2n+1 nor 1 + ζ2n+1 can be zero. This justifies their use in the
+denominator, as in this expression introduced above:
+                                        n−1
+                                                                          !
+                                     12           1               1
+                               ωn = ∑                     +                                            (2)
+                                     2 k=1 1 − ζ 2k−1 2      1 + ζ 2k−1
+                                                                        2
+                                                        2n+1                   2n+1
+8                                                                                                                   Basel Problem
+
+
+Simple algebra shows that for non-zero x and y, 1x + 1y = x+y
+                                                           xy , so
+
+                                                                                      2                         2
+                                  1                   1                   1 − ζ22k−1
+                                                                                 n+1 + 1 + ζ22k−1
+                                                                                              n+1
+                                         2
+                                           +                    2
+                                                                  =                   2                         2
+                            1 − ζ22k−1
+                                   n+1          1 + ζ22k−1
+                                                       n+1                1 − ζ22k−1
+                                                                                 n+1 × 1 + ζ22k−1
+                                                                                              n+1
+
+
+Since |z|2 = zz for any complex number z, the numerator can be rewritten as 2 + 2|ζ22k−1      2
+                                                                                         n+1 | = 4, where
+                                               2k−1
+the last equality follows from the fact that ζ2n+1 is a root of unity, so its magnitude is 1. Similarly,
+                                       2 2
+the denominator becomes 1 − ζ22k−1 n+1      . The final step is to recognize that for any naturals u and v,
+  2v = e2πi/2u 2v = e2πi/u v = ζ v . Thus, Eq. 2 can be rewritten as
+                           
+ζ2u                              u
+
+                     n−1                                  n−1                                 n−2
+                  12              4              12         1             2
+                                                                                   1
+          ωn =      ∑                    2
+                                           = 4 ×   ∑              2
+                                                                    = 4 × ∑                = 4ωn−1                            (3)
+                  2 k=1           2k−1 2         2 k=1 1 − ζ 2k−1                   2k−1 2
+                                                                          k=1 1 − ζ n
+                                      
+                           1 − ζ2n+1                          n           2                                 2
+
+
+In the last step, we used once again the lemma that the sum of the powers in the upper quadrants is the
+same as the sum of the powers in the lower quadrants, which earlier allowed us to derive Eq. 2.
+                                  1−1
+    Finally, observe that w1 = ∑2k=1      1
+                                            2 =
+                                                      1
+                                                     2(1)−1 2
+                                                              = 1 2 = 1 2 = 12 = 22(1)−3 . Using the
+                                               1−ζ 2k−1         1−ζ 1+1            |1−ζ4 |          |1−i|
+                                                  2 n+1               2
+fact that wn = 4wn−1 for n > 1, a simple induction yields that wn                      = 22n−3 for all positive integers n. In
+ACL2, this yields the main lemma of the Lighthouse proof:
+( defthmd o m e g a - s e r i e s - c l o s e d - f o r m
+   ( implies ( posp n )
+              ( equal ( omega-series 1 ( expt 2 (1- n )) n )
+                            ( expt 2 (- (* 2 n ) 3))))
+   : hints ...)
+
+
+
+5    Navigating the Subtleties
+Our next goal is to restate the key lemma from Sec. 4, theorem omega-series-closed-form, using
+                                                                                         2
+only the reals, as opposed to the complex numbers. We start with the term 1 − ζnk , which reduces to
+2 − (ζnk + ζnk ), since |z|2 = zz and ζn is a root of unity. Moreover, z + z = 2Re(z), where Re(z) denotes
+                                                            2
+the real part of the complex number z. Thus, 1 − ζnk = 2 − 2Re(ζnk ), which is real. Moreover, ζnk =
+                                                                                                         2 πk
+e2πik/n , so Re(ζnk ) = cos 2πk
+                                                                                                             
+                              n   , and using the cosine double angle formula, that reduces to 1 − 2 sin   n .
+                     k 2                    2 πk
+                                                           2 πk
+                                                                         2 πk
+                                                                                
+Therefore, 1 − ζn = 2 − 2 1 − 2 sin n                = 4 sin n = 4 sin n .
+    This suggests defining a sum of sine terms, analogous to omega-series, as follows:
+                                                                               m
+                                                                                          1
+                                  (sine-series k0 m n) ≜ ∑                            2 2k−1
+                                                                                                     .
+                                                                              k=k0 sin  2n+1
+                                                                                             π
+
+ACL2 proves that these two series are related as
+( defthmd s i n e - s e r i e s - c l o s e d - f o r m - l e m m a
+   ( implies ( and ( posp i )
+                        ( posp k )
+                        ( posp n ))
+Gamboa                                                                                                                   9
+
+
+              ( equal ( sine-series i k n )
+                      (* 4 ( omega-series i k n ))))
+   : hints ...)
+
+The main lemma in Sec. 4 gives a closed form for the omega-series term, so we really have
+( defthmd s i n e - s e r i e s - c l o s e d - f o r m
+   ( implies ( posp n )
+              ( equal ( sine-series 1 ( expt 2 (1- n )) n )
+                            ( expt 2 (- (* 2 n ) 1))))
+   : hints ...)
+
+    At this point, care is required to avoid a flaw in the proof, as described in [4]. Consider each sine
+                      1
+term in the sum 2  2k−1    . Since n is the limit of the Basel sum, we can expect it to be very large, i.e.,
+                 sin             π
+                        2n+1
+infinite. Thus, for a fixed value of k, the quotient is nearly zero, so sine acts like the identity function,
+                                                  2n+2
+and the sine term is nearly equal to  1 2 = 2 π 2 (2k−1)
+                                                         1
+                                                            2 . Adding these terms in the series, we appear
+                                                     2k−1
+                                                          π
+                                                     2n+1
+                            1               22n+2            1
+to have that ∑m
+              k=k0
+                                        ≈
+                                              π2     ∑m
+                                                      k=k0 (2k−1)2 . Substituting the closed form for the sine series, this
+                     sin2     2k−1
+                                   π
+                              2n+1
+                 2n+2       2n−1                         2              n−1            2
+                             1
+yields 22n−1 ≈ 2 π 2 ∑k=1 (2k−1)                                1      π
+                                2 , which simplifies to ∑k=1 (2k−1)2 ≈ 8 .
+                                     n−1
+     Notice that the sum ∑2k=1 (2k−1)
+                                   1
+                                      2 is closely related to the Basel series, containing only the odd terms.
+
+As we will see in Sec. 6, this is enough to show the final result. Unfortunately, the argument above is
+deeply flawed. The problem is twofold. First, we are being careless with the notion of “nearly zero.”
+For another, as n grows, each individual term may be approaching a limit, but the number of terms in the
+sum is also growing, so the limit of the sum is not necessarily equal to the sum of the limits. It is part of
+a mathematician’s education to recognize when arguments of this sort are valid and when they are not.
+     That is also part of the rigor that is built into non-standard analysis, as it makes the notions such as
+“nearly zero” and “infinite” very formal and precise. In ACL2(r), this rigor is reflected in a number of
+restrictions on the use of these “non-classical” notions. One such restriction is that induction cannot be
+used to prove arbitrary theorems about all natural numbers. If the theorem you wish to prove mentions
+(directly or indirectly) any of these non-classical notions, then induction can only be used to prove the
+theorem for standard natural numbers, which is to say for the “finite” natural numbers. This is a serious
+restriction, and it applies in this case because the theorem we are trying to prove is that the sum in the
+                                                                   2
+left-hand side of the equation is “almost equal” to the term π8 . The restriction is sufficient to keep us
+from falling into the trap laid out by the seductive argument above.
+     So to complete the proof we must take a different tack. Since we cannot use induction to reason
+about a property that uses non-classical notions, we proceed by proving some lemmas that do not use
+non-classical notions, and instead result in some terms that depend on n. Once that is done, we can see
+how the terms simplify for large values of n.
+     In this particular case, we proceed by using the Taylor series expansion of the sine function, which
+was developed in [2]. The Taylor series is an alternating sum, which enables us to find some quick
+bounds for the partial sums and the limits: If the first term in the series is positive (negative), then that
+first term is an upper (lower) bound for the sum.
+     The first few terms of the Taylor series for sin(x) are
+
+                                                                  x3 x5 x7
+                                                   sin(x) = x −     + − +···
+                                                                  3! 5! 7!
+10                                                                                            Basel Problem
+
+
+Using the first two terms of the series, it follows that for 0 < x ≤ 2, sin(x) ≤ x. Similarly, expanding
+                                                                              3
+the Taylor series to the first three terms, we have that for 0 < x ≤ 2, x − x6 ≤ sin(x). These inequalities
+                                        2
+can be combined to show that 1 − x6 ≤ sin(x) x ≤ 1. After some tedious algebra, ACL2 verifies that for
+        √
+0 < x < 3,  1 2 2 ≤ 1 + x2 . In [2], we showed some strong upper and lower bounds for π, and using
+               1− x6
+                                                 2
+those bounds, ACL2 proves by computation that π2 < 3. Combining these results, for 0 < x < π2 , we
+have that                                       2
+                                             x
+                                   1≤               ≤ 1 + x2 .
+                                          sin(x)
+    Next, we apply this result to each term in the sine series, in order to find upper and lower bounds
+                                   n−1
+for the entire series. Consider ∑2k=1 2  2k−1
+                                          1     . First, observe that for 1 ≤ k ≤ 2n−1 , 2k−1
+                                                                                          2n+1
+                                                                                               π < π2 , so the
+                                        sin          π
+                                              2n+1
+lemma above applies. This immediately yields that for k in that range,
+
+                                                      2k−1   2 
+                                                       n+1 π
+                                                1 ≤ 22 2k−1  .
+                                                   sin 2n+1 π
+
+Rearranging, this gives an important lower bound for each term:
+
+                                       22n+2    1          1
+                                                     ≤            .
+                                        π 2 (2k − 1)2 sin2 2k−1
+                                                           2n+1 π
+
+Taking the entire sum and recalling our prior result for the sum on the right, we have that
+                                      n−1                n−1
+                              22n+2 2    1       2
+                                                          1
+                                 2  ∑        2
+                                               ≤ ∑      2 2k−1
+                                                                  = 22n−1 .
+                               π k=1 (2k − 1)    k=1 sin  2n+1
+                                                               π
+
+Rearranging terms once more, this shows that
+
+                                     2n−1
+                                             1        π2       2n−1   π2
+                                     ∑           2
+                                                   ≤       · 2      =    .
+                                     k=1 (2k − 1)    22n+2            8
+
+As previously mentioned, the sum on the left is closely related to the Basel series, containing only the
+odd terms. In ACL2, we define this as
+( defun basel-odds ( i n )
+   ( declare ( xargs : measure ( nfix (- n i ))))
+   ( if ( zp (- n i ))
+        0
+        (+ ( expt (- (* 2 i ) 1) -2)
+            ( basel-odds (1+ i ) n ))))
+Then the lower bound is given by
+( defthmd b i g - l o w e r - b o u n d - l e m m a - s p e c i a l i z e d - 3
+   ( implies ( posp n )
+              ( <= ( basel-odds 1 (1+ ( expt 2 (1- n ))))
+                      (/ ( expt ( acl2-pi ) 2) 8)))
+   : hints ...)
+Gamboa                                                                                                      11
+
+
+    Now we turn our attention to the upper bound. We start with
+                                      2k−1
+                                             2
+                                                         2k − 1 2
+                                                               
+                                      2n+1 π
+                                                 ≤ 1+         π .
+                                   sin2 2k−1
+                                         2n+1
+                                              π           2n+1
+Dividing by the numerator of the left-hand side of the inequality, we have that
+                                                  1                22n+2    1
+                                                              ≤                  + 1.
+                                         sin2 2k−1
+                                              2n+1
+                                                   π                π 2 (2k − 1)2
+As before, taking sums yields
+                                        2n−1                                  n−1
+                             2n−1                     1          22n+2 2       1
+                         2          = ∑           2   2k−1
+                                                              ≤    2  ∑           2
+                                                                                     + 2n−1 .
+                                        k=1 sin       2n+1
+                                                           π      π    k=1 (2k − 1)
+Again, we rearrange terms to get
+                                               2n−1
+                                                              1          π2       π2
+                                               ∑ (2k − 1)2 ≥ 8 − 2n+3 .
+                                               k=1
+    Combining these two bounds, we have that, for any large integer n,
+                                                      2            n−1
+                                           π2   π2            1       π2
+                                              − n+3 ≤ ∑           2
+                                                                    ≤    .
+                                           8   2      k=1 (2k − 1)    8
+Taking standard parts on all sides, we conclude that
+                                    ∗        ∗ 2n−1              !
+                               π2        π2                  1         π2
+                                  −           ≤      ∑           2
+                                                                     ≤    .
+                               8        2n+3         k=1 (2k − 1)      8
+                                    2
+As n grows large, the term 2πn+3 becomes smaller and smaller. In the rigorous language of non-standard
+                                                          2
+analysis, we say that for large n, the term 2πn+3 is infinitesimal, so its standard part is zero. Thus, we have
+that for any large n,
+                                             ∗                   !
+                                                 2n−1
+                                       π2                  1          π2
+                                          ≤       ∑            2
+                                                                   ≤      ,
+                                        8        k=1 (2k − 1)          8
+hence                                           ∗                        !
+                                                      2n−1
+                                                            1                     π2
+                                                      ∑ (2k − 1)2             =      .
+                                                      k=1                         8
+                                                              2
+That is to say, the infinite sum converges to π8 , which is exactly what we wanted to show. In ACL2, we
+can express this as
+( defthmd b a s e l - o d d s - c l o s e d - f o r m
+   ( implies ( and ( posp n )
+                        ( i-large n ))
+              ( equal ( standard-part ( basel-odds 1 (1+ ( expt 2 (1- n )))))
+                            (/ ( expt ( acl2-pi ) 2) 8)))
+   : hints ...)
+There is still a small issue in that the upper limit of the sum is 2n−1 . Technically, we haven’t proved the
+               1
+sum ∑Nk=1 (2k−1)  2 converges for all values of N, only when N is a power of 2. But as we’ll see in the next
+
+section, this is all that is required to prove the convergence of the Basel series.
+12                                                                                                 Basel Problem
+
+
+6    Putting It All Together
+                                                                                                              2
+In the previous section, we found that the sum of the odd terms in the Basel series converges to π8 . In
+this section, we extend that result to the entire series by following another idea of Euler’s that splits the
+series into its odd- and even-indexed terms.
+                                          ∞        ∞         ∞
+                                              1       1         1
+                                                =         +
+                                          ∑ k2 ∑ (2k − 1)2 ∑ (2k)2
+                                          k=1     k=1       k=1
+                                                    ∞
+                                                           1       1 ∞ 1
+                                                =∑             2
+                                                                 +   ∑ k2
+                                                   k=1 (2k − 1)    4 k=1
+
+
+It follows that
+                                      ∞
+                                         1   4 ∞  1     4 π2 π2
+                                     ∑ 2 3 ∑ (2k − 1)2 3 · 8 = 6 .
+                                           =          =
+                                     k=1 k    k=1
+   This argument can be carried out in ACL2 as follows. First, we show how a partial sum of the odd
+and even terms can be combined into a partial sum of the entire series:
+( defthmd b a s e l - s e r i e s - s p l i t - e v e n s - o d d s
+   ( implies ( and ( natp i )
+                        ( natp n ))
+              ( equal (+ ( basel-odds i n )
+                                  ( basel-evens i n ))
+                            ( basel-series (1- (* 2 i )) (1- (* 2 n )))))
+   : hints ...)
+A trivial induction shows that the sum of the even terms is just a quarter of the sum of the entire series.
+Unfortunately, the upper bounds of the series are not the same, so we have to take some care. Fixing the
+lower bound of the series as i = 1, what we have is
+( defthmd b a s e l - s e r i e s - s p l i t - j u s t - o d d s - c o m p l e t e
+   ( implies ( natp n )
+              ( equal (+ ( basel-odds 1 n )
+                                  (* 1/4 ( basel-series 1 n )))
+                            ( basel-series 1 (1- (* 2 n )))))
+   : hints ...)
+Next, we take the standard part of both sides. As we mentioned previously, taking the standard part of a
+sum is the same as adding the standard parts of the summands, but things are not as simple for products.
+The standard part of the products is the product of the standard parts only if both factors are limited.
+Recall from Sec. 3 that the Basel series is always between 0 and 2, so it is in fact limited. Thus, we can
+conclude that
+( defthmd s t a n d a r d - p a r t - b a s e l - s e r i e s - s p l i t - j u s t - o d d s - c o m p l e t e - 2
+   ( implies ( posp n )
+              ( equal (+ ( standard-part ( basel-odds 1 (1+ ( expt 2 (1- n )))))
+                                  (* 1/4 ( standard-part
+                                                  ( basel-series 1 (1+ ( expt 2 (1- n )))))))
+                            ( standard-part
+                              ( basel-series 1 (1- (* 2 (1+ ( expt 2 (1- n )))))))))
+   : hints ...)
+Gamboa                                                                                                     13
+
+
+Again, note that the two summations have different upper bounds. But this time we are taking the
+standard part of the sums, and as we saw in Sec. 5, the standard parts are equal. This allows us to make
+the upper bounds equal and combine terms, resulting in
+( defthmd s t a n d a r d - p a r t - b a s e l - s e r i e s - s p l i t - j u s t - o d d s - c o m p l e t e - 4
+   ( implies ( and ( posp n )
+                        ( i-large n ))
+            ( equal ( standard-part ( basel-series 1 (1+ ( expt 2 (1- n )))))
+                          (* 4/3 ( standard-part ( basel-odds 1 (1+ ( expt 2 (1- n ))))))))
+   : hints ...)
+At this point, we can use the result from the previous section, and we can conclude that the Basel series
+                2
+converges to π6 , as desired. This is almost the complete proof, but it still only resolves the issue when
+the upper bound is a power of 2. But again we observe that the standard part of partial sums is the same,
+so we actually have the more general result:
+( defthmd b a s e l - s e r i e s - c l o s e d - f o r m
+   ( implies ( and ( posp n )
+                        ( i-large n ))
+              ( equal ( standard-part ( basel-series 1 n ))
+                            (/ ( expt ( acl2-pi ) 2) 6)))
+   : hints ...)
+That completes the proof of the Basel problem in ACL2(r), although we prefer to state it slightly differ-
+ently. Rather than rely on the notion of standard part, we prefer to use the notion of “infinitely close,”
+which leaves the Basel series in its original form, and is closer in spirit to the idea of limits. Thus, we
+restate the final theorem as follows:
+( defthmd b a s e l - s e r i e s - c l o s e d - f o r m - c l o s e
+   ( implies ( and ( posp n )
+                        ( i-large n ))
+              ( i-close ( basel-series 1 n )
+                                (/ ( expt ( acl2-pi ) 2) 6)))
+   : hints ...)
+
+
+7    Conclusion
+In this paper, we presented a formalization of the Basel problem in ACL2(r). Euler’s original proof
+worked by factoring the sine function into an infinite product, and formalizing this idea directly would
+have presented some formidable challenges in ACL2(r). For one thing, ACL2 does not have infinite sets,
+so any discussion of an infinite product is problematic. For another, the justification of the factorization
+itself requires the Weierstrass factorization theorem from complex analysis, which is a deep result not yet
+formalized in ACL2(r). So we followed a different path, which is an algebraic treatment of a geometric
+proof of the Basel problem.
+     A key part of the proof is that the sum of the even terms in the Basel series is exactly a quarter of the
+sum of the entire series. This idea can be generalized to show that the sum of the Basel series can also
+be expressed as a product over the primes, showing the deep connections between what we now call the
+Riemann zeta function and prime numbers. The Euler product formula states that
+                                                ∞
+                                                   1           1
+                                       ζ (2) = ∑ 2 = ∏           1
+                                                                    .
+                                               i=1 i p prime 1 − p2
+14                                                                                            Basel Problem
+
+
+The proof of this result combines the argument done in Sec. 6 with Eratosthenes’ sieve. We plan to
+formalize this result in ACL2(r).
+
+
+References
+[1] 3Blue1Brown Editors (2018): Why is π here? And why is it squared? A geometric answer to the Basel
+    problem. https://www.youtube.com/watch?v=d-o3eB9sfls.
+[2] R. Gamboa (1999): Mechanically Verifying Real-Valued Algorithms in ACL2. Ph.D. thesis, The University of
+    Texas at Austin.
+[3] R. Gamboa (2026): A Mechanical Proof of Stirling’s Approximation in ACL2(r). In: Proceedings of the
+    Twentieth International Workshop on the ACL2 Theorem Prover and its Applications (ACL2 ’26).
+[4] E. Moorhouse (2021): The Basel Problem. https://ericmoorhouse.org/handouts/basel.pdf.
+[5] A. Robert: Nonstandard Analysis. John Wiley & Sons, Chichester, doi:10.2307/3618484.
+[6] A. Robinson (1996):        Non-Standard     Analysis.        Princeton   University    Press,   Princeton,
+    doi:10.1515/9781400884223.
+[7] Freek Wiedijk (2012): Formalizing 100 Theorems. http://www.cs.ru.nl/~freek/100/index.html.
+[8] Wikipedia Editors (2006): Basel Problem. https://en.wikipedia.org/wiki/Basel_problem.
+[9] Wikipedia Editors (2006): Proof of the Euler product formula for the Riemann zeta function.
+    https://en.wikipedia.org/wiki/Proof_of_the_Euler_product_formula_for_the_Riemann_
+    zeta_function.
+

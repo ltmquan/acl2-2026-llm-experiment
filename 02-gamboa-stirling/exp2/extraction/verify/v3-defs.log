@@ -1,0 +1,104 @@
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7(r)                                                  +
+ +   built November 11, 2026  16:06:05.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Time:  0.24 seconds (prove: 0.00, print: 0.00, other: 0.24)
+ "<scratch>/given-gamboa-stirling/defs.lisp"
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "<scratch>/given-gamboa-stirling/defs.lisp"
+               "/opt/acl2r/books/arithmetic/factorial.lisp"
+              ]
+              \
+>L d           (DEFUN FACTORIAL (N)
+                 (IF (ZP N) 1 (* N (FACTORIAL (1- N)))))
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "<scratch>/given-gamboa-stirling/defs.lisp"
+              ]
+              \
+>L             (DEFUN WALLIS-PRODUCT (N)
+                 (IF (ZP N)
+                     1
+                   (* (/ (* 2 N) (1- (* 2 N)))
+                      (/ (* 2 N) (1+ (* 2 N)))
+                      (WALLIS-PRODUCT (1- N)))))
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "<scratch>/given-gamboa-stirling/defs.lisp"
+               "/opt/acl2r/books/nonstd/nsa/ln.lisp"
+               "/opt/acl2r/books/nonstd/nsa/complex-polar.lisp"
+               "/opt/acl2r/books/nonstd/nsa/inverse-trig.lisp"
+               "/opt/acl2r/books/nonstd/nsa/trig.lisp"
+              ]
+              \
+>L d           (DEFUN ACL2-PI NIL
+                 (* 2 (FIND-ZERO-COS-2 0 2 0)))
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "<scratch>/given-gamboa-stirling/defs.lisp"
+               "/opt/acl2r/books/nonstd/nsa/sqrt.lisp"
+              ]
+              \
+>L d           (DEFUN-STD ACL2-SQRT (X)
+                          (STANDARD-PART (SQRT-ITER (FIX X)
+                                                    (/ (I-LARGE-INTEGER)))))
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "<scratch>/given-gamboa-stirling/defs.lisp"
+               "/opt/acl2r/books/nonstd/nsa/exp.lisp"
+              ]
+              \
+>L d           (DEFUN-STD
+                   ACL2-EXP (X)
+                   (STANDARD-PART (SUMLIST (TAYLOR-EXP-LIST (I-LARGE-INTEGER)
+                                                            0 (FIX X)))))
+ACL2(r) !>   d       1:x(INCLUDE-BOOK "defs")
+              \
+              [Included books, outermost to innermost:
+               "<scratch>/given-gamboa-stirling/defs.lisp"
+               "/opt/acl2r/books/nonstd/nsa/ln.lisp"
+              ]
+              \
+>L d           (DEFUN ACL2-LN (Y)
+                 (COMPLEX (ACL2-LN-FOR-POSITIVE (RADIUSPART Y))
+                          (ANGLEPART Y)))
+ACL2(r) !>(IF (ZP N)
+    '1
+  (BINARY-* N (FACTORIAL (BINARY-+ '-1 N))))
+ACL2(r) !>(IF (ZP N)
+    '1
+  (BINARY-* (BINARY-* (BINARY-* '2 N)
+                      (UNARY-/ (BINARY-+ '-1 (BINARY-* '2 N))))
+            (BINARY-* (BINARY-* (BINARY-* '2 N)
+                                (UNARY-/ (BINARY-+ '1 (BINARY-* '2 N))))
+                      (WALLIS-PRODUCT (BINARY-+ '-1 N)))))
+ACL2(r) !> ((X Y) (X) (X))
+ACL2(r) !>Bye.

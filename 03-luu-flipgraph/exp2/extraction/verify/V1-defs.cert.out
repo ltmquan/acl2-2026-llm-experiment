@@ -1,0 +1,4910 @@
+"-*- Mode: auto-revert -*-"
+<scratch>/given-luu-flipgraph/v
+HOST: vm
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/opt/acl2/books
+ACL2=/opt/acl2/saved_acl2
+ACL2_USELESS_RUNES=-25
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+#+(and hons (not acl2-par)) (profile-fn 'include-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file :
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "kestrel/bv/bitxor.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "kestrel/bv/bitand.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/util/define.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/util/defrule.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/lists/repeat.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/basic/inductions.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/obags/top.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/lists/append.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "std/lists/nth.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "arithmetic/top-with-meta.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "defs" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: defs
+STEP: certify
+Start of output:
+
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7                                                     +
+ +   built November 11, 2026  15:57:27.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* 
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !><state>
+ACL2 !> "ACL2"
+ACL2 !> (:EXIT 1)
+ACL2 !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2 !> T
+ACL2 !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.
+NIL
+ACL2 !> T
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+ "/opt/acl2/books/std/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+ "/opt/acl2/books/cowles/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+ "/opt/acl2/books/data-structures/portcullis.lisp"
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "std/portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "data-structures/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "../portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "../portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "../portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "../portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "../portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "../portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "std/portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ "/opt/acl2/books/std/obags/portcullis.lisp"
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/fty/portcullis" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2/books/centaur/fty/portcullis.lisp"
+ACL2 !>>
+The event ( INCLUDE-BOOK "data-structures/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/omaps/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ "/opt/acl2/books/std/omaps/portcullis.lisp"
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "../portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "../portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "../portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "../portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "std/portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !> :CONTINUE
+ACL2 !>
+Summary
+Form:  ( INCLUDE-BOOK "kestrel/bv/bitxor" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+"/opt/acl2/books/kestrel/bv/bitxor.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "kestrel/bv/bitand" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+"/opt/acl2/books/kestrel/bv/bitand.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/util/define" ...)
+Rules: NIL
+Time:  0.11 seconds (prove: 0.00, print: 0.00, other: 0.11)
+"/opt/acl2/books/std/util/define.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/util/defrule" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+"/opt/acl2/books/std/util/defrule.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/lists/repeat" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+"/opt/acl2/books/std/lists/repeat.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/basic/inductions" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+"/opt/acl2/books/std/basic/inductions.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/obags/top" ...)
+Rules: NIL
+Time:  0.90 seconds (prove: 0.00, print: 0.00, other: 0.90)
+"/opt/acl2/books/std/obags/top.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/lists/append" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+"/opt/acl2/books/std/lists/append.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "std/lists/nth" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+"/opt/acl2/books/std/lists/nth.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "arithmetic/top-with-meta" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+"/opt/acl2/books/arithmetic/top-with-meta.lisp"
+
+Summary
+Form:  ( DEFUN BIT-LIST-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-BIT-LIST-P ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-BIT-LIST-P
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-BIT-LIST-P ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BIT-LIST-P
+
+Summary
+Form:  ( DEFUN BIT-LISTNP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-BIT-LISTNP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION BIT-LISTNP)
+        (:TYPE-PRESCRIPTION BIT-LISTNP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-BIT-LISTNP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-BIT-LISTNP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BIT-LISTNP
+
+Summary
+Form:  ( DEFUN BIT-LISTN0 ...)
+Rules: ((:TYPE-PRESCRIPTION REPEAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Goal'
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-BIT-LISTN0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BIT-LISTN0)
+        (:DEFINITION NOT)
+        (:DEFINITION REPEAT)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION REPEAT)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION REPEAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  294
+BIT-LIST-P-OF-BIT-LISTN0
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-BIT-LISTN0 ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  294
+BIT-LISTN0
+Goal'
+Goal'
+
+Summary
+Form:  ( DEFUN BIT-LIST-ADD ...)
+Rules: ((:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  466
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2.2
+Subgoal *1/2.1
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-BIT-LIST-ADD ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-ADD)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-LIST-ADD)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-ADD)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BITXOR))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  741
+BIT-LIST-P-OF-BIT-LIST-ADD
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-BIT-LIST-ADD ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  741
+BIT-LIST-ADD
+Goal'
+
+Summary
+Form:  ( DEFUN BIT-LIST-SCALE ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  224
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-BIT-LIST-SCALE ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BIT-LIST-SCALE)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-LIST-SCALE)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BIT-LIST-SCALE)
+        (:TYPE-PRESCRIPTION BITAND))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  521
+BIT-LIST-P-OF-BIT-LIST-SCALE
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-BIT-LIST-SCALE ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  521
+BIT-LIST-SCALE
+Goal'
+
+Summary
+Form:  ( DEFUN BIT-LIST-OUTER ...)
+Rules: ((:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BINARY-APPEND)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BIT-LIST-SCALE)
+        (:TYPE-PRESCRIPTION TRUE-LISTP-APPEND))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  237
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/2'''
+Subgoal *1/2'4'
+Subgoal *1/2'5'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1.1/5
+Subgoal *1.1/5'
+Subgoal *1.1/4
+Subgoal *1.1/4'
+Subgoal *1.1/4.2
+Subgoal *1.1/4.2'
+Subgoal *1.1/4.2''
+Subgoal *1.1/4.2'''
+Subgoal *1.1/4.1
+Subgoal *1.1/4.1'
+Subgoal *1.1/4.1''
+Subgoal *1.1/4.1'''
+Subgoal *1.1/3
+Subgoal *1.1/3'
+Subgoal *1.1/2
+Subgoal *1.1/1
+Subgoal *1.1/1'
+Subgoal *1.1.2/4
+Subgoal *1.1.2/4'
+Subgoal *1.1.2/3
+Subgoal *1.1.2/3'
+Subgoal *1.1.2/2
+Subgoal *1.1.2/1
+Subgoal *1.1.2/1'
+Subgoal *1.1.1/4
+Subgoal *1.1.1/4'
+Subgoal *1.1.1/3
+Subgoal *1.1.1/3'
+Subgoal *1.1.1/2
+Subgoal *1.1.1/1
+Subgoal *1.1.1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-BIT-LIST-OUTER ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION BINARY-APPEND)
+        (:DEFINITION BIT-LIST-OUTER)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION ENDP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRUE-LISTP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BINARY-APPEND)
+        (:INDUCTION BIT-LIST-OUTER)
+        (:INDUCTION BIT-LIST-P)
+        (:INDUCTION TRUE-LISTP)
+        (:REWRITE APPEND-OF-NIL)
+        (:REWRITE APPEND-WHEN-NOT-CONSP)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-SCALE)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE LIST-FIX-WHEN-TRUE-LISTP)
+        (:TYPE-PRESCRIPTION BINARY-APPEND)
+        (:TYPE-PRESCRIPTION BIT-LIST-OUTER)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BIT-LIST-SCALE)
+        (:TYPE-PRESCRIPTION TRUE-LISTP-APPEND))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  6107
+BIT-LIST-P-OF-BIT-LIST-OUTER
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-BIT-LIST-OUTER ...) ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  6107
+BIT-LIST-OUTER
+
+Summary
+Form:  ( DEFUN BIT-LIST-LISTP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-BIT-LIST-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BOOLEANP-OF-BIT-LIST-LISTP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-BIT-LIST-LISTP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BIT-LIST-LISTP
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN BIT-MATP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-+-NEGATIVE-0-1))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  152
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-BIT-MATP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION BIT-MATP)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-BIT-MATP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-BIT-MATP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BIT-MATP
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-WHEN-BIT-LISTNP ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BIT-LISTNP)
+        (:DEFINITION BITP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-LIST-P)
+        (:INDUCTION BIT-LISTNP)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  693
+T
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/4''
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-WHEN-BIT-MATP ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-MATP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING BIT-LIST-P-WHEN-BIT-LISTNP)
+        (:INDUCTION BIT-LIST-LISTP)
+        (:INDUCTION BIT-MATP)
+        (:REWRITE BIT-LIST-P-WHEN-BIT-LISTNP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-LISTNP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  825
+T
+
+Summary
+Form:  ( DEFUN BIT-MAT0 ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION REPEAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Goal'
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-BIT-MAT0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-MAT0)
+        (:DEFINITION NOT)
+        (:DEFINITION REPEAT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION REPEAT)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION REPEAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  358
+BIT-LIST-LISTP-OF-BIT-MAT0
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-BIT-MAT0 ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  358
+BIT-MAT0
+Goal'
+Goal'
+
+Summary
+Form:  ( DEFUN BIT-MAT-ADD ...)
+Rules: ((:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Prover steps counted:  496
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2.2
+Subgoal *1/2.1
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-ADD ...)
+Rules: ((:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-MAT-ADD)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-MAT-ADD)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-ADD)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MAT-ADD))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  843
+BIT-LIST-LISTP-OF-BIT-MAT-ADD
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-ADD ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  843
+BIT-MAT-ADD
+Goal'
+Goal''
+Goal'''
+Goal'4'
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFUN MAT-FLAT ...)
+Rules: ((:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION NOT)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-LIST-P)
+        (:INDUCTION TRUE-LISTP)
+        (:TYPE-PRESCRIPTION BINARY-APPEND)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP-APPEND))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1111
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/2'''
+Subgoal *1/2'4'
+Subgoal *1/2'5'
+Subgoal *1/2'6'
+Subgoal *1/2'7'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1.1/3
+Subgoal *1.1/3'
+Subgoal *1.1/2
+Subgoal *1.1/2'
+Subgoal *1.1/1
+Subgoal *1.1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-MAT-FLAT ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION BINARY-APPEND)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION ENDP)
+        (:DEFINITION MAT-FLAT)
+        (:DEFINITION NOT)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART MAT-FLAT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BINARY-APPEND)
+        (:INDUCTION BIT-LIST-P)
+        (:INDUCTION MAT-FLAT)
+        (:REWRITE APPEND-WHEN-NOT-CONSP)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION MAT-FLAT)
+        (:TYPE-PRESCRIPTION TRUE-LISTP-APPEND))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  2901
+BIT-LIST-P-OF-MAT-FLAT
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-MAT-FLAT ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  2901
+MAT-FLAT
+
+Summary
+Form:  ( DEFUN MAT-TRIPLEP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-MAT-TRIPLEP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION MAT-TRIPLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-MAT-TRIPLEP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-MAT-TRIPLEP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MAT-TRIPLEP
+
+Summary
+Form:  ( DEFUN SUMMAND ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Goal'
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLEP-OF-SUMMAND ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION SUMMAND)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION MAT-TRIPLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  464
+MAT-TRIPLEP-OF-SUMMAND
+
+Summary
+Form:  ( PROGN (DEFTHM MAT-TRIPLEP-OF-SUMMAND ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  464
+SUMMAND
+
+Summary
+Form:  ( DEFUN SUMMAND-A ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  99
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-SUMMAND-A ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION SUMMAND-A)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  72
+BIT-LIST-LISTP-OF-SUMMAND-A
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-SUMMAND-A ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  72
+SUMMAND-A
+
+Summary
+Form:  ( DEFUN SUMMAND-B ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  110
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-SUMMAND-B ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION SUMMAND-B)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  73
+BIT-LIST-LISTP-OF-SUMMAND-B
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-SUMMAND-B ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  73
+SUMMAND-B
+
+Summary
+Form:  ( DEFUN SUMMAND-C ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  123
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-SUMMAND-C ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION SUMMAND-C)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  74
+BIT-LIST-LISTP-OF-SUMMAND-C
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-SUMMAND-C ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  74
+SUMMAND-C
+
+Summary
+Form:  ( DEFUN SUMMAND0P ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION MAT-TRIPLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-SUMMAND0P ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION SUMMAND0P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-SUMMAND0P
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-SUMMAND0P ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SUMMAND0P
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN SUMMANDP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.03 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  4368
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-SUMMANDP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION SUMMANDP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-SUMMANDP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-SUMMANDP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SUMMANDP
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN SUMMAND-DIMP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  3905
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-SUMMAND-DIMP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION SUMMAND-DIMP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-SUMMAND-DIMP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-SUMMAND-DIMP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SUMMAND-DIMP
+
+Summary
+Form:  ( DEFUN SUMMAND-DIM-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-SUMMAND-DIM-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION SUMMAND-DIM-LISTP)
+        (:TYPE-PRESCRIPTION SUMMAND-DIM-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-SUMMAND-DIM-LISTP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-SUMMAND-DIM-LISTP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+SUMMAND-DIM-LISTP
+
+Summary
+Form:  ( DEFUN SUMMAND-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-SUMMAND-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION SUMMAND-LISTP)
+        (:TYPE-PRESCRIPTION SUMMAND-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-SUMMAND-LISTP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-SUMMAND-LISTP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+SUMMAND-LISTP
+
+Summary
+Form:  ( DEFUN SCHEMEP ...)
+Rules: ((:TYPE-PRESCRIPTION SUMMAND-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-SCHEMEP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION SCHEMEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-SCHEMEP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-SCHEMEP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SCHEMEP
+
+Summary
+Form:  ( DEFUN POS-NEXT ...)
+Rules: ((:EXECUTABLE-COUNTERPART EQLABLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+POS-NEXT
+
+Summary
+Form:  ( DEFUN POS-PREV ...)
+Rules: ((:EXECUTABLE-COUNTERPART EQLABLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+POS-PREV
+
+Summary
+Form:  ( DEFUN SUMMAND-GET-POS ...)
+Rules: ((:DEFINITION EQL)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  227
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-SUMMAND-GET-POS ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  89
+BIT-LIST-LISTP-OF-SUMMAND-GET-POS
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-SUMMAND-GET-POS ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  89
+SUMMAND-GET-POS
+
+Summary
+Form:  ( DEFUN SUMMAND-SET-POS ...)
+Rules: ((:DEFINITION EQL)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION SUMMAND))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  422
+Goal'
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLEP-OF-SUMMAND-SET-POS ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION SUMMAND)
+        (:DEFINITION SUMMAND-SET-POS)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLEP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2641
+MAT-TRIPLEP-OF-SUMMAND-SET-POS
+
+Summary
+Form:  ( PROGN (DEFTHM MAT-TRIPLEP-OF-SUMMAND-SET-POS ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2641
+SUMMAND-SET-POS
+
+Summary
+Form:  ( DEFUN MAT-TRIPLE-LISTP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-MAT-TRIPLE-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION MAT-TRIPLE-LISTP)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BOOLEANP-OF-MAT-TRIPLE-LISTP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-MAT-TRIPLE-LISTP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+MAT-TRIPLE-LISTP
+
+Summary
+Form:  ( DEFUN FLIP ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION POS-NEXT)
+        (:DEFINITION POS-PREV)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-ADD))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  511
+Goal'
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLE-LISTP-OF-FLIP ...)
+Rules: ((:DEFINITION FLIP)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION POS-NEXT)
+        (:DEFINITION POS-PREV)
+        (:DEFINITION SUMMAND)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:DEFINITION SUMMAND-SET-POS)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-ADD)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  5345
+MAT-TRIPLE-LISTP-OF-FLIP
+
+Summary
+Form:  ( PROGN (DEFTHM MAT-TRIPLE-LISTP-OF-FLIP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  5345
+FLIP
+
+Summary
+Form:  ( DEFUN PLUS ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-ADD))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  365
+Goal'
+Subgoal 24
+Subgoal 23
+Subgoal 22
+Subgoal 21
+Subgoal 20
+Subgoal 19
+Subgoal 18
+Subgoal 17
+Subgoal 16
+Subgoal 15
+Subgoal 14
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLE-LISTP-OF-PLUS ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION PLUS)
+        (:DEFINITION SUMMAND)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:DEFINITION SUMMAND-SET-POS)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-ADD)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
+Prover steps counted:  18901
+MAT-TRIPLE-LISTP-OF-PLUS
+
+Summary
+Form:  ( PROGN (DEFTHM MAT-TRIPLE-LISTP-OF-PLUS ...) ...)
+Rules: NIL
+Time:  0.08 seconds (prove: 0.08, print: 0.00, other: 0.00)
+Prover steps counted:  18901
+PLUS
+
+Summary
+Form:  ( DEFUN MOVE-KIND ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MOVE-KIND
+
+Summary
+Form:  ( DEFUN MOVE-POS ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MOVE-POS
+
+Summary
+Form:  ( DEFUN MOVE-S1 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MOVE-S1
+
+Summary
+Form:  ( DEFUN MOVE-S2 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MOVE-S2
+
+Summary
+Form:  ( DEFUN MOVE-P ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION MAT-TRIPLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-MOVE-P ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION MOVE-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-MOVE-P
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-MOVE-P ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MOVE-P
+
+Summary
+Form:  ( DEFUN MOVE-LIST-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-MOVE-LIST-P ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION MOVE-LIST-P)
+        (:TYPE-PRESCRIPTION MOVE-LIST-P))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-MOVE-LIST-P
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-MOVE-LIST-P ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+MOVE-LIST-P
+Goal'
+Goal''
+Goal'''
+Subgoal 2
+Subgoal 1
+Subgoal 1'
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/4''
+Subgoal *1/4'''
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1.1/5
+Subgoal *1.1/5'
+Subgoal *1.1/4
+Subgoal *1.1/4'
+Subgoal *1.1/3
+Subgoal *1.1/3'
+Subgoal *1.1/2
+Subgoal *1.1/2'
+Subgoal *1.1/1
+Subgoal *1.1/1'
+
+Summary
+Form:  ( DEFUN INSERT-ALL-NONZERO ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION FIX)
+        (:DEFINITION INSERT-ALL-NONZERO)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION SUMMAND-A)
+        (:DEFINITION SUMMAND-B)
+        (:DEFINITION SUMMAND-C)
+        (:DEFINITION SUMMAND0P)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION INSERT-ALL-NONZERO)
+        (:INDUCTION LEN)
+        (:INDUCTION MAT-TRIPLE-LISTP)
+        (:INDUCTION TRUE-LISTP)
+        (:META CANCEL_PLUS-EQUAL-CORRECT)
+        (:REWRITE OBAG::BAGP-OF-INSERT)
+        (:REWRITE CDR-CONS)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION OBAG::BAGP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MAT0)
+        (:TYPE-PRESCRIPTION OBAG::INSERT)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
+Prover steps counted:  16859
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3''
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2.3
+Subgoal *1/2.2
+Subgoal *1/2.1
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BAGP-OF-INSERT-ALL-NONZERO ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION INSERT-ALL-NONZERO)
+        (:DEFINITION NOT)
+        (:DEFINITION SUMMAND-A)
+        (:DEFINITION SUMMAND-B)
+        (:DEFINITION SUMMAND-C)
+        (:DEFINITION SUMMAND0P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION INSERT-ALL-NONZERO)
+        (:REWRITE OBAG::BAGP-OF-INSERT)
+        (:TYPE-PRESCRIPTION OBAG::BAGP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  2440
+BAGP-OF-INSERT-ALL-NONZERO
+
+Summary
+Form:  ( PROGN (DEFTHM BAGP-OF-INSERT-ALL-NONZERO ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  2440
+INSERT-ALL-NONZERO
+Goal'
+
+Summary
+Form:  ( DEFUN MOVE-VALIDP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION EQL)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION MOVE-KIND)
+        (:DEFINITION MOVE-P)
+        (:DEFINITION MOVE-POS)
+        (:DEFINITION MOVE-S1)
+        (:DEFINITION MOVE-S2)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION OBAG::BAGP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION OBAG::IN)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION OBAG::OCCS))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  6964
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-MOVE-VALIDP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION MOVE-VALIDP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-MOVE-VALIDP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-MOVE-VALIDP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MOVE-VALIDP
+Goal'
+Subgoal 27
+Subgoal 26
+Subgoal 26'
+Subgoal 25
+Subgoal 24
+Subgoal 23
+Subgoal 22
+Subgoal 21
+Subgoal 20
+Subgoal 19
+Subgoal 18
+Subgoal 17
+Subgoal 16
+Subgoal 16'
+Subgoal 15
+Subgoal 15'
+Subgoal 14
+Subgoal 14'
+Subgoal 13
+Subgoal 13'
+Subgoal 12
+Subgoal 12'
+Subgoal 11
+Subgoal 11'
+Subgoal 10
+Subgoal 10'
+Subgoal 9
+Subgoal 9'
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN APPLY-MOVE ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION EQL)
+        (:DEFINITION FLIP)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION MOVE-KIND)
+        (:DEFINITION MOVE-P)
+        (:DEFINITION MOVE-POS)
+        (:DEFINITION MOVE-S1)
+        (:DEFINITION MOVE-S2)
+        (:DEFINITION NOT)
+        (:DEFINITION PLUS)
+        (:DEFINITION POS-NEXT)
+        (:DEFINITION POS-PREV)
+        (:DEFINITION SUMMAND)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:DEFINITION SUMMAND-SET-POS)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE OBAG::BAGP-OF-DELETE)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-ADD)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION OBAG::BAGP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.37 seconds (prove: 0.36, print: 0.00, other: 0.00)
+Prover steps counted:  58699
+
+Summary
+Form:  ( DEFTHM BAGP-OF-APPLY-MOVE ...)
+Rules: ((:DEFINITION APPLY-MOVE)
+        (:DEFINITION FLIP)
+        (:DEFINITION MOVE-KIND)
+        (:DEFINITION MOVE-POS)
+        (:DEFINITION MOVE-S1)
+        (:DEFINITION MOVE-S2)
+        (:DEFINITION PLUS)
+        (:DEFINITION POS-NEXT)
+        (:DEFINITION POS-PREV)
+        (:DEFINITION SUMMAND)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:DEFINITION SUMMAND-SET-POS)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION OBAG::BAGP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  658
+BAGP-OF-APPLY-MOVE
+
+Summary
+Form:  ( PROGN (DEFTHM BAGP-OF-APPLY-MOVE ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  658
+APPLY-MOVE
+Goal'
+
+Summary
+Form:  ( DEFUN APPLY-MOVES ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION MOVE-KIND)
+        (:DEFINITION MOVE-LIST-P)
+        (:DEFINITION MOVE-P)
+        (:DEFINITION MOVE-POS)
+        (:DEFINITION MOVE-S1)
+        (:DEFINITION MOVE-S2)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART MOVE-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BAGP-OF-APPLY-MOVE)
+        (:TYPE-PRESCRIPTION OBAG::BAGP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION MOVE-LIST-P))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  9037
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BAGP-OF-APPLY-MOVES ...)
+Rules: ((:DEFINITION APPLY-MOVES)
+        (:DEFINITION ATOM)
+        (:DEFINITION NOT)
+        (:INDUCTION APPLY-MOVES)
+        (:REWRITE BAGP-OF-APPLY-MOVE)
+        (:TYPE-PRESCRIPTION OBAG::BAGP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  582
+BAGP-OF-APPLY-MOVES
+
+Summary
+Form:  ( PROGN (DEFTHM BAGP-OF-APPLY-MOVES ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  582
+APPLY-MOVES
+Goal'
+
+Summary
+Form:  ( DEFUN PATH-VALIDP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION MOVE-KIND)
+        (:DEFINITION MOVE-LIST-P)
+        (:DEFINITION MOVE-P)
+        (:DEFINITION MOVE-POS)
+        (:DEFINITION MOVE-S1)
+        (:DEFINITION MOVE-S2)
+        (:DEFINITION MOVE-VALIDP)
+        (:DEFINITION NOT)
+        (:DEFINITION SUMMAND-GET-POS)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART MOVE-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BAGP-OF-APPLY-MOVE)
+        (:TYPE-PRESCRIPTION OBAG::BAGP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION MOVE-LIST-P))
+Time:  0.11 seconds (prove: 0.10, print: 0.00, other: 0.00)
+Prover steps counted:  14698
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-PATH-VALIDP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION PATH-VALIDP)
+        (:TYPE-PRESCRIPTION PATH-VALIDP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-PATH-VALIDP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-PATH-VALIDP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+PATH-VALIDP
+
+Summary
+Form:  (DEFUN-SK FLIP-PLUS-REACHABLEP ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  313
+FLIP-PLUS-REACHABLEP
+
+Summary
+Form:  ( DEFUN TENSOR ...)
+Rules: ((:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-OUTER)
+        (:TYPE-PRESCRIPTION BIT-LIST-OUTER))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  64
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-TENSOR ...)
+Rules: ((:DEFINITION TENSOR)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-OUTER)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  36
+BIT-LIST-P-OF-TENSOR
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-TENSOR ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  36
+TENSOR
+
+Summary
+Form:  ( DEFUN SUMMAND-TENSOR ...)
+Rules: ((:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION TENSOR))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  141
+SUMMAND-TENSOR
+Goal'
+Goal''
+Goal'''
+Subgoal 2
+Subgoal 1
+Subgoal 1'
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/4''
+Subgoal *1/4'''
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1.1/3
+Subgoal *1.1/3'
+Subgoal *1.1/2
+Subgoal *1.1/2'
+Subgoal *1.1/1
+Subgoal *1.1/1'
+
+Summary
+Form:  ( DEFUN SCHEME-SUM ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION SCHEME-SUM)
+        (:DEFINITION SUMMAND-TENSOR)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:INDUCTION MAT-TRIPLE-LISTP)
+        (:INDUCTION SCHEME-SUM)
+        (:INDUCTION TRUE-LISTP)
+        (:META CANCEL_PLUS-EQUAL-CORRECT)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-ADD)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:REWRITE BIT-LIST-P-OF-TENSOR)
+        (:REWRITE CDR-CONS)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-ADD)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-LISTN0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP)
+        (:TYPE-PRESCRIPTION NONNEGATIVE-PRODUCT))
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Prover steps counted:  9207
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-SCHEME-SUM ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION NOT)
+        (:DEFINITION SCHEME-SUM)
+        (:DEFINITION SUMMAND-TENSOR)
+        (:INDUCTION SCHEME-SUM)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-ADD)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  450
+BIT-LIST-P-OF-SCHEME-SUM
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-SCHEME-SUM ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  450
+SCHEME-SUM
+
+Summary
+Form:  ( DEFUN BIT-UNIT-LIST ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-BIT-UNIT-LIST ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BIT-UNIT-LIST)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-UNIT-LIST)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BIT-LISTN0)
+        (:TYPE-PRESCRIPTION BIT-UNIT-LIST))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  643
+BIT-LIST-P-OF-BIT-UNIT-LIST
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-BIT-UNIT-LIST ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  643
+BIT-UNIT-LIST
+
+Summary
+Form:  ( DEFUN BIT-MAT-UNIT ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-MAT0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-UNIT ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-MAT-UNIT)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-MAT-UNIT)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT0)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:REWRITE BIT-LIST-P-OF-BIT-UNIT-LIST)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MAT-UNIT)
+        (:TYPE-PRESCRIPTION BIT-MAT0))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  868
+BIT-LIST-LISTP-OF-BIT-MAT-UNIT
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-UNIT ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  868
+BIT-MAT-UNIT
+
+Summary
+Form:  ( DEFUN MM-TENSOR-3 ...)
+Rules: ((:TYPE-PRESCRIPTION BIT-LIST-ADD)
+        (:TYPE-PRESCRIPTION BIT-LISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-MM-TENSOR-3 ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MM-TENSOR-3)
+        (:DEFINITION NOT)
+        (:INDUCTION MM-TENSOR-3)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-ADD)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  493
+BIT-LIST-P-OF-MM-TENSOR-3
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-MM-TENSOR-3 ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  493
+
+Summary
+Form:  ( VERIFY-GUARDS MM-TENSOR-3)
+Rules: ((:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-UNIT)
+        (:REWRITE BIT-LIST-P-OF-MM-TENSOR-3)
+        (:REWRITE NATP-POSP--1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  261
+MM-TENSOR-3
+
+Summary
+Form:  ( DEFUN MM-TENSOR-2 ...)
+Rules: ((:TYPE-PRESCRIPTION BIT-LIST-ADD)
+        (:TYPE-PRESCRIPTION BIT-LISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-MM-TENSOR-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MM-TENSOR-2)
+        (:DEFINITION NOT)
+        (:INDUCTION MM-TENSOR-2)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-ADD)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  455
+BIT-LIST-P-OF-MM-TENSOR-2
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-MM-TENSOR-2 ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  455
+
+Summary
+Form:  ( VERIFY-GUARDS MM-TENSOR-2)
+Rules: ((:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-P-OF-MM-TENSOR-2)
+        (:REWRITE BIT-LIST-P-OF-MM-TENSOR-3)
+        (:REWRITE NATP-POSP--1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  187
+MM-TENSOR-2
+
+Summary
+Form:  ( DEFUN MM-TENSOR-1 ...)
+Rules: ((:TYPE-PRESCRIPTION BIT-LIST-ADD)
+        (:TYPE-PRESCRIPTION BIT-LISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-MM-TENSOR-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MM-TENSOR-1)
+        (:DEFINITION NOT)
+        (:INDUCTION MM-TENSOR-1)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-ADD)
+        (:REWRITE BIT-LIST-P-OF-BIT-LISTN0)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  429
+BIT-LIST-P-OF-MM-TENSOR-1
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-MM-TENSOR-1 ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  429
+
+Summary
+Form:  ( VERIFY-GUARDS MM-TENSOR-1)
+Rules: ((:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-P-OF-MM-TENSOR-1)
+        (:REWRITE BIT-LIST-P-OF-MM-TENSOR-2)
+        (:REWRITE NATP-POSP--1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  167
+MM-TENSOR-1
+
+Summary
+Form:  ( DEFUN MM-TENSOR ...)
+Rules: ((:TYPE-PRESCRIPTION MM-TENSOR-1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-MM-TENSOR ...)
+Rules: ((:DEFINITION MM-TENSOR)
+        (:REWRITE BIT-LIST-P-OF-MM-TENSOR-1)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  12
+BIT-LIST-P-OF-MM-TENSOR
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-MM-TENSOR ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  12
+MM-TENSOR
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLE-LISTP-WHEN-SUMMAND-LISTP ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION SUMMAND-A)
+        (:DEFINITION SUMMAND-B)
+        (:DEFINITION SUMMAND-C)
+        (:DEFINITION SUMMAND-LISTP)
+        (:DEFINITION SUMMAND0P)
+        (:DEFINITION SUMMANDP)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION MAT-TRIPLE-LISTP)
+        (:INDUCTION SUMMAND-LISTP)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  4559
+MAT-TRIPLE-LISTP-WHEN-SUMMAND-LISTP
+Goal'
+
+Summary
+Form:  ( DEFUN CORRECT-SCHEMEP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:DEFINITION SCHEMEP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE MAT-TRIPLE-LISTP-WHEN-SUMMAND-LISTP)
+        (:TYPE-PRESCRIPTION SUMMAND-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  843
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-CORRECT-SCHEMEP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION CORRECT-SCHEMEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-CORRECT-SCHEMEP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-CORRECT-SCHEMEP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CORRECT-SCHEMEP
+Goal'
+Subgoal 2
+Subgoal 1
+Subgoal *2/5
+Subgoal *2/5'
+Subgoal *2/4
+Subgoal *2/3
+Subgoal *2/3'
+Subgoal *2/2
+Subgoal *2/2'
+Subgoal *2/2''
+Subgoal *2/2'''
+Subgoal *2/2'4'
+Subgoal *2/2'5'
+Subgoal *2/2'6'
+Subgoal *2/1
+Subgoal *2/1'
+Subgoal *2.1/3
+Subgoal *2.1/2
+Subgoal *2.1/1
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFUN MAT-ENTRY ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BITP)
+        (:DEFINITION ENDP)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION BIT-LIST-LISTP)
+        (:INDUCTION BIT-LIST-P)
+        (:INDUCTION NTH)
+        (:INDUCTION TRUE-LISTP)
+        (:REWRITE NTH-WHEN-TOO-LARGE-CHEAP)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP))
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2674
+MAT-ENTRY
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN NTH-DIM-INDUCT ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O<)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR ACL2-COUNT-OF-SUM)
+        (:TYPE-PRESCRIPTION ACL2-COUNT)
+        (:TYPE-PRESCRIPTION ACL2-COUNT-OF-CONSP-POSITIVE))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  843
+NTH-DIM-INDUCT
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+Subgoal *1/1'''
+
+Summary
+Form:  ( DEFTHM BITP-OF-NTH-WHEN-BIT-LISTNP-LOCAL ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION BIT-LISTNP)
+        (:DEFINITION BITP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION NTH-DIM-INDUCT)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION BIT-LISTNP)
+        (:TYPE-PRESCRIPTION BITP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1677
+T
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+Subgoal *1/1'''
+
+Summary
+Form:  ( DEFTHM BIT-LISTNP-OF-NTH-WHEN-BIT-MATP-LOCAL ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION BIT-MATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION NTH-DIM-INDUCT)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION BIT-LISTNP)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1130
+T
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM INTEGERP-OF-MAT-ENTRY ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MAT-ENTRY)
+        (:DEFINITION NOT)
+        (:REWRITE BIT-LISTNP-OF-NTH-WHEN-BIT-MATP-LOCAL)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Hint-events: ((:USE BITP-OF-NTH-WHEN-BIT-LISTNP-LOCAL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  495
+(:DEFTHMD INTEGERP-OF-MAT-ENTRY)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM BITP-OF-MAT-ENTRY ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BITP)
+        (:DEFINITION MAT-ENTRY)
+        (:DEFINITION NOT)
+        (:REWRITE BIT-LISTNP-OF-NTH-WHEN-BIT-MATP-LOCAL)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION BITP))
+Hint-events: ((:USE BITP-OF-NTH-WHEN-BIT-LISTNP-LOCAL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  521
+BITP-OF-MAT-ENTRY
+Goal'
+
+Summary
+Form:  ( DEFUN BIT-MAT-SCALE ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-LIST-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  240
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-SCALE ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-MAT-SCALE)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-MAT-SCALE)
+        (:REWRITE BIT-LIST-P-OF-BIT-LIST-SCALE)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MAT-SCALE))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  544
+BIT-LIST-LISTP-OF-BIT-MAT-SCALE
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-SCALE ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  544
+BIT-MAT-SCALE
+
+Summary
+Form:  ( DEFUN MAT-MUL-ENTRY ...)
+Rules: ((:TYPE-PRESCRIPTION BITXOR))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BITP-OF-MAT-MUL-ENTRY ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:INDUCTION MAT-MUL-ENTRY)
+        (:TYPE-PRESCRIPTION MAT-MUL-ENTRY))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BITP-OF-MAT-MUL-ENTRY
+
+Summary
+Form:  ( PROGN (DEFTHM BITP-OF-MAT-MUL-ENTRY ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Goal'
+Goal''
+
+Summary
+Form:  ( VERIFY-GUARDS MAT-MUL-ENTRY)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE INTEGERP-OF-BITAND)
+        (:REWRITE INTEGERP-OF-MAT-ENTRY)
+        (:REWRITE NATP-POSP--1)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION MAT-MUL-ENTRY))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1034
+MAT-MUL-ENTRY
+
+Summary
+Form:  ( DEFUN BIT-MAT-MUL-ROW ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-BIT-MAT-MUL-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION BIT-MAT-MUL-ROW)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-MAT-MUL-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION BIT-MAT-MUL-ROW)
+        (:TYPE-PRESCRIPTION MAT-MUL-ENTRY))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  513
+BIT-LIST-P-OF-BIT-MAT-MUL-ROW
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-BIT-MAT-MUL-ROW ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  513
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( VERIFY-GUARDS BIT-MAT-MUL-ROW)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-MINUS-ZERO)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  865
+BIT-MAT-MUL-ROW
+
+Summary
+Form:  ( DEFUN BIT-MAT-MUL-ROWS ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-MUL-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION BIT-MAT-MUL-ROWS)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BIT-MAT-MUL-ROWS)
+        (:REWRITE BIT-LIST-P-OF-BIT-MAT-MUL-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MAT-MUL-ROWS))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  607
+BIT-LIST-LISTP-OF-BIT-MAT-MUL-ROWS
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-MUL-ROWS ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  607
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( VERIFY-GUARDS BIT-MAT-MUL-ROWS)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-MINUS-ZERO)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  721
+BIT-MAT-MUL-ROWS
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN BIT-MAT-MUL ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:TYPE-PRESCRIPTION BIT-MAT-MUL-ROWS)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  268
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-MUL ...)
+Rules: ((:DEFINITION BIT-MAT-MUL)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-MUL-ROWS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  18
+BIT-LIST-LISTP-OF-BIT-MAT-MUL
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-BIT-MAT-MUL ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  18
+BIT-MAT-MUL
+Subgoal 3
+Subgoal 3'
+Subgoal 2
+Subgoal 2'
+Subgoal 1
+Subgoal 1.2
+Subgoal 1.1
+
+Summary
+Form:  ( DEFUN LFORMP ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ACL2-COUNT)
+        (:DEFINITION BITP)
+        (:DEFINITION EQL)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O<)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-COUNT)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR ACL2-COUNT-OF-SUM)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION ACL2-COUNT)
+        (:TYPE-PRESCRIPTION ACL2-COUNT-OF-CONSP-POSITIVE)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  3779
+Subgoal *1/12
+Subgoal *1/11
+Subgoal *1/10
+Subgoal *1/9
+Subgoal *1/8
+Subgoal *1/7
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-LFORMP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION LFORMP)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  0.04 seconds (prove: 0.03, print: 0.00, other: 0.00)
+BOOLEANP-OF-LFORMP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-LFORMP ...) ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.03, print: 0.00, other: 0.00)
+LFORMP
+Subgoal 3
+Subgoal 3'
+Subgoal 3''
+Subgoal 3'''
+Subgoal 3'4'
+Subgoal 3'5'
+Subgoal 3'6'
+Subgoal 3'7'
+Subgoal 3.4
+Subgoal 3.3
+Subgoal 3.3'
+Subgoal 3.2
+Subgoal 3.2'
+Subgoal 3.1
+Subgoal 3.1'
+Subgoal 2
+Subgoal 2'
+Subgoal 2''
+Subgoal 2'''
+Subgoal 2'4'
+Subgoal 2'5'
+Subgoal 2.3
+Subgoal 2.2
+Subgoal 2.2'
+Subgoal 2.2''
+Subgoal 2.1
+Subgoal 2.1'
+Subgoal 1
+Subgoal 1'
+Subgoal 1''
+Subgoal 1'''
+Subgoal 1'4'
+Subgoal 1'5'
+Subgoal 1'6'
+Subgoal 1'7'
+Subgoal 1.4
+Subgoal 1.3
+Subgoal 1.3'
+Subgoal 1.2
+Subgoal 1.2'
+Subgoal 1.1
+Subgoal 1.1'
+
+Summary
+Form:  ( DEFUN EVAL-LFORM ...)
+Rules: ((:DEFINITION ACL2-COUNT)
+        (:DEFINITION EQL)
+        (:DEFINITION FIX)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O<)
+        (:DEFINITION SYNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART ACL2-COUNT)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART SYMBOLP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR ACL2-COUNT-OF-CONS-GREATER)
+        (:LINEAR ACL2-COUNT-OF-SUM)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION ACL2-COUNT)
+        (:TYPE-PRESCRIPTION ACL2-COUNT-OF-CONSP-POSITIVE))
+Time:  0.19 seconds (prove: 0.18, print: 0.00, other: 0.01)
+Prover steps counted:  79961
+Goal'
+Goal''
+Subgoal *1/8
+Subgoal *1/8'
+Subgoal *1/7
+Subgoal *1/7'
+Subgoal *1/6
+Subgoal *1/6'
+Subgoal *1/5
+Subgoal *1/5'
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BITP-OF-EVAL-LFORM ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION EQL)
+        (:DEFINITION EVAL-LFORM)
+        (:DEFINITION LEN)
+        (:DEFINITION LFORMP)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION EVAL-LFORM)
+        (:INDUCTION LFORMP)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE BITP-OF-MAT-ENTRY)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION BITAND)
+        (:TYPE-PRESCRIPTION BITP)
+        (:TYPE-PRESCRIPTION BITXOR)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  4043
+BITP-OF-EVAL-LFORM
+
+Summary
+Form:  ( PROGN (DEFTHM BITP-OF-EVAL-LFORM ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  4043
+Goal'
+Subgoal 16
+Subgoal 15
+Subgoal 14
+Subgoal 14.4
+Subgoal 14.3
+Subgoal 14.3'
+Subgoal 14.2
+Subgoal 14.2'
+Subgoal 14.1
+Subgoal 14.1'
+Subgoal 14.1''
+Subgoal *1/12
+Subgoal *1/12'
+Subgoal *1/11
+Subgoal *1/11'
+Subgoal *1/10
+Subgoal *1/10'
+Subgoal *1/9
+Subgoal *1/8
+Subgoal *1/8'
+Subgoal *1/7
+Subgoal *1/7'
+Subgoal *1/7.8
+Subgoal *1/7.7
+Subgoal *1/7.6
+Subgoal *1/7.5
+Subgoal *1/7.4
+Subgoal *1/7.3
+Subgoal *1/7.2
+Subgoal *1/7.1
+Subgoal *1/6
+Subgoal *1/6'
+Subgoal *1/5
+Subgoal *1/5'
+Subgoal *1/5.64
+Subgoal *1/5.63
+Subgoal *1/5.62
+Subgoal *1/5.61
+Subgoal *1/5.60
+Subgoal *1/5.59
+Subgoal *1/5.58
+Subgoal *1/5.57
+Subgoal *1/5.56
+Subgoal *1/5.55
+Subgoal *1/5.54
+Subgoal *1/5.53
+Subgoal *1/5.52
+Subgoal *1/5.51
+Subgoal *1/5.50
+Subgoal *1/5.49
+Subgoal *1/5.48
+Subgoal *1/5.47
+Subgoal *1/5.46
+Subgoal *1/5.45
+Subgoal *1/5.44
+Subgoal *1/5.43
+Subgoal *1/5.42
+Subgoal *1/5.41
+Subgoal *1/5.40
+Subgoal *1/5.39
+Subgoal *1/5.38
+Subgoal *1/5.37
+Subgoal *1/5.36
+Subgoal *1/5.35
+Subgoal *1/5.34
+Subgoal *1/5.33
+Subgoal *1/5.32
+Subgoal *1/5.31
+Subgoal *1/5.30
+Subgoal *1/5.29
+Subgoal *1/5.28
+Subgoal *1/5.27
+Subgoal *1/5.26
+Subgoal *1/5.25
+Subgoal *1/5.24
+Subgoal *1/5.23
+Subgoal *1/5.22
+Subgoal *1/5.21
+Subgoal *1/5.20
+Subgoal *1/5.19
+Subgoal *1/5.18
+Subgoal *1/5.17
+Subgoal *1/5.16
+Subgoal *1/5.15
+Subgoal *1/5.14
+Subgoal *1/5.13
+Subgoal *1/5.12
+Subgoal *1/5.11
+Subgoal *1/5.10
+Subgoal *1/5.9
+Subgoal *1/5.8
+Subgoal *1/5.7
+Subgoal *1/5.6
+Subgoal *1/5.5
+Subgoal *1/5.4
+Subgoal *1/5.3
+Subgoal *1/5.2
+Subgoal *1/5.1
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( VERIFY-GUARDS EVAL-LFORM)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BITP)
+        (:DEFINITION EQL)
+        (:DEFINITION EVAL-LFORM)
+        (:DEFINITION LEN)
+        (:DEFINITION LFORMP)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LFORMP)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE BITAND-OF-0-ARG1)
+        (:REWRITE BITAND-OF-0-ARG2)
+        (:REWRITE BITAND-OF-1-ARG1)
+        (:REWRITE BITXOR-SAME)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE INTEGERP-OF-MAT-ENTRY)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION BITXOR)
+        (:TYPE-PRESCRIPTION GETBIT)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  1.20 seconds (prove: 1.19, print: 0.01, other: 0.00)
+Prover steps counted:  205943
+EVAL-LFORM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM INTEGERP-OF-EVAL-LFORM ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:FORWARD-CHAINING BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION LFORMP))
+Hint-events: ((:USE BITP-OF-EVAL-LFORM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  170
+T
+Subgoal 3
+Subgoal 3'
+Subgoal 3''
+Subgoal 3'''
+Subgoal 3'4'
+Subgoal 3'5'
+Subgoal 3'6'
+Subgoal 3'7'
+Subgoal 3.4
+Subgoal 3.3
+Subgoal 3.3'
+Subgoal 3.2
+Subgoal 3.2'
+Subgoal 3.1
+Subgoal 3.1'
+Subgoal 2
+Subgoal 2'
+Subgoal 2''
+Subgoal 2'''
+Subgoal 2'4'
+Subgoal 2'5'
+Subgoal 2.3
+Subgoal 2.2
+Subgoal 2.2'
+Subgoal 2.2''
+Subgoal 2.1
+Subgoal 2.1'
+Subgoal 1
+Subgoal 1'
+Subgoal 1''
+Subgoal 1'''
+Subgoal 1'4'
+Subgoal 1'5'
+Subgoal 1'6'
+Subgoal 1'7'
+Subgoal 1.4
+Subgoal 1.3
+Subgoal 1.3'
+Subgoal 1.2
+Subgoal 1.2'
+Subgoal 1.1
+Subgoal 1.1'
+
+Summary
+Form:  ( DEFUN LFORM-MAT ...)
+Rules: ((:DEFINITION ACL2-COUNT)
+        (:DEFINITION EQL)
+        (:DEFINITION FIX)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O<)
+        (:DEFINITION SYNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART ACL2-COUNT)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART SYMBOLP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR ACL2-COUNT-OF-CONS-GREATER)
+        (:LINEAR ACL2-COUNT-OF-SUM)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION ACL2-COUNT)
+        (:TYPE-PRESCRIPTION ACL2-COUNT-OF-CONSP-POSITIVE)
+        (:TYPE-PRESCRIPTION BIT-MAT-ADD)
+        (:TYPE-PRESCRIPTION BIT-MAT-SCALE)
+        (:TYPE-PRESCRIPTION BIT-MAT-UNIT)
+        (:TYPE-PRESCRIPTION BIT-MAT0))
+Time:  0.20 seconds (prove: 0.19, print: 0.00, other: 0.00)
+Prover steps counted:  79961
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-LFORM-MAT ...)
+Rules: ((:DEFINITION EQL)
+        (:DEFINITION LFORM-MAT)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:INDUCTION LFORM-MAT)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-ADD)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-SCALE)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT-UNIT)
+        (:REWRITE BIT-LIST-LISTP-OF-BIT-MAT0)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  1603
+BIT-LIST-LISTP-OF-LFORM-MAT
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-LFORM-MAT ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  1603
+Goal'
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( VERIFY-GUARDS LFORM-MAT)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BITP)
+        (:DEFINITION EQL)
+        (:DEFINITION LEN)
+        (:DEFINITION LFORMP)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQLABLEP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-OF-LFORM-MAT)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  4237
+LFORM-MAT
+
+Summary
+Form:  ( DEFUN PRODP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-PRODP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION PRODP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-PRODP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-PRODP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PRODP
+
+Summary
+Form:  ( DEFUN PROD-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-PROD-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION PROD-LISTP)
+        (:TYPE-PRESCRIPTION PROD-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-PROD-LISTP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-PROD-LISTP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+PROD-LISTP
+
+Summary
+Form:  ( IN-THEORY (ENABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 8555)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-WHEN-PROD-LISTP ...)
+Rules: ((:DEFINITION PROD-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION PROD-LISTP)
+        (:INDUCTION TRUE-LISTP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  197
+TRUE-LISTP-WHEN-PROD-LISTP
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3''
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM PRODP-OF-NTH-WHEN-PROD-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION LEN)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION PROD-LISTP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION CDR-DEC-INDUCT)
+        (:REWRITE <-+-NEGATIVE-0-1)
+        (:REWRITE NTH-WHEN-TOO-LARGE-CHEAP)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION NFIX)
+        (:TYPE-PRESCRIPTION PRODP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1260
+PRODP-OF-NTH-WHEN-PROD-LISTP
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1457
+T
+
+Summary
+Form:  ( DEFUN INDEX-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-INDEX-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION INDEX-LISTP)
+        (:TYPE-PRESCRIPTION INDEX-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BOOLEANP-OF-INDEX-LISTP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-INDEX-LISTP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+INDEX-LISTP
+
+Summary
+Form:  ( IN-THEORY (ENABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 8561)
+Subgoal *1/5
+Subgoal *1/5'
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3''
+Subgoal *1/3'''
+Subgoal *1/3'4'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM NAT-LISTP-WHEN-INDEX-LISTP ...)
+Rules: ((:COMPOUND-RECOGNIZER NAT-LISTP-IMPLIES-TRUE-LISTP)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION INDEX-LISTP)
+        (:DEFINITION NOT)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART NAT-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION INDEX-LISTP)
+        (:REWRITE NAT-LISTP-OF-CONS)
+        (:TYPE-PRESCRIPTION NAT-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1367
+NAT-LISTP-WHEN-INDEX-LISTP
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1367
+T
+
+Summary
+Form:  ( DEFUN IDX-ROWP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-IDX-ROWP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION IDX-ROWP)
+        (:TYPE-PRESCRIPTION IDX-ROWP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BOOLEANP-OF-IDX-ROWP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-IDX-ROWP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+IDX-ROWP
+
+Summary
+Form:  ( DEFUN IDX-TABLEP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-IDX-TABLEP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION IDX-TABLEP)
+        (:TYPE-PRESCRIPTION IDX-TABLEP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BOOLEANP-OF-IDX-TABLEP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-IDX-TABLEP ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+IDX-TABLEP
+
+Summary
+Form:  ( DEFUN OUTS-ROWP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-OUTS-ROWP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION OUTS-ROWP)
+        (:TYPE-PRESCRIPTION OUTS-ROWP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BOOLEANP-OF-OUTS-ROWP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-OUTS-ROWP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+OUTS-ROWP
+
+Summary
+Form:  ( IN-THEORY (ENABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 8576)
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/4''
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM IDX-ROWP-WHEN-OUTS-ROWP ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION IDX-ROWP)
+        (:DEFINITION NOT)
+        (:DEFINITION OUTS-ROWP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART IDX-ROWP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING NAT-LISTP-WHEN-INDEX-LISTP)
+        (:INDUCTION IDX-ROWP)
+        (:INDUCTION OUTS-ROWP)
+        (:REWRITE NAT-LISTP-WHEN-INDEX-LISTP)
+        (:TYPE-PRESCRIPTION IDX-ROWP)
+        (:TYPE-PRESCRIPTION INDEX-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  710
+IDX-ROWP-WHEN-OUTS-ROWP
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-WHEN-OUTS-ROWP ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION OUTS-ROWP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION OUTS-ROWP)
+        (:INDUCTION TRUE-LISTP)
+        (:TYPE-PRESCRIPTION INDEX-LISTP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  372
+TRUE-LISTP-WHEN-OUTS-ROWP
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM LEN-OF-OUTS-ROWP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION OUTS-ROWP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION LEN)
+        (:INDUCTION OUTS-ROWP)
+        (:REWRITE MINUS-CANCELLATION-ON-LEFT)
+        (:TYPE-PRESCRIPTION INDEX-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  598
+(:DEFTHMD LEN-OF-OUTS-ROWP)
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  1680
+T
+
+Summary
+Form:  ( DEFUN OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:INDUCTION OUTS-ROWSP)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+BOOLEANP-OF-OUTS-ROWSP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-OUTS-ROWSP ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+OUTS-ROWSP
+
+Summary
+Form:  ( IN-THEORY (ENABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 8583)
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/4''
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM IDX-TABLEP-WHEN-OUTS-ROWSP ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION IDX-TABLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION OUTS-ROWSP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART IDX-TABLEP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING IDX-ROWP-WHEN-OUTS-ROWP)
+        (:INDUCTION IDX-TABLEP)
+        (:INDUCTION OUTS-ROWSP)
+        (:REWRITE IDX-ROWP-WHEN-OUTS-ROWP)
+        (:TYPE-PRESCRIPTION IDX-TABLEP)
+        (:TYPE-PRESCRIPTION OUTS-ROWP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  845
+IDX-TABLEP-WHEN-OUTS-ROWSP
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-WHEN-OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION OUTS-ROWSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION OUTS-ROWSP)
+        (:INDUCTION TRUE-LISTP)
+        (:TYPE-PRESCRIPTION OUTS-ROWP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  409
+TRUE-LISTP-WHEN-OUTS-ROWSP
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM LEN-OF-OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION OUTS-ROWSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION LEN)
+        (:INDUCTION OUTS-ROWSP)
+        (:REWRITE MINUS-CANCELLATION-ON-LEFT)
+        (:TYPE-PRESCRIPTION OUTS-ROWP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  645
+(:DEFTHMD LEN-OF-OUTS-ROWSP)
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1899
+T
+
+Summary
+Form:  ( DEFUN ALGOP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM BOOLEANP-OF-ALGOP ...)
+Rules: ((:COMPOUND-RECOGNIZER BOOLEANP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION ALGOP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BOOLEANP-OF-ALGOP
+
+Summary
+Form:  ( PROGN (DEFTHM BOOLEANP-OF-ALGOP ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALGOP
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3''
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM OUTS-ROWP-OF-NTH-WHEN-OUTS-ROWSP-CORE ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION OUTS-ROWSP)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION CDR-DEC-INDUCT)
+        (:REWRITE <-+-NEGATIVE-0-1)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE NTH-WHEN-TOO-LARGE-CHEAP)
+        (:REWRITE NTH-WHEN-ZP)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION NFIX)
+        (:TYPE-PRESCRIPTION OUTS-ROWP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1627
+T
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM OUTS-ROWP-OF-NTH-WHEN-OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION NFIX)
+        (:TYPE-PRESCRIPTION OUTS-ROWP)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP))
+Hint-events: ((:USE LEN-OF-OUTS-ROWSP)
+              (:USE OUTS-ROWP-OF-NTH-WHEN-OUTS-ROWSP-CORE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  957
+OUTS-ROWP-OF-NTH-WHEN-OUTS-ROWSP
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3''
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM INDEX-LISTP-OF-NTH-WHEN-OUTS-ROWP-CORE ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION OUTS-ROWP)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION CDR-DEC-INDUCT)
+        (:REWRITE <-+-NEGATIVE-0-1)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE NTH-WHEN-TOO-LARGE-CHEAP)
+        (:REWRITE NTH-WHEN-ZP)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION INDEX-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION NFIX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1557
+T
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM INDEX-LISTP-OF-NTH-WHEN-OUTS-ROWP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION INDEX-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION NFIX)
+        (:TYPE-PRESCRIPTION OUTS-ROWP))
+Hint-events: ((:USE INDEX-LISTP-OF-NTH-WHEN-OUTS-ROWP-CORE)
+              (:USE LEN-OF-OUTS-ROWP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  915
+INDEX-LISTP-OF-NTH-WHEN-OUTS-ROWP
+Goal'
+
+Summary
+Form:  ( DEFTHM INDEX-LISTP-OF-NTH-NTH-WHEN-OUTS-ROWSP ...)
+Rules: ((:TYPE-PRESCRIPTION INDEX-LISTP))
+Hint-events: ((:USE INDEX-LISTP-OF-NTH-WHEN-OUTS-ROWP)
+              (:USE OUTS-ROWP-OF-NTH-WHEN-OUTS-ROWSP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+INDEX-LISTP-OF-NTH-NTH-WHEN-OUTS-ROWSP
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-OF-NTH-WHEN-OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE NTH-WHEN-ZP)
+        (:REWRITE TRUE-LISTP-WHEN-OUTS-ROWP)
+        (:TYPE-PRESCRIPTION NFIX)
+        (:TYPE-PRESCRIPTION OUTS-ROWP)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP))
+Hint-events: ((:USE OUTS-ROWP-OF-NTH-WHEN-OUTS-ROWSP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1268
+T
+Goal'
+Goal''
+Subgoal 17
+Subgoal 16
+Subgoal 15
+Subgoal 14
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM NAT-LISTP-OF-NTH-NTH-WHEN-OUTS-ROWSP ...)
+Rules: ((:COMPOUND-RECOGNIZER NAT-LISTP-IMPLIES-TRUE-LISTP)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE NAT-LISTP-WHEN-INDEX-LISTP)
+        (:REWRITE NTH-WHEN-ZP)
+        (:TYPE-PRESCRIPTION INDEX-LISTP)
+        (:TYPE-PRESCRIPTION NAT-LISTP)
+        (:TYPE-PRESCRIPTION NFIX)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP))
+Hint-events: ((:USE INDEX-LISTP-OF-NTH-NTH-WHEN-OUTS-ROWSP))
+Time:  0.03 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  7111
+T
+Goal'
+
+Summary
+Form:  ( DEFUN PROD-VALUE ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION PRODP)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE EQUAL-CONSTANT-+)
+        (:REWRITE FOLD-CONSTS-IN-+)
+        (:REWRITE INTEGERP-OF-EVAL-LFORM)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION BITAND)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  715
+
+Summary
+Form:  ( DEFTHM BITP-OF-PROD-VALUE ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION PROD-VALUE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BITP-OF-PROD-VALUE
+
+Summary
+Form:  ( PROGN (DEFTHM BITP-OF-PROD-VALUE ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROD-VALUE
+
+Summary
+Form:  ( DEFUN PRODS-XOR ...)
+Rules: ((:TYPE-PRESCRIPTION BITXOR))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BITP-OF-PRODS-XOR ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:INDUCTION PRODS-XOR)
+        (:TYPE-PRESCRIPTION PRODS-XOR))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BITP-OF-PRODS-XOR
+
+Summary
+Form:  ( PROGN (DEFTHM BITP-OF-PRODS-XOR ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( VERIFY-GUARDS PRODS-XOR)
+Rules: ((:COMPOUND-RECOGNIZER NAT-LISTP-IMPLIES-TRUE-LISTP)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER
+             TRUE-LISTP-WHEN-INTEGER-LISTP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER
+             TRUE-LISTP-WHEN-RATIONAL-LISTP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION INDEX-LISTP)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING CAR-NAT-LISTP)
+        (:FORWARD-CHAINING INTEGER-LISTP-FORWARD-TO-RATIONAL-LISTP)
+        (:FORWARD-CHAINING NAT-LISTP-FORWARD-TO-INTEGER-LISTP)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:FORWARD-CHAINING NATP-FC-2)
+        (:FORWARD-CHAINING RATIONALP-CAR-RATIONAL-LISTP)
+        (:FORWARD-CHAINING TRUE-LISTP-WHEN-PROD-LISTP)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE INTEGERP-OF-CAR-WHEN-INTEGER-LISTP)
+        (:REWRITE NAT-LISTP-WHEN-INDEX-LISTP)
+        (:REWRITE NATP-OF-CAR-WHEN-NAT-LISTP)
+        (:REWRITE PRODP-OF-NTH-WHEN-PROD-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION INDEX-LISTP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION PROD-LISTP)
+        (:TYPE-PRESCRIPTION PROD-VALUE)
+        (:TYPE-PRESCRIPTION PRODP)
+        (:TYPE-PRESCRIPTION PRODS-XOR))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2593
+PRODS-XOR
+Goal'
+
+Summary
+Form:  ( DEFUN ALGO-ENTRY ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ALGOP)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING TRUE-LISTP-WHEN-OUTS-ROWSP)
+        (:FORWARD-CHAINING TRUE-LISTP-WHEN-PROD-LISTP)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE INDEX-LISTP-OF-NTH-NTH-WHEN-OUTS-ROWSP)
+        (:REWRITE NAT-LISTP-OF-NTH-NTH-WHEN-OUTS-ROWSP)
+        (:REWRITE TRUE-LISTP-OF-NTH-WHEN-OUTS-ROWSP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP)
+        (:TYPE-PRESCRIPTION PROD-LISTP)
+        (:TYPE-PRESCRIPTION PRODS-XOR))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Prover steps counted:  1065
+
+Summary
+Form:  ( DEFTHM BITP-OF-ALGO-ENTRY ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:TYPE-PRESCRIPTION ALGO-ENTRY))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+BITP-OF-ALGO-ENTRY
+
+Summary
+Form:  ( PROGN (DEFTHM BITP-OF-ALGO-ENTRY ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALGO-ENTRY
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN EVAL-ALGO-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-MINUS-ZERO)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION ALGOP)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  807
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-EVAL-ALGO-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION EVAL-ALGO-ROW)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION EVAL-ALGO-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:TYPE-PRESCRIPTION ALGO-ENTRY)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION EVAL-ALGO-ROW))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  538
+BIT-LIST-P-OF-EVAL-ALGO-ROW
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-EVAL-ALGO-ROW ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  538
+EVAL-ALGO-ROW
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN EVAL-ALGO-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-MINUS-ZERO)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION ALGOP)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  797
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-EVAL-ALGO-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION EVAL-ALGO-ROWS)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION EVAL-ALGO-ROWS)
+        (:REWRITE BIT-LIST-P-OF-EVAL-ALGO-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION EVAL-ALGO-ROWS))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  633
+BIT-LIST-LISTP-OF-EVAL-ALGO-ROWS
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-EVAL-ALGO-ROWS ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  633
+EVAL-ALGO-ROWS
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN EVAL-ALGO ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:TYPE-PRESCRIPTION ALGOP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION EVAL-ALGO-ROWS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  320
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-EVAL-ALGO ...)
+Rules: ((:DEFINITION EVAL-ALGO)
+        (:REWRITE BIT-LIST-LISTP-OF-EVAL-ALGO-ROWS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  21
+BIT-LIST-LISTP-OF-EVAL-ALGO
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-EVAL-ALGO ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  21
+EVAL-ALGO
+Goal'
+
+Summary
+Form:  ( DEFUN OCC-PARITY ...)
+Rules: ((:COMPOUND-RECOGNIZER NAT-LISTP-IMPLIES-TRUE-LISTP)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION DOUBLE-REWRITE)
+        (:DEFINITION NOT)
+        (:REWRITE NAT-LISTP-OF-CDR-WHEN-NAT-LISTP)
+        (:TYPE-PRESCRIPTION BITXOR)
+        (:TYPE-PRESCRIPTION OCC-PARITY))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  264
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM BITP-OF-OCC-PARITY ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:INDUCTION OCC-PARITY)
+        (:TYPE-PRESCRIPTION OCC-PARITY))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+BITP-OF-OCC-PARITY
+
+Summary
+Form:  ( PROGN (DEFTHM BITP-OF-OCC-PARITY ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+OCC-PARITY
+Goal'
+
+Summary
+Form:  ( DEFUN C-MAT-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER NAT-LISTP-IMPLIES-TRUE-LISTP)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION IDX-ROWP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART IDX-ROWP)
+        (:EXECUTABLE-COUNTERPART NAT-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION IDX-ROWP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  171
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-P-OF-C-MAT-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER BITP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION BIT-LIST-P)
+        (:DEFINITION C-MAT-ROW)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-P)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION C-MAT-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-P)
+        (:TYPE-PRESCRIPTION C-MAT-ROW)
+        (:TYPE-PRESCRIPTION OCC-PARITY))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  424
+BIT-LIST-P-OF-C-MAT-ROW
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-P-OF-C-MAT-ROW ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  424
+C-MAT-ROW
+Goal'
+
+Summary
+Form:  ( DEFUN C-MAT ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION IDX-TABLEP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART IDX-ROWP)
+        (:EXECUTABLE-COUNTERPART IDX-TABLEP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION IDX-ROWP)
+        (:TYPE-PRESCRIPTION IDX-TABLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  222
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM BIT-LIST-LISTP-OF-C-MAT ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION BIT-LIST-LISTP)
+        (:DEFINITION C-MAT)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION C-MAT)
+        (:REWRITE BIT-LIST-P-OF-C-MAT-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION C-MAT))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  544
+BIT-LIST-LISTP-OF-C-MAT
+
+Summary
+Form:  ( PROGN (DEFTHM BIT-LIST-LISTP-OF-C-MAT ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  544
+C-MAT
+Goal'
+
+Summary
+Form:  ( DEFUN TRIPLES-FROM ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION PROD-LISTP)
+        (:DEFINITION PRODP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION IDX-TABLEP)
+        (:TYPE-PRESCRIPTION LFORMP)
+        (:TYPE-PRESCRIPTION PROD-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1089
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLE-LISTP-OF-TRIPLES-FROM ...)
+Rules: ((:DEFINITION ATOM)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRIPLES-FROM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION TRIPLES-FROM)
+        (:REWRITE BIT-LIST-LISTP-OF-C-MAT)
+        (:REWRITE BIT-LIST-LISTP-OF-LFORM-MAT)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP)
+        (:TYPE-PRESCRIPTION TRIPLES-FROM))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  2068
+MAT-TRIPLE-LISTP-OF-TRIPLES-FROM
+
+Summary
+Form:  ( PROGN (DEFTHM MAT-TRIPLE-LISTP-OF-TRIPLES-FROM ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  2068
+TRIPLES-FROM
+Goal'
+
+Summary
+Form:  ( DEFUN ALGO-TRIPLES ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ALGOP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:FORWARD-CHAINING IDX-TABLEP-WHEN-OUTS-ROWSP)
+        (:FORWARD-CHAINING TRUE-LISTP-WHEN-PROD-LISTP)
+        (:TYPE-PRESCRIPTION IDX-TABLEP)
+        (:TYPE-PRESCRIPTION OUTS-ROWSP)
+        (:TYPE-PRESCRIPTION PROD-LISTP)
+        (:TYPE-PRESCRIPTION TRIPLES-FROM))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  218
+
+Summary
+Form:  ( DEFTHM MAT-TRIPLE-LISTP-OF-ALGO-TRIPLES ...)
+Rules: ((:DEFINITION ALGO-TRIPLES)
+        (:REWRITE MAT-TRIPLE-LISTP-OF-TRIPLES-FROM)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  18
+MAT-TRIPLE-LISTP-OF-ALGO-TRIPLES
+
+Summary
+Form:  ( PROGN (DEFTHM MAT-TRIPLE-LISTP-OF-ALGO-TRIPLES ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  18
+ALGO-TRIPLES
+
+Summary
+Form:  ( DEFUN ALGO-SCHEME ...)
+Rules: ((:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART OBAG::BAGP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE MAT-TRIPLE-LISTP-OF-ALGO-TRIPLES)
+        (:TYPE-PRESCRIPTION INSERT-ALL-NONZERO))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  39
+
+Summary
+Form:  ( DEFTHM BAGP-OF-ALGO-SCHEME ...)
+Rules: ((:DEFINITION ALGO-SCHEME)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION OBAG::BAGP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  16
+BAGP-OF-ALGO-SCHEME
+
+Summary
+Form:  ( PROGN (DEFTHM BAGP-OF-ALGO-SCHEME ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  16
+ALGO-SCHEME
+
+Summary
+Form:  (DEFUN-SK ALGO-CORRECTP ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  739
+ALGO-CORRECTP
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN MAT-LFORM-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MAT-ENTRY)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.03 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  5425
+Goal'
+Goal''
+Subgoal *1/7
+Subgoal *1/7'
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/4''
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+
+Summary
+Form:  ( DEFTHM RETURN-TYPE-OF-MAT-LFORM-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION LFORMP)
+        (:DEFINITION MAT-ENTRY)
+        (:DEFINITION MAT-LFORM-ROW)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION MAT-LFORM-ROW)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-MINUS-ZERO)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  8855
+RETURN-TYPE-OF-MAT-LFORM-ROW
+
+Summary
+Form:  ( PROGN (DEFTHM RETURN-TYPE-OF-MAT-LFORM-ROW ...) ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  8855
+MAT-LFORM-ROW
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN MAT-LFORM-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:META CANCEL_PLUS-LESSP-CORRECT)
+        (:REWRITE <-MINUS-ZERO)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION BIT-MATP))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  662
+Goal'
+Goal''
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM RETURN-TYPE-OF-MAT-LFORM-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION LFORMP)
+        (:DEFINITION MAT-LFORM-ROWS)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART BITP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:FORWARD-CHAINING BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:FORWARD-CHAINING NATP-FC-1)
+        (:INDUCTION MAT-LFORM-ROWS)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-RW)
+        (:REWRITE RETURN-TYPE-OF-MAT-LFORM-ROW)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2365
+RETURN-TYPE-OF-MAT-LFORM-ROWS
+
+Summary
+Form:  ( PROGN (DEFTHM RETURN-TYPE-OF-MAT-LFORM-ROWS ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2365
+MAT-LFORM-ROWS
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN MAT-LFORM ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION MAT-LFORM-ROWS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  223
+Goal'
+
+Summary
+Form:  ( DEFTHM RETURN-TYPE-OF-MAT-LFORM ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION MAT-LFORM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FORWARD-CHAINING BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:REWRITE RETURN-TYPE-OF-MAT-LFORM-ROWS)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION LFORMP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  114
+RETURN-TYPE-OF-MAT-LFORM
+
+Summary
+Form:  ( PROGN (DEFTHM RETURN-TYPE-OF-MAT-LFORM ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  114
+MAT-LFORM
+Goal'
+
+Summary
+Form:  ( DEFUN C-INDICES ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-ENTRY)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1979
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3''
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM NAT-LISTP-OF-C-INDICES ...)
+Rules: ((:COMPOUND-RECOGNIZER NAT-LISTP-IMPLIES-TRUE-LISTP)
+        (:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ATOM)
+        (:DEFINITION C-INDICES)
+        (:DEFINITION MAT-ENTRY)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NAT-LISTP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION C-INDICES)
+        (:REWRITE NAT-LISTP-OF-CONS)
+        (:TYPE-PRESCRIPTION NAT-LISTP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  3008
+NAT-LISTP-OF-C-INDICES
+
+Summary
+Form:  ( PROGN (DEFTHM NAT-LISTP-OF-C-INDICES ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  3008
+C-INDICES
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN TRIPLES-OUTS-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  911
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM IDX-ROWP-OF-TRIPLES-OUTS-ROW ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION IDX-ROWP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRIPLES-OUTS-ROW)
+        (:EXECUTABLE-COUNTERPART IDX-ROWP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION TRIPLES-OUTS-ROW)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NAT-LISTP-OF-C-INDICES)
+        (:TYPE-PRESCRIPTION IDX-ROWP)
+        (:TYPE-PRESCRIPTION TRIPLES-OUTS-ROW))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  445
+IDX-ROWP-OF-TRIPLES-OUTS-ROW
+
+Summary
+Form:  ( PROGN (DEFTHM IDX-ROWP-OF-TRIPLES-OUTS-ROW ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  445
+TRIPLES-OUTS-ROW
+Goal'
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN TRIPLES-OUTS-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE NATP-POSP--1)
+        (:REWRITE NATP-RW)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  936
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM IDX-TABLEP-OF-TRIPLES-OUTS-ROWS ...)
+Rules: ((:COMPOUND-RECOGNIZER ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION IDX-TABLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION TRIPLES-OUTS-ROWS)
+        (:EXECUTABLE-COUNTERPART IDX-TABLEP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION TRIPLES-OUTS-ROWS)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE IDX-ROWP-OF-TRIPLES-OUTS-ROW)
+        (:TYPE-PRESCRIPTION IDX-TABLEP)
+        (:TYPE-PRESCRIPTION TRIPLES-OUTS-ROWS))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  539
+IDX-TABLEP-OF-TRIPLES-OUTS-ROWS
+
+Summary
+Form:  ( PROGN (DEFTHM IDX-TABLEP-OF-TRIPLES-OUTS-ROWS ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  539
+TRIPLES-OUTS-ROWS
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN TRIPLES-OUTS ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP)
+        (:TYPE-PRESCRIPTION TRIPLES-OUTS-ROWS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  582
+
+Summary
+Form:  ( DEFTHM IDX-TABLEP-OF-TRIPLES-OUTS ...)
+Rules: ((:DEFINITION TRIPLES-OUTS)
+        (:REWRITE IDX-TABLEP-OF-TRIPLES-OUTS-ROWS)
+        (:TYPE-PRESCRIPTION IDX-TABLEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  15
+IDX-TABLEP-OF-TRIPLES-OUTS
+
+Summary
+Form:  ( PROGN (DEFTHM IDX-TABLEP-OF-TRIPLES-OUTS ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  15
+TRIPLES-OUTS
+Goal'
+
+Summary
+Form:  ( DEFUN SCHEME-PRODS ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION MAT-TRIPLE-LISTP)
+        (:DEFINITION MAT-TRIPLEP)
+        (:DEFINITION NOT)
+        (:DEFINITION SUMMAND-DIM-LISTP)
+        (:DEFINITION SUMMAND-DIMP)
+        (:DEFINITION TRUE-LISTP)
+        (:EXECUTABLE-COUNTERPART ATOM)
+        (:EXECUTABLE-COUNTERPART BIT-LIST-LISTP)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART MAT-TRIPLE-LISTP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE BIT-LIST-LISTP-WHEN-BIT-MATP)
+        (:TYPE-PRESCRIPTION BIT-LIST-LISTP)
+        (:TYPE-PRESCRIPTION BIT-MATP)
+        (:TYPE-PRESCRIPTION SUMMAND-DIM-LISTP))
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.01)
+Prover steps counted:  1480
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-OF-SCHEME-PRODS ...)
+Rules: ((:INDUCTION SCHEME-PRODS)
+        (:TYPE-PRESCRIPTION SCHEME-PRODS))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+TRUE-LISTP-OF-SCHEME-PRODS
+
+Summary
+Form:  ( PROGN (DEFTHM TRUE-LISTP-OF-SCHEME-PRODS ...) ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+SCHEME-PRODS
+
+Summary
+Form:  ( DEFUN SCHEME-ALGO ...)
+Rules: ((:COMPOUND-RECOGNIZER NATP-COMPOUND-RECOGNIZER)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION MAT-TRIPLE-LISTP)
+        (:TYPE-PRESCRIPTION SUMMAND-DIM-LISTP)
+        (:TYPE-PRESCRIPTION TRIPLES-OUTS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+Summary
+Form:  ( DEFTHM CONSP-OF-SCHEME-ALGO ...)
+Rules: ((:TYPE-PRESCRIPTION SCHEME-ALGO))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+CONSP-OF-SCHEME-ALGO
+
+Summary
+Form:  ( PROGN (DEFTHM CONSP-OF-SCHEME-ALGO ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SCHEME-ALGO
+
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Time:  0.25 seconds (prove: 0.00, print: 0.00, other: 0.24)
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "defs" ...)
+Rules: NIL
+Time:  5.82 seconds (prove: 3.43, print: 0.06, other: 2.33)
+Prover steps counted:  635348
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 5.82 seconds realtime, 5.68 seconds runtime
+; (909,078,288 bytes allocated).
+Exit code from ACL2 is 43
+-rw-r--r-- 1 root root 179554 Nov 12 23:06 defs.cert

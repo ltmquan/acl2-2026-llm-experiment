@@ -1,0 +1,1368 @@
+"-*- Mode: auto-revert -*-"
+<scratch>/given-russinoff-fields/v1
+HOST: vm
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/opt/acl2/books
+ACL2=/opt/acl2/saved_acl2
+ACL2_USELESS_RUNES=-25
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+#+(and hons (not acl2-par)) (profile-fn 'include-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file cert.acl2:
+(include-book "projects/numbers/portcullis" :dir :system)
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "projects/groups/groups.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "projects/linear/field.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "ordinals/lexicographic-book.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+(acl2::ld "ordinals/lexicographic-book.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "defs" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: defs
+STEP: certify
+Start of output:
+
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7                                                     +
+ +   built November 11, 2026  15:57:27.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* 
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !><state>
+ACL2 !> "ACL2"
+ACL2 !> (:EXIT 1)
+ACL2 !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2 !> T
+ACL2 !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.
+NIL
+ACL2 !>
+Summary
+Form:  ( INCLUDE-BOOK "projects/numbers/portcullis" ...)
+Rules: NIL
+Time:  0.07 seconds (prove: 0.00, print: 0.00, other: 0.07)
+ "/opt/acl2/books/projects/numbers/portcullis.lisp"
+ACL2 !> T
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "rtl/rel11/lib/doc" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2/books/rtl/rel11/lib/doc.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2/books/cowles/portcullis.lisp"
+ACL2 !>>
+The event ( DEFPKG "DM" ...) is redundant.  See :DOC redundant-events.
+
+Summary
+Form:  ( DEFPKG "DM" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+ "/opt/acl2/books/data-structures/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/bitops/portcullis" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2/books/centaur/bitops/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/fty/portcullis" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+ "/opt/acl2/books/centaur/fty/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/gl/portcullis" ...)
+Rules: NIL
+Time:  0.10 seconds (prove: 0.00, print: 0.00, other: 0.10)
+ "/opt/acl2/books/centaur/gl/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "tools/flag" ...)
+Rules: NIL
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+ "/opt/acl2/books/tools/flag.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/aig/portcullis" ...)
+Rules: NIL
+Time:  0.08 seconds (prove: 0.00, print: 0.00, other: 0.08)
+ "/opt/acl2/books/centaur/aig/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/typed-lists/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ "/opt/acl2/books/std/typed-lists/portcullis.lisp"
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "rtl/rel11/lib/doc" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "rtl/rel11/lib/doc" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( DEFPKG "DM" ...) is redundant.  See :DOC redundant-events.
+
+Summary
+Form:  ( DEFPKG "DM" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "data-structures/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "centaur/bitops/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "centaur/bitops/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "centaur/fty/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "centaur/fty/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "centaur/gl/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "centaur/gl/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "tools/flag" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "tools/flag" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "centaur/aig/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "centaur/aig/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "std/typed-lists/portcullis" ...) is redundant.
+See :DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "std/typed-lists/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "std/portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+The event ( INCLUDE-BOOK "std/portcullis" ...) is redundant.  See :DOC
+redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+The event ( INCLUDE-BOOK "cowles/portcullis" ...) is redundant.  See
+:DOC redundant-events.
+
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>Bye.
+ :EOF
+ACL2 !> :CONTINUE
+ACL2 !>
+Summary
+Form:  ( INCLUDE-BOOK "projects/groups/groups" ...)
+Rules: NIL
+Time:  0.10 seconds (prove: 0.00, print: 0.00, other: 0.10)
+"/opt/acl2/books/projects/groups/groups.lisp"
+
+Summary
+Form:  ( INCLUDE-BOOK "projects/linear/field" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+"/opt/acl2/books/projects/linear/field.lisp"
+
+Summary
+Form:  ( DEFUN FBASEP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION PRIMEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND FBASEP)
+
+Summary
+Form:  ( DEFUN BELTP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BELTP)
+
+Summary
+Form:  ( DEFUN BADD ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BADD)
+
+Summary
+Form:  ( DEFUN BMUL ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BMUL)
+
+Summary
+Form:  ( DEFUN BZERO ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BZERO)
+
+Summary
+Form:  ( DEFUN BONE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BONE)
+
+Summary
+Form:  ( DEFUN BNEG ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BNEG)
+
+Summary
+Form:  ( DEFUN BRECIP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND BRECIP)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 6439)
+
+Summary
+Form:  ( DEFUN FZERO ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND FZERO)
+
+Summary
+Form:  ( DEFUN FONE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND FONE)
+
+Summary
+Form:  ( DEFUN PZERO ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND PZERO)
+
+Summary
+Form:  ( DEFUN PONE ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND PONE)
+
+Summary
+Form:  ( DEFUN MONICP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND MONICP)
+
+Summary
+Form:  ( DEFUN PCONSTP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PCONSTP
+
+Summary
+Form:  ( DEFUN DEGREE ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+DEGREE
+Goal'
+
+Summary
+Form:  ( DEFUN PSTRIP ...)
+Rules: ((:DEFINITION NOT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  40
+PSTRIP
+
+Summary
+Form:  ( DEFUN PSHIFT ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BINARY-APPEND)
+        (:TYPE-PRESCRIPTION ACL2::TRUE-LISTP-APPEND))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PSHIFT
+
+Summary
+Form:  ( DEFUN MONOMIAL ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION PSHIFT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MONOMIAL
+
+Summary
+Form:  ( INCLUDE-BOOK "ordinals/lexicographic-book" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+"/opt/acl2/books/ordinals/lexicographic-book.lisp"
+L<
+Subgoal 56
+Subgoal 55
+Subgoal 54
+Subgoal 53
+Subgoal 52
+Subgoal 51
+Subgoal 50
+Subgoal 49
+Subgoal 48
+Subgoal 47
+Subgoal 46
+Subgoal 45
+Subgoal 44
+Subgoal 43
+Subgoal 42
+Subgoal 41
+Subgoal 40
+Subgoal 39
+Subgoal 38
+Subgoal 37
+Subgoal 36
+Subgoal 35
+Subgoal 34
+Subgoal 33
+Subgoal 32
+Subgoal 31
+Subgoal 31'
+Subgoal 30
+Subgoal 30'
+Subgoal 29
+Subgoal 29'
+Subgoal 28
+Subgoal 28'
+Subgoal 27
+Subgoal 27'
+Subgoal 26
+Subgoal 26'
+Subgoal 25
+Subgoal 25'
+Subgoal 24
+Subgoal 24'
+Subgoal 23
+Subgoal 23'
+Subgoal 23''
+Subgoal 22
+Subgoal 22'
+Subgoal 21
+Subgoal 20
+Subgoal 20'
+Subgoal 19
+Subgoal 18
+Subgoal 18'
+Subgoal 17
+Subgoal 16
+Subgoal 15
+Subgoal 15'
+Subgoal 14
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 11'
+Subgoal 11''
+Subgoal 11'''
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 4'
+Subgoal 3
+Subgoal 2
+Subgoal 2.2
+Subgoal 2.1
+Subgoal 1
+Subgoal *1/3
+Subgoal *1/3.3
+Subgoal *1/3.3'
+Subgoal *1/3.2
+Subgoal *1/3.1
+Subgoal *1/3.1'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1.3
+Subgoal *1/1.3'
+Subgoal *1/1.2
+Subgoal *1/1.2'
+Subgoal *1/1.2''
+Subgoal *1/1.2'''
+Subgoal *1/1.2'4'
+Subgoal *1/1.2'5'
+Subgoal *1/1.2'6'
+Subgoal *1/1.2'7'
+Subgoal *1/1.1
+Subgoal *1/1.1'
+Subgoal *1.1/4
+Subgoal *1.1/4.2
+Subgoal *1.1/4.1
+Subgoal *1.1/3
+Subgoal *1.1/3'
+Subgoal *1.1/3''
+Subgoal *1.1/2
+Subgoal *1.1/2'
+Subgoal *1.1/2''
+Subgoal *1.1/2'''
+Subgoal *1.1/2'4'
+Subgoal *1.1/1
+Subgoal *1.1.1/3
+Subgoal *1.1.1/3.2
+Subgoal *1.1.1/3.1
+Subgoal *1.1.1/2
+Subgoal *1.1.1/2'
+Subgoal *1.1.1/2''
+Subgoal *1.1.1/1
+
+Summary
+Form:  ( MUTUAL-RECURSION ( DEFUN FELTP ...) ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION BINARY-APPEND)
+        (:DEFINITION D<)
+        (:DEFINITION DEGREE)
+        (:DEFINITION FIX)
+        (:DEFINITION L<)
+        (:DEFINITION LEN)
+        (:DEFINITION LEXP)
+        (:DEFINITION MONOMIAL)
+        (:DEFINITION NAT-LISTP)
+        (:DEFINITION NOT)
+        (:DEFINITION PCONSTP)
+        (:DEFINITION PSHIFT)
+        (:DEFINITION PSTRIP)
+        (:DEFINITION SYNP)
+        (:DEFINITION TRUE-LISTP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART D<)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NAT-LISTP)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:INDUCTION PSTRIP)
+        (:INDUCTION TRUE-LISTP)
+        (:REWRITE ASSOCIATIVITY-OF-+)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE CONS-EQUAL)
+        (:REWRITE ACL2::DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:REWRITE ACL2::ZP-OPEN)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION PONE)
+        (:TYPE-PRESCRIPTION PSTRIP)
+        (:TYPE-PRESCRIPTION PZERO)
+        (:WELL-FOUNDED-RELATION ACL2::WELL-FOUNDED-L<))
+Time:  0.90 seconds (prove: 0.84, print: 0.01, other: 0.05)
+Prover steps counted:  382503
+((:DEFUND FELTP)
+ FELTSP (:DEFUND POLYP)
+ (:DEFUND FADD)
+ (:DEFUND FNEG)
+ PNEG FADDL (:DEFUND PADD)
+ FMUL CMUL PMUL (:DEFUND FRECIP)
+ PGCD-AUX R$-AUX S$-AUX (:DEFUND PGCD)
+ (:DEFUND R$)
+ (:DEFUND S$)
+ PDIVIDE (:DEFUND PQUOT)
+ (:DEFUND PREM))
+
+Summary
+Form:  ( ENCAPSULATE NIL (LOCAL ...) ...)
+Rules: NIL
+Time:  0.96 seconds (prove: 0.84, print: 0.01, other: 0.10)
+Prover steps counted:  382503
+T
+
+Summary
+Form:  ( DEFUN PDIVIDES ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND PDIVIDES)
+
+Summary
+Form:  ( DEFCHOOSE PFACTOR ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PFACTOR
+
+Summary
+Form:  ( DEFUN REDUCIBLEP ...)
+Rules: ((:TYPE-PRESCRIPTION PDIVIDES))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND REDUCIBLEP)
+
+Summary
+Form:  ( DEFUN IRREDUCIBLEP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND IRREDUCIBLEP)
+
+Summary
+Form:  ( DEFUN FIELDP ...)
+Rules: ((:TYPE-PRESCRIPTION FBASEP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND FIELDP)
+
+Summary
+Form:  (DEFUN-SK FADD-CLOSED-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  599
+FADD-CLOSED-P
+
+Summary
+Form:  (DEFUN-SK FMUL-CLOSED-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  599
+FMUL-CLOSED-P
+
+Summary
+Form:  (DEFUN-SK FADD-COMM-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  639
+FADD-COMM-P
+
+Summary
+Form:  (DEFUN-SK FMUL-COMM-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  639
+FMUL-COMM-P
+
+Summary
+Form:  (DEFUN-SK FADD-ASSOC-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  902
+FADD-ASSOC-P
+
+Summary
+Form:  (DEFUN-SK FMUL-ASSOC-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  902
+FMUL-ASSOC-P
+
+Summary
+Form:  ( DEFUN FELTP-FZERO-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+FELTP-FZERO-P
+
+Summary
+Form:  ( DEFUN FELTP-FONE-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+FELTP-FONE-P
+
+Summary
+Form:  ( DEFUN FONE-FZERO-P ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+FONE-FZERO-P
+
+Summary
+Form:  (DEFUN-SK FZERO-ID-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  343
+FZERO-ID-P
+
+Summary
+Form:  (DEFUN-SK FONE-ID-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  343
+FONE-ID-P
+
+Summary
+Form:  (DEFUN-SK FELTP-FNEG-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  321
+FELTP-FNEG-P
+
+Summary
+Form:  (DEFUN-SK FADD-FNEG-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  379
+FADD-FNEG-P
+
+Summary
+Form:  (DEFUN-SK FELTP-FRECIP-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  450
+FELTP-FRECIP-P
+
+Summary
+Form:  (DEFUN-SK FMUL-FRECIP-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  508
+FMUL-FRECIP-P
+
+Summary
+Form:  (DEFUN-SK FDISTRIB-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  956
+FDISTRIB-P
+
+Summary
+Form:  ( DEFUN FIELD-AXIOMS-P ...)
+Rules: ((:TYPE-PRESCRIPTION FDISTRIB-P))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND FIELD-AXIOMS-P)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 6570)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 6568)
+
+Summary
+Form:  ( DEFUN EXTENDS ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+EXTENDS
+
+Summary
+Form:  ( DEFUN EXTENSIONP ...)
+Rules: ((:TYPE-PRESCRIPTION EXTENDS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+EXTENSIONP
+
+Summary
+Form:  ( DEFUN FLIFTN ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+FLIFTN
+
+Summary
+Form:  ( DEFUN FLIFT ...)
+Rules: ((:TYPE-PRESCRIPTION FLIFTN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND FLIFT)
+
+Summary
+Form:  ( DEFUN PLIFT ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PLIFT
+
+Summary
+Form:  ( DEFUN EDEGREE ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION DEGREE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+EDEGREE
+
+Summary
+Form:  ( DEFUN FPOWER ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+FPOWER
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+
+Summary
+Form:  ( DEFTHM LEN-PSTRIP ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION PSTRIP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:INDUCTION PSTRIP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  583
+(:DEFTHMD LEN-PSTRIP)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFUN PEVAL ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:DEFINITION PCONSTP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION LEN))
+Hint-events: ((:USE LEN-PSTRIP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  258
+PEVAL
+
+Summary
+Form:  ( DEFUN PROOTP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND PROOTP)
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+
+Summary
+Form:  ( DEFTHM LEN-PSTRIP-LINEAR ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION PSTRIP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:INDUCTION PSTRIP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  583
+LEN-PSTRIP-LINEAR
+Subgoal 4
+Subgoal 3
+Subgoal 3'
+Subgoal 2
+Subgoal 2'
+Subgoal 1
+Subgoal 1'
+Subgoal 1''
+
+Summary
+Form:  ( DEFUN FADDL-INDUCT ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1211
+FADDL-INDUCT
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3.2
+Subgoal *1/3.1
+Subgoal *1/3.1'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM LEN-FADDL ...)
+Rules: ((:DEFINITION FADDL)
+        (:DEFINITION LEN)
+        (:DEFINITION MAX)
+        (:DEFINITION NOT)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAX)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FADDL-INDUCT)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION FADDL)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  9526
+LEN-FADDL
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM LEN-APPEND-LOCAL ...)
+Rules: ((:DEFINITION BINARY-APPEND)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION BINARY-APPEND)
+        (:INDUCTION LEN)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  316
+LEN-APPEND-LOCAL
+Subgoal 3
+Subgoal 2
+Subgoal 2'
+Subgoal 1
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+
+Summary
+Form:  ( DEFTHM LEN-PSHIFT ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION PSHIFT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION PSHIFT)
+        (:REWRITE ASSOCIATIVITY-OF-+)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE LEN-APPEND-LOCAL)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1416
+LEN-PSHIFT
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN PDIVIDE-INDUCT ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION DEGREE)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION MONOMIAL)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:DEFINITION PCONSTP)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE ASSOCIATIVITY-OF-+)
+        (:REWRITE ACL2::DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3126
+PDIVIDE-INDUCT
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM LEN-PADD-BOUND ...)
+Rules: ((:DEFINITION MAX)
+        (:DEFINITION PADD)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:LINEAR LEN-PSTRIP-LINEAR)
+        (:REWRITE LEN-FADDL)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  804
+LEN-PADD-BOUND
+Goal'
+
+Summary
+Form:  ( DEFTHM LEN-MONOMIAL ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION MONOMIAL)
+        (:DEFINITION NFIX)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CDR-CONS)
+        (:REWRITE LEN-PSHIFT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  74
+LEN-MONOMIAL
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/3.4
+Subgoal *1/3.3
+Subgoal *1/3.2
+Subgoal *1/3.1
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/2.4
+Subgoal *1/2.4'
+Subgoal *1/2.4''
+Subgoal *1/2.4'''
+Subgoal *1/2.3
+Subgoal *1/2.3'
+Subgoal *1/2.3.2
+Subgoal *1/2.3.1
+Subgoal *1/2.3.1'
+Subgoal *1/2.3.1''
+Subgoal *1/2.3.1'''
+Subgoal *1/2.3.1'4'
+Subgoal *1/2.3.1'5'
+Subgoal *1/2.3.1'6'
+Subgoal *1/2.3.1.2
+Subgoal *1/2.3.1.1
+Subgoal *1/2.3.1.1'
+Subgoal *1/2.3.1.1''
+Subgoal *1/2.3.1.1'''
+Subgoal *1/2.3.1.1'4'
+Subgoal *1/2.3.1.1'5'
+Subgoal *1/2.3.1.1'6'
+Subgoal *1/2.3.1.1'7'
+Subgoal *1/2.3.1.1'8'
+Subgoal *1/2.3.1.1'9'
+Subgoal *1/2.3.1.1'10'
+Subgoal *1/2.3.1.1'11'
+Subgoal *1/2.3.1.1'12'
+Subgoal *1/2.3.1.1'13'
+Subgoal *1/2.3.1.1'14'
+Subgoal *1/2.3.1.1'15'
+Subgoal *1/2.3.1.1'16'
+Subgoal *1/2.2
+Subgoal *1/2.2'
+Subgoal *1/2.1
+Subgoal *1/2.1'
+Subgoal *1/2.1.2
+Subgoal *1/2.1.1
+Subgoal *1/2.1.1.2
+Subgoal *1/2.1.1.1
+Subgoal *1/2.1.1.1'
+Subgoal *1/2.1.1.1''
+Subgoal *1/2.1.1.1'''
+Subgoal *1/2.1.1.1'4'
+Subgoal *1/2.1.1.1'5'
+Subgoal *1/2.1.1.1.2
+Subgoal *1/2.1.1.1.1
+Subgoal *1/2.1.1.1.1'
+Subgoal *1/2.1.1.1.1''
+Subgoal *1/2.1.1.1.1'''
+Subgoal *1/2.1.1.1.1'4'
+Subgoal *1/2.1.1.1.1'5'
+Subgoal *1/2.1.1.1.1'6'
+Subgoal *1/2.1.1.1.1'7'
+Subgoal *1/2.1.1.1.1'8'
+Subgoal *1/2.1.1.1.1'9'
+Subgoal *1/2.1.1.1.1'10'
+Subgoal *1/2.1.1.1.1'11'
+Subgoal *1/2.1.1.1.1'12'
+Subgoal *1/2.1.1.1.1'13'
+Subgoal *1/2.1.1.1.1'14'
+Subgoal *1/2.1.1.1.1'15'
+Subgoal *1/2.1.1.1.1'16'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1.6
+Subgoal *1/1.6'
+Subgoal *1/1.5
+Subgoal *1/1.5'
+Subgoal *1/1.4
+Subgoal *1/1.3
+Subgoal *1/1.2
+Subgoal *1/1.1
+Subgoal *1.1/2
+Subgoal *1.1/1
+
+Summary
+Form:  ( DEFTHM LEN-PDIVIDE-QUOT-BOUND ...)
+Rules: ((:DEFINITION DEGREE)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION MAX)
+        (:DEFINITION MV-NTH)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION PCONSTP)
+        (:DEFINITION PDIVIDE)
+        (:DEFINITION PZERO)
+        (:DEFINITION SYNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART MAX)
+        (:EXECUTABLE-COUNTERPART NFIX)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:INDUCTION PDIVIDE-INDUCT)
+        (:REWRITE ASSOCIATIVITY-OF-+)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE ACL2::DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE LEN-MONOMIAL)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION MONOMIAL)
+        (:TYPE-PRESCRIPTION PDIVIDE)
+        (:TYPE-PRESCRIPTION PNEG))
+Hint-events: ((:USE LEN-PADD-BOUND))
+Time:  1.25 seconds (prove: 1.24, print: 0.01, other: 0.00)
+Prover steps counted:  632811
+LEN-PDIVIDE-QUOT-BOUND
+Goal'
+Goal''
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM LEN-PQUOT-BOUND ...)
+Rules: ((:DEFINITION DEGREE)
+        (:DEFINITION FELTSP)
+        (:DEFINITION LEN)
+        (:DEFINITION MAX)
+        (:DEFINITION MV-NTH)
+        (:DEFINITION NOT)
+        (:DEFINITION PCONSTP)
+        (:DEFINITION POLYP)
+        (:DEFINITION PQUOT)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION PDIVIDE))
+Hint-events: ((:USE LEN-PDIVIDE-QUOT-BOUND))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3957
+LEN-PQUOT-BOUND
+Subgoal 3
+Subgoal 2
+Subgoal 1
+Subgoal 1'
+
+Summary
+Form:  ( DEFUN FACTORIZATION ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION DEGREE)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:DEFINITION REDUCIBLEP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE LEN-PQUOT-BOUND)
+        (:TYPE-PRESCRIPTION BINARY-APPEND)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION POLYP)
+        (:TYPE-PRESCRIPTION ACL2::TRUE-LISTP-APPEND))
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1870
+FACTORIZATION
+
+Summary
+Form:  ( DEFUN PROOTS-AUX ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+PROOTS-AUX
+
+Summary
+Form:  ( DEFUN PROOTS ...)
+Rules: ((:TYPE-PRESCRIPTION PROOTS-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND PROOTS)
+
+Summary
+Form:  ( INCLUDE-BOOK "ordinals/lexicographic-book" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+"/opt/acl2/books/ordinals/lexicographic-book.lisp"
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 3'
+Subgoal 2
+Subgoal 2'
+Subgoal 1
+Subgoal 1.2
+Subgoal 1.1
+
+Summary
+Form:  ( MUTUAL-RECURSION ( DEFUN EMBED ...) ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION D<)
+        (:DEFINITION L<)
+        (:DEFINITION LEN)
+        (:DEFINITION LEXP)
+        (:DEFINITION NAT-LISTP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART D<)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NAT-LISTP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR ACL2::ACL2-COUNT-CAR-CDR-LINEAR)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION ACL2-COUNT)
+        (:TYPE-PRESCRIPTION LEN)
+        (:WELL-FOUNDED-RELATION ACL2::WELL-FOUNDED-L<))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  5876
+((:DEFUND EMBED) PEMBED)
+
+Summary
+Form:  ( DEFUN EMBEDDINGP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND EMBEDDINGP)
+
+Summary
+Form:  (DEFUN-SK ALGEBRAIC-WITNESS ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  829
+ALGEBRAIC-WITNESS
+
+Summary
+Form:  ( DEFUN ALL-EMBEDDINGP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ALL-EMBEDDINGP
+
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "defs" ...)
+Rules: NIL
+Time:  3.04 seconds (prove: 2.18, print: 0.02, other: 0.84)
+Prover steps counted:  1053363
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 3.04 seconds realtime, 3.01 seconds runtime
+; (506,639,776 bytes allocated).
+Exit code from ACL2 is 43
+-rw-r--r-- 1 root root 133979 Nov 12 23:01 defs.cert

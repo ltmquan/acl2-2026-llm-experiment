@@ -1,0 +1,608 @@
+"-*- Mode: auto-revert -*-"
+<scratch>pad/given-cayuela
+HOST: vm
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/opt/acl2r/books
+ACL2=/opt/acl2r/saved_acl2r
+ACL2_USELESS_RUNES=-25
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+#+(and hons (not acl2-par)) (profile-fn 'include-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file :
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "defs.port" :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "test-solution" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: test-solution
+STEP: certify
+Start of output:
+
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7(r)                                                  +
+ +   built November 11, 2026  16:06:05.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* 
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !><state>
+ACL2(r) !> "ACL2"
+ACL2(r) !> (:EXIT 1)
+ACL2(r) !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2(r) !> T
+ACL2(r) !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.
+NIL
+ACL2(r) !> T
+ACL2(r) !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2r/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2(r) !>> "ACL2"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/portcullis" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+ "/opt/acl2r/books/std/portcullis.lisp"
+ACL2(r) !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2r/books/cowles/portcullis.lisp"
+ACL2(r) !>>Bye.
+ :EOF
+ACL2(r) !> :CONTINUE
+ACL2(r) !>
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Time:  0.31 seconds (prove: 0.00, print: 0.00, other: 0.31)
+"<scratch>pad/given-cayuela/defs.lisp"
+Goal'
+
+Summary
+Form:  ( DEFTHM COLLAPSE-S3 ...)
+Rules: ((:DEFINITION CADD)
+        (:DEFINITION CPLX)
+        (:DEFINITION CSCALE)
+        (:DEFINITION DOTP)
+        (:DEFINITION E1)
+        (:DEFINITION E2)
+        (:DEFINITION IMZ)
+        (:DEFINITION RE)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART E0)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART IMZ)
+        (:EXECUTABLE-COUNTERPART RE)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* (* x y) z)|)
+        (:REWRITE |(* -1 x)|)
+        (:REWRITE |(* 0 x)|)
+        (:REWRITE |(* 1 x)|)
+        (:REWRITE |(* a (/ a) b)|)
+        (:REWRITE |(* c (* d x))|)
+        (:REWRITE |(* x (+ y z))|)
+        (:REWRITE |(* x (- y))|)
+        (:REWRITE |(* x x)|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE |(+ (+ x y) z)|)
+        (:REWRITE |(+ 0 x)|)
+        (:REWRITE |(+ y (+ x z))|)
+        (:REWRITE |(+ y x)|)
+        (:REWRITE |(- (* c x))|)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-1)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE NORMALIZE-ADDENDS)
+        (:REWRITE NORMALIZE-FACTORS-GATHER-EXPONENTS)
+        (:REWRITE SUM-HALVES))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  4544
+COLLAPSE-S3
+Goal'
+
+Summary
+Form:  ( DEFTHM SQRT-3-SQUARED-NV ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION ACL2-SQRT))
+Hint-events: ((:USE SQRT-=-Y))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SQRT-3-SQUARED-NV
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM MAIN-1 ...)
+Rules: ((:DEFINITION CPLX)
+        (:DEFINITION E1)
+        (:DEFINITION E2)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART E0)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:REWRITE SQRT-3-SQUARED-NV)
+        (:TYPE-PRESCRIPTION ACL2-SQRT))
+Hint-events: ((:USE COLLAPSE-S3)
+              (:USE SQRT-3-SQUARED-NV))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  515
+MAIN-1
+Goal'
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+Subgoal 1'
+
+Summary
+Form:  ( DEFTHM MAIN-2 ...)
+Rules: ((:DEFINITION CCONJ)
+        (:DEFINITION CMUL)
+        (:DEFINITION CPLX)
+        (:DEFINITION CROSSP)
+        (:DEFINITION EIZ)
+        (:DEFINITION IMZ)
+        (:DEFINITION RE)
+        (:DEFINITION SYNP)
+        (:DEFINITION TORQUE-W)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CCONJ)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CPLX)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART IMZ)
+        (:EXECUTABLE-COUNTERPART RE)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* 0 x)|)
+        (:REWRITE |(* x (+ y z))|)
+        (:REWRITE |(* x (- y))|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (+ x y) z)|)
+        (:REWRITE |(+ (if a b c) x)|)
+        (:REWRITE |(+ 0 x)|)
+        (:REWRITE |(+ x (if a b c))|)
+        (:REWRITE |(+ y (+ x z))|)
+        (:REWRITE |(+ y x)|)
+        (:REWRITE |(- (+ x y))|)
+        (:REWRITE |(- (- x))|)
+        (:REWRITE |(- (if a b c))|)
+        (:REWRITE |(equal (if a b c) x)|)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-TIMES-1))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  2916
+MAIN-2
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM REAL-SQUARE->=-0 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+REAL-SQUARE->=-0
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM QUADRATIC-ALWAYS-POSITIVE ...)
+Rules: ((:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR REAL-SQUARE->=-0)
+        (:REWRITE |arith (* 1 x)|))
+Hint-events: ((:USE REAL-SQUARE->=-0))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  627
+QUADRATIC-ALWAYS-POSITIVE
+
+Summary
+Form:  ( DEFTHM EXPT-B-3-REDUCTION ...)
+Rules: ((:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* (/ x) (expt x n))|)
+        (:REWRITE |(* a (/ a))|)
+        (:REWRITE |(* x (if a b c))|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-1)
+        (:REWRITE NORMALIZE-FACTORS-GATHER-EXPONENTS)
+        (:REWRITE SIMPLIFY-PRODUCTS-GATHER-EXPONENTS-EQUAL)
+        (:REWRITE |arith (* -1 x)|)
+        (:REWRITE |arith (* x 1)|)
+        (:REWRITE |arith (expt x 0)|)
+        (:REWRITE |arith (expt x c)|)
+        (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-REALP-BASE))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  1855
+EXPT-B-3-REDUCTION
+
+Summary
+Form:  ( DEFTHM EXPT-B-4-REDUCTION ...)
+Rules: ((:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:LINEAR REAL-SQUARE->=-0)
+        (:REWRITE |arith (* -1 x)|)
+        (:REWRITE |arith (* 1 x)|)
+        (:REWRITE |arith (* x 1)|)
+        (:REWRITE |arith (expt x 0)|)
+        (:REWRITE |arith (expt x c)|))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  1750
+EXPT-B-4-REDUCTION
+Goal'
+Goal''
+Goal'''
+Goal'4'
+
+Summary
+Form:  ( DEFTHM MAIN-3 ...)
+Rules: ((:DEFINITION G-C*)
+        (:DEFINITION G-C+)
+        (:DEFINITION G-COLLAPSE-SUM)
+        (:DEFINITION G-CPLX)
+        (:DEFINITION G-CSCALE)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-OMEGA-POW)
+        (:DEFINITION G-RE)
+        (:DEFINITION G-REALPAIRP)
+        (:DEFINITION G-VDOT)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART ABS)
+        (:EXECUTABLE-COUNTERPART ACL2-NUMBERP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART EXPT)
+        (:EXECUTABLE-COUNTERPART G-CPLX)
+        (:EXECUTABLE-COUNTERPART G-IM)
+        (:EXECUTABLE-COUNTERPART G-RE)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART REALP)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* (* x y) z)|)
+        (:REWRITE |(* (expt x n) (expt y n))|)
+        (:REWRITE |(* 0 x)|)
+        (:REWRITE |(* 1 x)|)
+        (:REWRITE |(* a (/ a) b)|)
+        (:REWRITE |(* c (* d x))|)
+        (:REWRITE |(* x (+ y z))|)
+        (:REWRITE |(* x (- y))|)
+        (:REWRITE |(* x (expt x n))|)
+        (:REWRITE |(* x (if a b c))|)
+        (:REWRITE |(* x x)|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE |(+ (+ x y) z)|)
+        (:REWRITE |(+ (if a b c) x)|)
+        (:REWRITE |(+ 0 x)|)
+        (:REWRITE |(+ c (+ d x))|)
+        (:REWRITE |(+ x (- x))|)
+        (:REWRITE |(+ x (if a b c))|)
+        (:REWRITE |(+ x x)|)
+        (:REWRITE |(+ y (+ x z))|)
+        (:REWRITE |(+ y x)|)
+        (:REWRITE |(- (* c x))|)
+        (:REWRITE |(- (if a b c))|)
+        (:REWRITE |(expt (expt x m) n)|)
+        (:REWRITE BUBBLE-DOWN-*-BUBBLE-DOWN)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-1)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-3)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE CONS-CAR-CDR)
+        (:REWRITE CONS-EQUAL)
+        (:REWRITE DEFAULT-TIMES-2)
+        (:REWRITE EXPT-B-3-REDUCTION)
+        (:REWRITE EXPT-B-4-REDUCTION)
+        (:REWRITE NORMALIZE-ADDENDS)
+        (:REWRITE NORMALIZE-FACTORS-GATHER-EXPONENTS)
+        (:REWRITE PREFER-POSITIVE-ADDENDS-EQUAL)
+        (:REWRITE REDUCE-ADDITIVE-CONSTANT-EQUAL)
+        (:REWRITE REDUCE-MULTIPLICATIVE-CONSTANT-EQUAL)
+        (:REWRITE SIMPLIFY-TERMS-SUCH-AS-AX+BX-=-0)
+        (:REWRITE SUM-HALVES)
+        (:TYPE-PRESCRIPTION EXPT)
+        (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-INTEGERP-BASE)
+        (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-NON-0-BASE)
+        (:TYPE-PRESCRIPTION
+             EXPT-TYPE-PRESCRIPTION-NONPOSITIVE-BASE-EVEN-EXPONENT)
+        (:TYPE-PRESCRIPTION
+             EXPT-TYPE-PRESCRIPTION-NONPOSITIVE-BASE-EVEN-EXPONENT-REAL-CASE)
+        (:TYPE-PRESCRIPTION EXPT-TYPE-PRESCRIPTION-REALP-BASE))
+Hint-events: ((:USE QUADRATIC-ALWAYS-POSITIVE))
+Time:  0.19 seconds (prove: 0.19, print: 0.00, other: 0.00)
+Prover steps counted:  10845
+MAIN-3
+
+Summary
+Form:  ( DEFTHM SQRT-3-SQUARED ...)
+Rules: ((:EXECUTABLE-COUNTERPART EQUAL)
+        (:REWRITE SQRT-3-SQUARED-NV))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  8
+SQRT-3-SQUARED
+
+Summary
+Form:  ( DEFTHM EXPT-2-IS-TIMES ...)
+Rules: ((:DEFINITION SYNP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* x x)|)
+        (:REWRITE BUBBLE-DOWN-*-MATCH-1)
+        (:REWRITE NORMALIZE-FACTORS-GATHER-EXPONENTS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  99
+EXPT-2-IS-TIMES
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 8171)
+Goal'
+
+Summary
+Form:  ( DEFTHM SQRT-3-SQUARED-EXPT ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION ACL2-SQRT))
+Hint-events: ((:USE EXPT-2-IS-TIMES)
+              (:USE SQRT-3-SQUARED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SQRT-3-SQUARED-EXPT
+
+Summary
+Form:  ( DEFTHM GAMMA-SPLIT ...)
+Rules: ((:DEFINITION G-GAMMA-VAL)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  12
+GAMMA-SPLIT
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 8172)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM COS-GAMMA-VAL ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:EXECUTABLE-COUNTERPART UNARY-/)
+        (:REWRITE |(* (* x y) z)|)
+        (:REWRITE |(* c (* d x))|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE COSINE-PI/3)
+        (:REWRITE GAMMA-SPLIT)
+        (:REWRITE NORMALIZE-ADDENDS)
+        (:REWRITE SINE-PI/3)
+        (:REWRITE SQRT-3-SQUARED)
+        (:REWRITE SQRT-3-SQUARED-EXPT))
+Hint-events: ((:USE COSINE-OF-SUMS)
+              (:USE COSINE-PI/3)
+              (:USE SINE-PI/3)
+              (:USE SQRT-3-SQUARED-EXPT))
+Time:  0.10 seconds (prove: 0.10, print: 0.00, other: 0.00)
+Prover steps counted:  367
+COS-GAMMA-VAL
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM SIN-GAMMA-VAL ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY-/)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* (* x y) z)|)
+        (:REWRITE |(* c (* d x))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE COSINE-PI/3)
+        (:REWRITE GAMMA-SPLIT)
+        (:REWRITE NORMALIZE-ADDENDS)
+        (:REWRITE SINE-PI/3))
+Hint-events: ((:USE COSINE-PI/3)
+              (:USE SINE-OF-SUMS)
+              (:USE SINE-PI/3))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  359
+SIN-GAMMA-VAL
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM OMEGA-REAL-CLOSED-FORM ...)
+Rules: ((:DEFINITION G-CPLX)
+        (:DEFINITION G-OMEGA-REAL)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART UNARY-/)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE GAMMA-SPLIT)
+        (:REWRITE NORMALIZE-ADDENDS))
+Hint-events: ((:USE COS-GAMMA-VAL)
+              (:USE SIN-GAMMA-VAL))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  308
+OMEGA-REAL-CLOSED-FORM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM OMEGA-REAL-SATISFIES-CUBIC ...)
+Rules: ((:DEFINITION G-C*)
+        (:DEFINITION G-C+)
+        (:DEFINITION G-CPLX)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-RE)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-*)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART G-C+)
+        (:EXECUTABLE-COUNTERPART G-CPLX)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:EXECUTABLE-COUNTERPART UNARY-/)
+        (:REWRITE |(* (* x y) z)|)
+        (:REWRITE |(* 0 x)|)
+        (:REWRITE |(* c (* d x))|)
+        (:REWRITE |(* y (* x z))|)
+        (:REWRITE |(* y x)|)
+        (:REWRITE |(+ (* c x) (* d x))|)
+        (:REWRITE BUBBLE-DOWN-+-MATCH-1)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE NORMALIZE-ADDENDS)
+        (:REWRITE OMEGA-REAL-CLOSED-FORM)
+        (:REWRITE SQRT-3-SQUARED)
+        (:REWRITE SQRT-3-SQUARED-EXPT))
+Hint-events: ((:USE OMEGA-REAL-CLOSED-FORM)
+              (:USE SQRT-3-SQUARED-EXPT))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  354
+OMEGA-REAL-SATISFIES-CUBIC
+
+Summary
+Form:  ( DEFTHM REALPAIRP-OMEGA-REAL ...)
+Rules: ((:DEFINITION G-CPLX)
+        (:DEFINITION G-IM)
+        (:DEFINITION G-RE)
+        (:DEFINITION G-REALPAIRP)
+        (:EXECUTABLE-COUNTERPART REALP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE OMEGA-REAL-CLOSED-FORM)
+        (:TYPE-PRESCRIPTION G-REALPAIRP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  44
+REALPAIRP-OMEGA-REAL
+Goal'
+
+Summary
+Form:  ( DEFTHM MAIN-4 ...)
+Rules: NIL
+Hint-events: ((:USE MAIN-3)
+              (:USE OMEGA-REAL-SATISFIES-CUBIC)
+              (:USE REALPAIRP-OMEGA-REAL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+MAIN-4
+
+Summary
+Form:  ( INCLUDE-BOOK "test-solution" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "test-solution" ...)
+Rules: NIL
+Time:  0.81 seconds (prove: 0.48, print: 0.00, other: 0.33)
+Prover steps counted:  24603
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 0.81 seconds realtime, 0.80 seconds runtime
+; (169,606,288 bytes allocated).
+Exit code from ACL2 is 43
+-rw-r--r-- 1 root root 13788 Nov 12 22:58 test-solution.cert

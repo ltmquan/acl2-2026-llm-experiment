@@ -1,0 +1,32 @@
+69c69
+<   formals (ACL2::X1 ACL2::X2)
+---
+>   formals (X Y)
+72c72
+<   guard 'T
+---
+>   guard (IF (FP X) (FP Y) 'NIL)
+75c75
+<   formals (ACL2::X1 ACL2::X2)
+---
+>   formals (X Y)
+78c78
+<   guard 'T
+---
+>   guard (IF (FP X) (FP Y) 'NIL)
+81c81
+<   formals (ACL2::X1)
+---
+>   formals (X)
+84c84
+<   guard 'T
+---
+>   guard (FP X)
+87c87
+<   formals (ACL2::X1)
+---
+>   formals (X)
+90c90
+<   guard 'T
+---
+>   guard (IF (FP X) (NOT (EQUAL X (F0))) 'NIL)

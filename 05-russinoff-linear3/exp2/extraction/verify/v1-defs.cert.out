@@ -1,0 +1,4081 @@
+"-*- Mode: auto-revert -*-"
+<scratch>/given-russinoff-linear3
+HOST: vm
+
+Environment variables:
+ACL2_CUSTOMIZATION=NONE
+ACL2_SYSTEM_BOOKS=/opt/acl2/books
+ACL2=/opt/acl2/saved_acl2
+ACL2_USELESS_RUNES=-25
+
+Temp lisp file:
+(acl2::value :q)
+(acl2::in-package "ACL2")
+; see github issue #638 (waterfall-parallelism and profiling): 
+#+(and hons (not acl2-par)) (profile-fn 'prove)
+#+(and hons (not acl2-par)) (profile-fn 'certify-book-fn)
+#+(and hons (not acl2-par)) (profile-fn 'include-book-fn)
+(acl2::lp)
+(set-debugger-enable :bt)
+(acl2::in-package "ACL2")
+
+(set-ld-error-action (quote (:exit 1)) state)
+(set-inhibit-output-lst (list (quote prove) (quote proof-tree) (quote warning) (quote observation) (quote event) (quote history)))
+
+(acl2::assign acl2::get-internal-time-as-realtime acl2::t)
+#-cmucl (acl2::gc-verbose t)
+; instructions from .acl2 file cert.acl2:
+(include-book "projects/numbers/portcullis" :dir :system)
+
+
+; Prevent reset-prehistory while loading .port files
+(acl2::assign acl2::skip-reset-prehistory acl2::t)
+; portculli for included books:
+(acl2::ld "projects/linear/reduction.port" :dir :SYSTEM :ld-missing-input-ok t :ld-always-skip-top-level-locals t)
+#!ACL2 (set-ld-error-action (quote :continue) state)
+
+; certify-book command flags: ? t
+#!ACL2 (er-progn (time$ (certify-book "defs" ? t  ))
+                                 (value (prog2$ #+hons (memsum)
+                                                 #-hons nil
+                                                 (exit 43))))
+--- End temp lisp file ---
+
+TARGET: defs
+STEP: certify
+Start of output:
+
+This is SBCL 2.2.9.debian, an implementation of ANSI Common Lisp.
+More information about SBCL is available at <http://www.sbcl.org/>.
+
+SBCL is free software, provided as is, with absolutely no warranty.
+It is mostly in the public domain; some portions are provided under
+BSD-style licenses.  See the CREDITS and COPYING files in the
+distribution for more information.
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ACL2 Version 8.7                                                     +
+ +   built November 11, 2026  15:57:27.                                 +
+ + Copyright (C) 2026, Regents of the University of Texas.              +
+ + ACL2 comes with ABSOLUTELY NO WARRANTY.  This is free software and   +
+ + you are welcome to redistribute it under certain conditions.  For    +
+ + details, see the LICENSE file distributed with ACL2.                 +
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>
+Exiting the ACL2 read-eval-print loop.  To re-enter, execute (LP).
+* #<PACKAGE "ACL2">
+* 
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !><state>
+ACL2 !> "ACL2"
+ACL2 !> (:EXIT 1)
+ACL2 !> (PROVE PROOF-TREE
+        WARNING OBSERVATION EVENT HISTORY)
+ACL2 !> T
+ACL2 !>GC-VERBOSE is not supported in this Common Lisp.
+Contact the ACL2 developers if you would like to help add such support.
+NIL
+ACL2 !>
+Summary
+Form:  ( INCLUDE-BOOK "projects/numbers/portcullis" ...)
+Rules: NIL
+Time:  0.06 seconds (prove: 0.00, print: 0.00, other: 0.06)
+ "/opt/acl2/books/projects/numbers/portcullis.lisp"
+ACL2 !> T
+ACL2 !>
+Project-dir-alist:
+((:SYSTEM . "/opt/acl2/books/")).
+Type :help for help.
+Type (quit) to quit completely out of ACL2.
+
+ACL2 !>> "ACL2"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "rtl/rel11/lib/doc" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2/books/rtl/rel11/lib/doc.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "cowles/portcullis" ...)
+Rules: NIL
+Time:  0.01 seconds (prove: 0.00, print: 0.00, other: 0.01)
+ "/opt/acl2/books/cowles/portcullis.lisp"
+ACL2 !>>
+The event ( DEFPKG "DM" ...) is redundant.  See :DOC redundant-events.
+
+Summary
+Form:  ( DEFPKG "DM" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ :REDUNDANT
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "data-structures/portcullis" ...)
+Rules: NIL
+Time:  0.04 seconds (prove: 0.00, print: 0.00, other: 0.04)
+ "/opt/acl2/books/data-structures/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/bitops/portcullis" ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+ "/opt/acl2/books/centaur/bitops/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/fty/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ "/opt/acl2/books/centaur/fty/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/gl/portcullis" ...)
+Rules: NIL
+Time:  0.10 seconds (prove: 0.00, print: 0.00, other: 0.10)
+ "/opt/acl2/books/centaur/gl/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "tools/flag" ...)
+Rules: NIL
+Time:  0.03 seconds (prove: 0.00, print: 0.00, other: 0.03)
+ "/opt/acl2/books/tools/flag.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "centaur/aig/portcullis" ...)
+Rules: NIL
+Time:  0.07 seconds (prove: 0.00, print: 0.00, other: 0.07)
+ "/opt/acl2/books/centaur/aig/portcullis.lisp"
+ACL2 !>>
+Summary
+Form:  ( INCLUDE-BOOK "std/typed-lists/portcullis" ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ "/opt/acl2/books/std/typed-lists/portcullis.lisp"
+ACL2 !>>Bye.
+ :EOF
+ACL2 !> :CONTINUE
+ACL2 !>
+Summary
+Form:  ( INCLUDE-BOOK "projects/linear/reduction" ...)
+Rules: NIL
+Time:  0.24 seconds (prove: 0.00, print: 0.00, other: 0.24)
+"/opt/acl2/books/projects/linear/reduction.lisp"
+
+Summary
+Form:  ( DEFUN VP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VP
+
+Summary
+Form:  ( DEFUN V+ ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+V+
+
+Summary
+Form:  ( DEFUN V0 ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+V0
+
+Summary
+Form:  ( DEFUN V- ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+V-
+
+Summary
+Form:  ( DEFUN V* ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+V*
+
+Summary
+Form:  ( DEFUN VBASIS0 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VBASIS0
+
+Summary
+Form:  ( DEFUN VCOORDS0 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VCOORDS0
+
+Summary
+Form:  ( DEFTHM VP-V0 ...)
+Rules: ((:DEFINITION V0)
+        (:DEFINITION VP)
+        (:REWRITE FPF0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  6
+VP-V0
+Goal'
+
+Summary
+Form:  ( DEFTHM VP-V- ...)
+Rules: ((:DEFINITION V-)
+        (:DEFINITION VP)
+        (:REWRITE FPF-))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  35
+VP-V-
+Goal'
+
+Summary
+Form:  ( DEFTHM V+CLOSED ...)
+Rules: ((:DEFINITION V+)
+        (:DEFINITION VP)
+        (:REWRITE F+CLOSED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  57
+V+CLOSED
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM V+COMM ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION V+)
+        (:DEFINITION VP))
+Hint-events: ((:USE F+COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  62
+(:DEFTHMD V+COMM)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM V+ASSOC ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION V+)
+        (:DEFINITION VP))
+Hint-events: ((:USE F+ASSOC))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  94
+(:DEFTHMD V+ASSOC)
+Goal'
+
+Summary
+Form:  ( DEFTHM V+ID ...)
+Rules: ((:DEFINITION V+)
+        (:DEFINITION V0)
+        (:DEFINITION VP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F0ID))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  65
+V+ID
+Goal'
+
+Summary
+Form:  ( DEFTHM V+INV ...)
+Rules: ((:DEFINITION V+)
+        (:DEFINITION V-)
+        (:DEFINITION V0)
+        (:DEFINITION VP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F+INV))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  70
+V+INV
+Goal'
+
+Summary
+Form:  ( DEFTHM V*CLOSED ...)
+Rules: ((:DEFINITION V*)
+        (:DEFINITION VP)
+        (:REWRITE F*CLOSED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  55
+V*CLOSED
+Goal'
+
+Summary
+Form:  ( DEFTHM V*ID ...)
+Rules: ((:DEFINITION V*)
+        (:DEFINITION VP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F1ID2))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  40
+V*ID
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM V*ASSOC ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION V*)
+        (:DEFINITION VP))
+Hint-events: ((:USE F*ASSOC))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  87
+(:DEFTHMD V*ASSOC)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDISTF ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION V*)
+        (:DEFINITION V+)
+        (:DEFINITION VP))
+Hint-events: ((:USE FDIST-COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  96
+(:DEFTHMD VDISTF)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDISTV ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION V*)
+        (:DEFINITION V+)
+        (:DEFINITION VP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FDIST)
+        (:REWRITE FDIST-COMM))
+Hint-events: ((:USE FDIST-COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  253
+(:DEFTHMD VDISTV)
+
+Summary
+Form:  ( DEFUN VLISTNP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VLISTNP
+
+Summary
+Form:  ( DEFUN VCOMB ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VCOMB
+
+Summary
+Form:  ( DEFUN VDIM ...)
+Rules: ((:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VDIM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM POSP-VDIM ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION POSP)
+        (:DEFINITION VBASIS0)
+        (:DEFINITION VDIM)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION POSP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  66
+(:DEFTHMD POSP-VDIM)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7372)
+Goal'
+
+Summary
+Form:  ( DEFTHM VLISTNP-BASIS0 ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION VBASIS0)
+        (:DEFINITION VDIM)
+        (:DEFINITION VLISTNP)
+        (:DEFINITION VP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FPF1)
+        (:TYPE-PRESCRIPTION VLISTNP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  66
+VLISTNP-BASIS0
+Goal'
+
+Summary
+Form:  ( DEFTHM FLISTNP-VCOORDS0 ...)
+Rules: ((:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION VBASIS0)
+        (:DEFINITION VCOORDS0)
+        (:DEFINITION VDIM)
+        (:DEFINITION VP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  76
+FLISTNP-VCOORDS0
+Goal'
+
+Summary
+Form:  ( DEFTHM VBASIS0-SPANS ...)
+Rules: ((:DEFINITION V*)
+        (:DEFINITION V+)
+        (:DEFINITION V0)
+        (:DEFINITION VBASIS0)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORDS0)
+        (:DEFINITION VP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F0ID)
+        (:REWRITE F1ID))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  111
+VBASIS0-SPANS
+Goal'
+Goal''
+Goal'''
+Goal'4'
+Goal'5'
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2.3
+Subgoal *1/2.3'
+Subgoal *1/2.2
+Subgoal *1/2.2'
+Subgoal *1/2.2''
+Subgoal *1/2.1
+Subgoal *1/2.1'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM VBASIS0-LIN-INDEP ...)
+Rules: ((:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION V*)
+        (:DEFINITION V+)
+        (:DEFINITION V0)
+        (:DEFINITION VBASIS0)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VDIM)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART FLISTN0)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLISTNP)
+        (:INDUCTION VCOMB)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F0ID)
+        (:REWRITE F1ID))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  4483
+(:DEFTHMD VBASIS0-LIN-INDEP)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7374)
+
+Summary
+Form:  ( ENCAPSULATE (((VP * ...) ...) ...) ...)
+Rules: NIL
+Time:  0.05 seconds (prove: 0.02, print: 0.00, other: 0.03)
+Prover steps counted:  5722
+(VP V+ V0 V- V* VBASIS0 VCOORDS0)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM V+ID-COMM ...)
+Rules: ((:CONGRUENCE IFF-IMPLIES-EQUAL-IMPLIES-1)
+        (:DEFINITION NOT)
+        (:REWRITE V+ID)
+        (:REWRITE VP-V0))
+Hint-events: ((:USE V+COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  106
+V+ID-COMM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM V+INV-COMM ...)
+Rules: ((:DEFINITION NOT)
+        (:REWRITE V+INV)
+        (:REWRITE VP-V-))
+Hint-events: ((:USE V+COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  127
+V+INV-COMM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM F0*V0 ...)
+Rules: ((:DEFINITION NOT)
+        (:REWRITE F0ID)
+        (:REWRITE FPF0)
+        (:REWRITE FPF1)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V*ID)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE V+INV-COMM)
+        (:REWRITE VP-V-))
+Hint-events: ((:USE V+ASSOC) (:USE VDISTF))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  330
+F0*V0
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM C*V0 ...)
+Rules: ((:CONGRUENCE IFF-IMPLIES-EQUAL-IMPLIES-1)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE V+INV-COMM)
+        (:REWRITE VP-V-)
+        (:REWRITE VP-V0))
+Hint-events: ((:USE V+ASSOC) (:USE VDISTV))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  397
+C*V0
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM VP-VCOMB ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLISTNP)
+        (:INDUCTION VCOMB)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V+CLOSED)
+        (:REWRITE VP-V0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  908
+VP-VCOMB
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+
+Summary
+Form:  ( DEFTHM LEN-VLISTNP ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION NTHCDR)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  568
+LEN-VLISTNP
+
+Summary
+Form:  ( DEFUN VP-NTH-VLISTNP-INDUCT ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VP-NTH-VLISTNP-INDUCT
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+Subgoal *1/1.2
+Subgoal *1/1.1
+
+Summary
+Form:  ( DEFTHM VP-NTH-VLISTNP ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION VP-NTH-VLISTNP-INDUCT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1069
+VP-NTH-VLISTNP
+Goal'
+Goal''
+Goal'''
+Goal'4'
+
+Summary
+Form:  ( DEFTHM HACK-1 ...)
+Rules: ((:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V+CLOSED))
+Hint-events: ((:USE V+ASSOC)
+              (:USE V+COMM)
+              (:USE VDISTF))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1980
+(:DEFTHMD HACK-1)
+Goal'
+Subgoal *1/7
+Subgoal *1/6
+Subgoal *1/6'
+Subgoal *1/6.2
+Subgoal *1/6.2'
+Subgoal *1/6.1
+Subgoal *1/6.1'
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM VCOMB-ADD ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLIST-ADD)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NATP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART FLIST-ADD)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLIST-ADD)
+        (:INDUCTION FLISTNP)
+        (:INDUCTION VCOMB)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE VP-V0)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLIST-ADD)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Hint-events: ((:USE HACK-1))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  4703
+(:DEFTHMD VCOMB-ADD)
+Goal'
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/5'
+Subgoal *1/5.2
+Subgoal *1/5.2'
+Subgoal *1/5.1
+Subgoal *1/5.1'
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM VCOMB-SCALAR-MUL ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLIST-SCALAR-MUL)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NATP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLIST-SCALAR-MUL)
+        (:INDUCTION FLISTNP)
+        (:INDUCTION VCOMB)
+        (:REWRITE C*V0)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE V*CLOSED)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLIST-SCALAR-MUL)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Hint-events: ((:USE V*ASSOC) (:USE VDISTV))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3757
+(:DEFTHMD VCOMB-SCALAR-MUL)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-UNIQUE-1 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F+INV)
+        (:REWRITE F0*V0)
+        (:REWRITE FLISTNP-FLIST-SCALAR-MUL)
+        (:REWRITE FPF-)
+        (:REWRITE FPF1)
+        (:REWRITE V*ID)
+        (:REWRITE VCOMB-ADD)
+        (:REWRITE VCOMB-SCALAR-MUL)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Hint-events: ((:USE VDISTF))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  697
+(:DEFTHMD VCOORDS0-UNIQUE-1)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-UNIQUE-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION NOT)
+        (:DEFINITION VDIM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLISTNP-FLIST-ADD)
+        (:REWRITE FLISTNP-FLIST-SCALAR-MUL)
+        (:REWRITE FPF-)
+        (:REWRITE FPF1)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION LEN))
+Hint-events: ((:USE VBASIS0-LIN-INDEP)
+              (:USE VCOORDS0-UNIQUE-1)
+              (:USE VLISTNP-BASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1079
+(:DEFTHMD VCOORDS0-UNIQUE-2)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-UNIQUE-3 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F*CLOSED)
+        (:REWRITE F+INV2)
+        (:REWRITE F0*F02)
+        (:REWRITE F0ID)
+        (:REWRITE F0ID2)
+        (:REWRITE F1ID2)
+        (:REWRITE FPF-)
+        (:REWRITE FPF1))
+Hint-events: ((:USE F+ASSOC) (:USE FDIST-COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  569
+VCOORDS0-UNIQUE-3
+Goal'
+Subgoal *1/9
+Subgoal *1/8
+Subgoal *1/7
+Subgoal *1/7'
+Subgoal *1/7''
+Subgoal *1/7'''
+Subgoal *1/7'4'
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-UNIQUE-4 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION FLIST-ADD)
+        (:DEFINITION FLIST-SCALAR-MUL)
+        (:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART FLISTN0)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLIST-ADD)
+        (:INDUCTION FLIST-SCALAR-MUL)
+        (:INDUCTION FLISTN0)
+        (:INDUCTION FLISTNP)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION FLIST-ADD)
+        (:TYPE-PRESCRIPTION FLISTN0))
+Hint-events: ((:USE VCOORDS0-UNIQUE-3))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3712
+VCOORDS0-UNIQUE-4
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-UNIQUE ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:REWRITE VBASIS0-SPANS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VCOORDS0-UNIQUE-2)
+              (:USE VCOORDS0-UNIQUE-4))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  849
+(:DEFTHMD VCOORDS0-UNIQUE)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM VCOMB-FLISTN0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTN0)
+        (:DEFINITION NOT)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION NTHCDR)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE F0*V0)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE VP-V0)
+        (:TYPE-PRESCRIPTION FLISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  670
+VCOMB-FLISTN0
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-V0 ...)
+Rules: ((:DEFINITION NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE VCOMB-FLISTN0)
+        (:REWRITE VLISTNP-BASIS0)
+        (:REWRITE VP-V0))
+Hint-events: ((:USE VCOORDS0-UNIQUE))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  157
+VCOORDS0-V0
+
+Summary
+Form:  ( DEFUN VCOORD-MAT ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VCOORD-MAT
+
+Summary
+Form:  ( IN-THEORY (ENABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7370)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2.2
+Subgoal *1/2.1
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM FMATP-VCOORD-MAT ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMATP)
+        (:DEFINITION NOT)
+        (:DEFINITION SYNP)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION NTHCDR)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE COMMUTATIVITY-OF-+)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:REWRITE ACL2::ZP-OPEN)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VCOORD-MAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  819
+FMATP-VCOORD-MAT
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION COL)
+        (:DEFINITION ENTRY)
+        (:DEFINITION FDOT)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION ROW)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART FMATP)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F*CLOSED)
+        (:REWRITE F0ID)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE NTH-0-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMAT*-ENTRY) (:USE FP-FLISTNP))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  5350
+(:DEFTHMD VCOORDS0-VCOMB-1)
+Goal'
+Goal''
+Goal'''
+Subgoal 2
+Subgoal 1
+Subgoal 1'
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE NTH-FLIST-SCALAR-MUL)
+              (:USE VCOORDS0-VCOMB-1))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3552
+(:DEFTHMD VCOORDS0-VCOMB-2)
+Goal'
+Goal''
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 4'
+Subgoal 4.2
+Subgoal 4.1
+Subgoal 4.1'
+Subgoal 4.1''
+Subgoal 4.1.2
+Subgoal 4.1.1
+Subgoal 4.1.1'
+Subgoal 3
+Subgoal 3'
+Subgoal 3.2
+Subgoal 3.1
+Subgoal 3.1'
+Subgoal 3.1''
+Subgoal 3.1.2
+Subgoal 3.1.1
+Subgoal 3.1.1'
+Subgoal 2
+Subgoal 2'
+Subgoal 2.2
+Subgoal 2.1
+Subgoal 2.1'
+Subgoal 2.1''
+Subgoal 2.1.2
+Subgoal 2.1.1
+Subgoal 2.1.1'
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-3 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART FMATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE FLISTNP-FLIST-SCALAR-MUL)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE LEN-FLIST)
+        (:REWRITE TRUE-LISTP-FLIST)
+        (:TYPE-PRESCRIPTION FLIST-SCALAR-MUL)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION NTH-DIFF)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMATP-FMAT*)
+              (:USE NTH-DIFF-DIFF)
+              (:USE POSP-VDIM)
+              (:USE VCOORDS0-VCOMB-2))
+Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Prover steps counted:  24258
+(:DEFTHMD VCOORDS0-VCOMB-3)
+Goal'
+Goal''
+Goal'''
+Subgoal 2
+Subgoal 1
+Subgoal 1'
+Subgoal 1''
+Subgoal 1.2
+Subgoal 1.1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-4 ...)
+Rules: ((:DEFINITION FLISTNP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VLISTNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V+ID)
+        (:REWRITE VBASIS0-SPANS)
+        (:REWRITE VCOMB-SCALAR-MUL)
+        (:REWRITE VCOORDS0-VCOMB-3)
+        (:REWRITE VLISTNP-BASIS0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE POSP-VDIM))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1459
+(:DEFTHMD VCOORDS0-VCOMB-4)
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-5 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION COL)
+        (:DEFINITION ENTRY)
+        (:DEFINITION FDOT)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE NTH-0-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION VCOORD-MAT)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMAT*-ENTRY))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  5106
+(:DEFTHMD VCOORDS0-VCOMB-5)
+Goal'
+Goal''
+Subgoal 28
+Subgoal 27
+Subgoal 26
+Subgoal 25
+Subgoal 24
+Subgoal 23
+Subgoal 22
+Subgoal 21
+Subgoal 20
+Subgoal 19
+Subgoal 18
+Subgoal 17
+Subgoal 16
+Subgoal 15
+Subgoal 14
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 8.2
+Subgoal 8.1
+Subgoal 8.1'
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 4.2
+Subgoal 4.1
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-6 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ENTRY)
+        (:DEFINITION FLIST-ADD)
+        (:DEFINITION FLIST-SCALAR-MUL)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F*CLOSED)
+        (:REWRITE FLISTNP-FLIST-SCALAR-MUL)
+        (:TYPE-PRESCRIPTION FLIST-SCALAR-MUL)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VCOORD-MAT)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FLIST-SCALAR-MUL)
+              (:USE FMATP-FMAT*)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE NTH-FLIST-ADD)
+              (:USE NTH-FLIST-SCALAR-MUL))
+Time:  0.20 seconds (prove: 0.20, print: 0.00, other: 0.00)
+Prover steps counted:  70613
+(:DEFTHMD VCOORDS0-VCOMB-6)
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-7 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ENTRY)
+        (:DEFINITION FLIST-ADD)
+        (:DEFINITION FLIST-SCALAR-MUL)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NTH)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE NTH-0-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VCOORD-MAT)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMAT*-ENTRY)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE VCOORDS0-VCOMB-5)
+              (:USE VCOORDS0-VCOMB-6))
+Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Prover steps counted:  16998
+(:DEFTHMD VCOORDS0-VCOMB-7)
+Goal'
+Goal''
+Subgoal 44
+Subgoal 43
+Subgoal 42
+Subgoal 41
+Subgoal 40
+Subgoal 39
+Subgoal 38
+Subgoal 37
+Subgoal 36
+Subgoal 35
+Subgoal 34
+Subgoal 33
+Subgoal 32
+Subgoal 31
+Subgoal 30
+Subgoal 29
+Subgoal 28
+Subgoal 27
+Subgoal 26
+Subgoal 25
+Subgoal 24
+Subgoal 23
+Subgoal 22
+Subgoal 21
+Subgoal 20
+Subgoal 19
+Subgoal 18
+Subgoal 17
+Subgoal 16
+Subgoal 15
+Subgoal 14
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-8 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART FMATP)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE FLISTNP-FLIST-SCALAR-MUL)
+        (:REWRITE LEN-FLIST)
+        (:REWRITE TRUE-LISTP-FLIST)
+        (:REWRITE ACL2::ZP-OPEN)
+        (:TYPE-PRESCRIPTION FLIST-ADD)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION NTH-DIFF)
+        (:TYPE-PRESCRIPTION VCOORD-MAT)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FLISTNP-FLIST-ADD)
+              (:USE FLISTNP-ROW)
+              (:USE FMATP-FMAT*)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE NTH-DIFF-DIFF)
+              (:USE VCOORDS0-VCOMB-7))
+Time:  0.56 seconds (prove: 0.56, print: 0.00, other: 0.00)
+Prover steps counted:  200620
+(:DEFTHMD VCOORDS0-VCOMB-8)
+Goal'
+Goal''
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-9 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART FMATP)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE VCOMB-SCALAR-MUL)
+        (:REWRITE VLISTNP-BASIS0)
+        (:REWRITE ACL2::ZP-OPEN)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VCOORD-MAT)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FLISTNP-FLIST-SCALAR-MUL)
+              (:USE FLISTNP-ROW)
+              (:USE FMATP-FMAT*)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE VCOMB-ADD))
+Time:  0.05 seconds (prove: 0.05, print: 0.00, other: 0.00)
+Prover steps counted:  18338
+(:DEFTHMD VCOORDS0-VCOMB-9)
+Goal'
+Goal''
+Subgoal 2
+Subgoal 2'
+Subgoal 2''
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-10 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE DEFAULT-CDR)
+        (:REWRITE VBASIS0-SPANS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VCOORDS0-VCOMB-9))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3788
+(:DEFTHMD VCOORDS0-VCOMB-10)
+Goal'
+Goal''
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-11 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CAR)
+        (:REWRITE DEFAULT-CDR)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VCOORDS0-VCOMB-10)
+              (:USE VCOORDS0-VCOMB-8))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  2487
+(:DEFTHMD VCOORDS0-VCOMB-11)
+Goal'
+Goal''
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/5'
+Subgoal *1/5.2
+Subgoal *1/5.2'
+Subgoal *1/5.1
+Subgoal *1/5.1'
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB-12 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION POSP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONS)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLISTNP)
+        (:INDUCTION VCOMB)
+        (:INDUCTION VCOORD-MAT)
+        (:REWRITE CDR-CONS)
+        (:REWRITE DEFAULT-CDR)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VCOORDS0-VCOMB-11)
+              (:USE VCOORDS0-VCOMB-4))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  4420
+(:DEFTHMD VCOORDS0-VCOMB-12)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM VCOORDS0-VCOMB ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMATP-FMAT*)
+              (:USE POSP-VDIM)
+              (:USE VCOORDS0-UNIQUE)
+              (:USE VCOORDS0-VCOMB-12))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1411
+(:DEFTHMD VCOORDS0-VCOMB)
+
+Summary
+Form:  ( DEFUN VINDEPP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND VINDEPP)
+
+Summary
+Form:  ( DEFUN VDEPP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND VDEPP)
+
+Summary
+Form:  ( DEFUN VDEP-COEFFS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+VDEP-COEFFS
+
+Summary
+Form:  ( IN-THEORY (ENABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7380)
+Goal'
+Goal''
+Subgoal *1/9
+Subgoal *1/9'
+Subgoal *1/8
+Subgoal *1/7
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM FMAT*-NTH ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ENDP)
+        (:DEFINITION FMAT*)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FMAT*)
+        (:INDUCTION FMATP)
+        (:INDUCTION NTH)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE NTH-0-CONS)
+        (:TYPE-PRESCRIPTION FMAT*))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  7103
+(:DEFTHMD FMAT*-NTH)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-V0-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:DEFINITION VDEP-COEFFS)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE ROW-OPS-MAT-ROW-REDUCE)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FLISTNP-ROW)
+              (:USE FMAT*-NTH)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE VCOORDS0-VCOMB))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2661
+(:DEFTHMD VDEPP-VCOMB-V0-1)
+Goal'
+Goal''
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-V0-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION IFF)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:DEFINITION ROW-RANK)
+        (:DEFINITION VDEP-COEFFS)
+        (:DEFINITION VDEPP)
+        (:DEFINITION VINDEPP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLISTNP-VCOORDS0)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE LEN-FLIST)
+        (:REWRITE LEN-FMAT-ROW)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLIST0P)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FLIST0P-FLISTN0-LEN)
+              (:USE FLISTNP-ROW)
+              (:USE FMATP-ROW-REDUCE)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE NUM-NONZERO-ROWS-NONZERO)
+              (:USE ROW-ECHELON-P-ROW-REDUCE)
+              (:USE ROW-RANK<=M)
+              (:USE VDEPP-VCOMB-V0-1))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  13401
+(:DEFTHMD VDEPP-VCOMB-V0-2)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-V0-3 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION VDEP-COEFFS)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE LEN-VLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VDEPP-VCOMB-V0-1)
+              (:USE VDEPP-VCOMB-V0-2))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1009
+(:DEFTHMD VDEPP-VCOMB-V0-3)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-V0-4 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION FLISTN0)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:DEFINITION VDEP-COEFFS)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE LEN-VLISTNP)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION INVERTIBLEP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FDET-ROW-0)
+              (:USE FLISTNP-ROW)
+              (:USE FMATP-ROW-REDUCE)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE INVERTIBLEP-FDET-NOT-ZERO)
+              (:USE INVERTIBLEP-ROW-REDUCE-MAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1899
+(:DEFTHMD VDEPP-VCOMB-V0-4)
+Goal'
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-V0-5 ...)
+Rules: ((:DEFINITION NATP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE VCOMB-FLISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  115
+(:DEFTHMD VDEPP-VCOMB-V0-5)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-V0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:CONGRUENCE IFF-IMPLIES-EQUAL-IMPLIES-1)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION VDEP-COEFFS)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLIST0P-FLISTN0)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE LEN-FLIST)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE VCOMB-FLISTN0)
+        (:REWRITE VCOORDS0-V0)
+        (:REWRITE VLISTNP-BASIS0)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FLIST0P-FLISTN0-LEN)
+              (:USE POSP-VDIM)
+              (:USE VBASIS0-SPANS)
+              (:USE VDEPP-VCOMB-V0-3)
+              (:USE VDEPP-VCOMB-V0-4)
+              (:USE VDEPP-VCOMB-V0-5))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2141
+(:DEFTHMD VDEPP-VCOMB-V0)
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+Subgoal *1/1''
+Subgoal *1/1'''
+
+Summary
+Form:  ( DEFTHM ROW-ECHELON-P-VINDEPP-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION DLISTP)
+        (:DEFINITION FDELTA)
+        (:DEFINITION FDOT-SELECT)
+        (:DEFINITION IFF)
+        (:DEFINITION MEMBER-EQUAL)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW-RANK)
+        (:DEFINITION SUBLISTP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:REWRITE F0*F0)
+        (:REWRITE F0ID)
+        (:REWRITE F0ID2)
+        (:REWRITE F1ID)
+        (:REWRITE FP-FLISTNP)
+        (:REWRITE FPF0)
+        (:REWRITE MEMBER-SUBLIST)
+        (:REWRITE SUBLISTP-SELF)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION MEMBER-EQUAL)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION ROW-ECHELON-P))
+Hint-events: ((:USE MEMBER-NINIT)
+              (:USE NTH-COL-LEAD-INDS))
+Time:  0.11 seconds (prove: 0.11, print: 0.00, other: 0.00)
+Prover steps counted:  30264
+(:DEFTHMD ROW-ECHELON-P-VINDEPP-1)
+Goal'
+Goal''
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM ROW-ECHELON-P-VINDEPP-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION IFF)
+        (:DEFINITION ACL2::MEMBER-EQL-EXEC$GUARD-CHECK)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION RETURN-LAST)
+        (:DEFINITION ROW-RANK)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE DLISTP-NINIT)
+        (:REWRITE MEMBER-NTH)
+        (:REWRITE SUBLISTP-SELF)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION MEMBER-EQUAL)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION ROW-ECHELON-P)
+        (:TYPE-PRESCRIPTION SUBLISTP))
+Hint-events: ((:USE FDOT-SELECT-NINIT)
+              (:USE FLISTNP-COL)
+              (:USE LEN-LEAD-INDS-NUM-NONZERO-ROWS)
+              (:USE MEMBER-NINIT)
+              (:USE MEMBER-SUBLIST)
+              (:USE ROW-ECHELON-P-VINDEPP-1)
+              (:USE ROW-REDUCE-ROW-ECHELON-P)
+              (:USE SUBLISTP-LEAD-INDS-NINIT))
+Time:  0.14 seconds (prove: 0.13, print: 0.00, other: 0.00)
+Prover steps counted:  41468
+(:DEFTHMD ROW-ECHELON-P-VINDEPP-2)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM ENTRY-FMAT*-ROW-ECHELON-P ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION ENTRY)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:DEFINITION ROW-RANK)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE NTH-0-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMAT*)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION ROW-ECHELON-P))
+Hint-events: ((:USE FMAT*-ENTRY)
+              (:USE LEN-LEAD-INDS-NUM-NONZERO-ROWS)
+              (:USE NTH-LEAD-INDS-BOUND)
+              (:USE ROW-ECHELON-P-VINDEPP-2)
+              (:USE ROW-REDUCE-ROW-ECHELON-P))
+Time:  0.04 seconds (prove: 0.04, print: 0.00, other: 0.00)
+Prover steps counted:  11866
+(:DEFTHMD ENTRY-FMAT*-ROW-ECHELON-P)
+Goal'
+
+Summary
+Form:  ( DEFTHM ROW-ECHELON-P-VINDEPP-3 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMAT*)
+        (:DEFINITION NATP)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE NTH-FLISTN0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  540
+(:DEFTHMD ROW-ECHELON-P-VINDEPP-3)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM ROW-ECHELON-P-VINDEPP-4 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION FMAT*)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW-RANK)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE LEN-LEAD-INDS-NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION ROW-ECHELON-P))
+Hint-events: ((:USE ENTRY-FMAT*-ROW-ECHELON-P)
+              (:USE NTH-LEAD-INDS-BOUND)
+              (:USE ROW-ECHELON-P-VINDEPP-3)
+              (:USE ROW-REDUCE-ROW-ECHELON-P))
+Time:  0.03 seconds (prove: 0.03, print: 0.00, other: 0.00)
+Prover steps counted:  7984
+(:DEFTHMD ROW-ECHELON-P-VINDEPP-4)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM ROW-ECHELON-P-VINDEPP ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW-RANK)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE LEN-FLIST)
+        (:REWRITE NTH-FLISTN0)
+        (:REWRITE TRUE-LISTP-FLIST)
+        (:TYPE-PRESCRIPTION FLISTN0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION NTH-DIFF)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION ROW-ECHELON-P))
+Hint-events: ((:USE NTH-DIFF-DIFF)
+              (:USE ROW-ECHELON-P-VINDEPP-4))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1405
+ROW-ECHELON-P-VINDEPP
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMAT*)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE VCOORDS0-V0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VCOORDS0-V0)
+              (:USE VCOORDS0-VCOMB))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  745
+(:DEFTHMD VINDEPP-VCOMB-V0-1)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMAT*)
+        (:DEFINITION FMATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE CONS-EQUAL)
+        (:REWRITE INVERTIBLEP-ROW-REDUCE-MAT)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMAT*-ASSOC)
+              (:USE FMATP-ROW-REDUCE)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE INVERTIBLEP-SUFFICIENT))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3574
+(:DEFTHMD VINDEPP-VCOMB-V0-2)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-3 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:REWRITE INVERTIBLEP-ROW-REDUCE-MAT)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMAT*-ASSOC)
+              (:USE FMATP-ROW-REDUCE)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE ID-FMAT-LEFT)
+              (:USE INVERTIBLEP-SUFFICIENT)
+              (:USE ROW-OPS-MAT-ROW-REDUCE))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  4040
+(:DEFTHMD VINDEPP-VCOMB-V0-3)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-4 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMAT*)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE CONS-EQUAL)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE VINDEPP-VCOMB-V0-1)
+              (:USE VINDEPP-VCOMB-V0-2)
+              (:USE VINDEPP-VCOMB-V0-3))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3161
+(:DEFTHMD VINDEPP-VCOMB-V0-4)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-5 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMAT*)
+        (:DEFINITION FMATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE FMATP-FMAT*)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2082
+VINDEPP-VCOMB-V0-5
+Goal'
+Goal''
+Goal'''
+Goal'4'
+Goal'5'
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-6 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION FMATP)
+        (:DEFINITION HIDE)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW-RANK)
+        (:DEFINITION VINDEPP)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART INVERSE-MAT)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART NUM-NONZERO-ROWS)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ROW-ECHELON-P)
+        (:EXECUTABLE-COUNTERPART ROW-REDUCE)
+        (:EXECUTABLE-COUNTERPART ROW-REDUCE-MAT)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:EXECUTABLE-COUNTERPART VINDEPP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE INVERTIBLEP-ROW-REDUCE-MAT)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE ROW-ECHELON-P-ROW-REDUCE)
+        (:REWRITE ROW-REDUCE-ROW-ECHELON-P)
+        (:REWRITE VINDEPP-VCOMB-V0-5)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION NUM-NONZERO-ROWS)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE FMATP-FMAT*)
+              (:USE FMATP-ROW-REDUCE)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE INVERTIBLEP-SUFFICIENT)
+              (:USE ROW-ECHELON-P-VINDEPP)
+              (:USE VINDEPP-VCOMB-V0-4)
+              (:USE VINDEPP-VCOMB-V0-5))
+Time:  0.08 seconds (prove: 0.07, print: 0.00, other: 0.01)
+Prover steps counted:  24326
+VINDEPP-VCOMB-V0-6
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-7 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FMATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE INVERTIBLEP-ROW-REDUCE-MAT)
+        (:REWRITE VINDEPP-VCOMB-V0-6)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE FMAT*-ASSOC)
+              (:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE ID-FMAT-RIGHT)
+              (:USE INVERTIBLEP-SUFFICIENT)
+              (:USE VINDEPP-VCOMB-V0-6))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2364
+VINDEPP-VCOMB-V0-7
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-8 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ENTRY)
+        (:DEFINITION FMAT*)
+        (:DEFINITION FMATP)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FDOT-FLISTN0)
+        (:REWRITE FLISTNP-COL)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE NTH-0-CONS)
+        (:TYPE-PRESCRIPTION FMATP))
+Hint-events: ((:USE FMAT*-ENTRY))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1707
+VINDEPP-VCOMB-V0-8
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0-9 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE VINDEPP-VCOMB-V0-7)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION FMATP)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE FMATP-ROW-REDUCE-MAT)
+              (:USE FMATP-VCOORD-MAT)
+              (:USE VINDEPP-VCOMB-V0-7)
+              (:USE VINDEPP-VCOMB-V0-8))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1205
+VINDEPP-VCOMB-V0-9
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-VCOMB-V0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE LEN-FLIST)
+        (:REWRITE TRUE-LISTP-FLIST)
+        (:REWRITE VCOMB-FLISTN0)
+        (:REWRITE VINDEPP-VCOMB-V0-9)
+        (:TYPE-PRESCRIPTION FLISTN0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION NTH-DIFF)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE NTH-DIFF-DIFF)
+              (:USE POSP-VDIM)
+              (:USE VINDEPP-VCOMB-V0-9))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  983
+VINDEPP-VCOMB-V0
+Goal'
+Subgoal *1/9
+Subgoal *1/9'
+Subgoal *1/8
+Subgoal *1/8'
+Subgoal *1/7
+Subgoal *1/6
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2''
+Subgoal *1/2'''
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM VCOMB-FUNIT ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ENDP)
+        (:DEFINITION FUNIT)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART INTEGERP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-LINEAR NIL)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FUNIT)
+        (:INDUCTION NTH)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F0*V0)
+        (:REWRITE V*ID)
+        (:REWRITE V+ID)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE VCOMB-FLISTN0)
+        (:REWRITE VP-NTH-VLISTNP)
+        (:TYPE-PRESCRIPTION FLISTN0)
+        (:TYPE-PRESCRIPTION FUNIT))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2267
+VCOMB-FUNIT
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM NTH-VINDEPP-NOT-V0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FDELTA)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F1F0)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE FLISTNP-FUNIT)
+        (:REWRITE VCOMB-FLISTN0)
+        (:REWRITE VCOMB-FUNIT)
+        (:REWRITE VINDEPP-VCOMB-V0-9)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE NTH-FUNIT)
+              (:USE POSP-VDIM)
+              (:USE VCOMB-FUNIT)
+              (:USE VINDEPP-VCOMB-V0))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  1251
+NTH-VINDEPP-NOT-V0
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM V0-NOT-MEMBER-VINDEPP ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION ACL2::MEMBER-EQL-EXEC$GUARD-CHECK)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION RETURN-LAST)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE MEMBER-SUBLIST)
+        (:REWRITE NTH-IND)
+        (:REWRITE SUBLISTP-SELF)
+        (:TYPE-PRESCRIPTION INDEX)
+        (:TYPE-PRESCRIPTION MEMBER-EQUAL)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE IND<LEN)
+              (:USE NTH-VINDEPP-NOT-V0)
+              (:USE POSP-VDIM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  554
+V0-NOT-MEMBER-VINDEPP
+Subgoal 3
+Subgoal 2
+Subgoal 2.2
+Subgoal 2.1
+Subgoal 1
+Subgoal 1.2
+Subgoal 1.1
+
+Summary
+Form:  ( DEFTHM VDEPP-V0-1 ...)
+Rules: ((:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NOT)
+        (:DEFINITION VCOMB)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART FLISTN0)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FPF0)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V+ID))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1279
+(:DEFTHMD VDEPP-V0-1)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-V0-2 ...)
+Rules: ((:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION NOT)
+        (:DEFINITION VCOMB)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART FLISTN0)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE C*V0)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F*INV2)
+        (:REWRITE F0*V0)
+        (:REWRITE FPF/)
+        (:REWRITE FPF0)
+        (:REWRITE V*ID)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE VP-V0)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Hint-events: ((:USE V*ASSOC) (:USE VDEPP-V0-1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  818
+(:DEFTHMD VDEPP-V0-2)
+Goal'
+Goal''
+Subgoal 2
+Subgoal 2'
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VDEPP-V0-3 ...)
+Rules: ((:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION NTH)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VDEP-COEFFS)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART FLISTN0)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART NTH)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FPF0)
+        (:TYPE-PRESCRIPTION ROW-REDUCE-MAT)
+        (:TYPE-PRESCRIPTION VDEPP))
+Hint-events: ((:USE VDEPP-V0-2)
+              (:USE VDEPP-VCOMB-V0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1685
+(:DEFTHMD VDEPP-V0-3)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-V0 ...)
+Rules: ((:DEFINITION IFF)
+        (:DEFINITION ACL2::MEMBER-EQL-EXEC$GUARD-CHECK)
+        (:DEFINITION MEMBER-EQUAL)
+        (:DEFINITION NOT)
+        (:DEFINITION RETURN-LAST)
+        (:DEFINITION VDEPP)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART NATP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE VP-V0)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE V0-NOT-MEMBER-VINDEPP)
+              (:USE VDEPP-V0-3))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  393
+(:DEFTHMD VDEPP-V0)
+Goal'
+Goal''
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VDEPP-IF->-VDIM ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION ROW-RANK)
+        (:DEFINITION VDEPP)
+        (:DEFINITION VINDEPP)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART NUM-NONZERO-ROWS)
+        (:EXECUTABLE-COUNTERPART ROW-REDUCE)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FMATP-VCOORD-MAT)
+        (:REWRITE LEN-VLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE POSP-VDIM) (:USE ROW-RANK<=N))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  564
+(:DEFTHMD VDEPP-IF->-VDIM)
+
+Summary
+Form:  ( DEFUN VCOORDS ...)
+Rules: ((:TYPE-PRESCRIPTION FLIST-SCALAR-MUL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND VCOORDS)
+Goal'
+Goal''
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION SYNP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VDEP-COEFFS)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F0*V0)
+        (:REWRITE FLISTNP-FLISTN0)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE FPF0)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE UNICITY-OF-0)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V+ID)
+        (:REWRITE V+ID-COMM)
+        (:REWRITE VCOMB-FLISTN0)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLISTN0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE VDEPP-VCOMB-V0)
+              (:USE VINDEPP-VCOMB-V0))
+Time:  0.02 seconds (prove: 0.02, print: 0.00, other: 0.00)
+Prover steps counted:  7648
+(:DEFTHMD VDEPP-VCOMB-1)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM HACK-2 ...)
+Rules: ((:DEFINITION =)
+        (:DEFINITION NOT)
+        (:REWRITE C*V0)
+        (:REWRITE F*INV2)
+        (:REWRITE F+INV)
+        (:REWRITE F0*V0)
+        (:REWRITE FPF-)
+        (:REWRITE FPF/)
+        (:REWRITE V*CLOSED)
+        (:REWRITE V*ID)
+        (:REWRITE V+ID)
+        (:REWRITE V+ID-COMM))
+Hint-events: ((:USE V*ASSOC)
+              (:USE V+ASSOC)
+              (:USE VDISTF)
+              (:USE VDISTV))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1186
+(:DEFTHMD HACK-2)
+Goal'
+Goal''
+Subgoal 16
+Subgoal 15
+Subgoal 14
+Subgoal 13
+Subgoal 12
+Subgoal 11
+Subgoal 10
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB-2 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION =)
+        (:DEFINITION FIX)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION SYNP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VCOORDS)
+        (:DEFINITION VDEP-COEFFS)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART VCOORD-MAT)
+        (:EXECUTABLE-COUNTERPART VINDEPP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FLISTNP-FLIST-SCALAR-MUL)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE FPF-)
+        (:REWRITE FPF/)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE UNICITY-OF-0)
+        (:REWRITE VCOMB-SCALAR-MUL)
+        (:REWRITE VP-VCOMB)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VDIM)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE HACK-2)
+              (:USE POSP-VDIM)
+              (:USE VDEPP-VCOMB-1))
+Time:  0.07 seconds (prove: 0.07, print: 0.00, other: 0.00)
+Prover steps counted:  27442
+(:DEFTHMD VDEPP-VCOMB-2)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-VCOMB ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION IFF)
+        (:DEFINITION LEN)
+        (:DEFINITION NATP)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION SYNP)
+        (:DEFINITION VCOMB)
+        (:DEFINITION VCOORD-MAT)
+        (:DEFINITION VCOORDS)
+        (:DEFINITION VDEP-COEFFS)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART VINDEPP)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE UNICITY-OF-0)
+        (:REWRITE VCOORDS0-V0)
+        (:REWRITE VP-V0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP)
+        (:TYPE-PRESCRIPTION VINDEPP)
+        (:TYPE-PRESCRIPTION ZP))
+Hint-events: ((:USE VDEPP-V0) (:USE VDEPP-VCOMB-2))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  3751
+(:DEFTHMD VDEPP-VCOMB)
+
+Summary
+Form:  ( DEFUN VBASISP ...)
+Rules: ((:TYPE-PRESCRIPTION VINDEPP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND VBASISP)
+
+Summary
+Form:  ( DEFUN VUNSPANNED ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND VUNSPANNED)
+Subgoal 2
+Subgoal 1
+Subgoal 1.3
+Subgoal 1.2
+Subgoal 1.1
+
+Summary
+Form:  ( DEFUN EXTEND-TO-BASIS ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE ACL2::DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION VDIM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  925
+EXTEND-TO-BASIS
+
+Summary
+Form:  ( DEFUN WP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WP
+
+Summary
+Form:  ( DEFUN W+ ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+W+
+
+Summary
+Form:  ( DEFUN W0 ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+W0
+
+Summary
+Form:  ( DEFUN W- ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+W-
+
+Summary
+Form:  ( DEFUN W* ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+W*
+
+Summary
+Form:  ( DEFUN WBASIS0 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WBASIS0
+
+Summary
+Form:  ( DEFUN WCOORDS0 ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WCOORDS0
+
+Summary
+Form:  ( DEFTHM WP-W0 ...)
+Rules: ((:DEFINITION W0)
+        (:DEFINITION WP)
+        (:REWRITE FPF0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  6
+WP-W0
+Goal'
+
+Summary
+Form:  ( DEFTHM WP-W- ...)
+Rules: ((:DEFINITION W-)
+        (:DEFINITION WP)
+        (:REWRITE FPF-))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  35
+WP-W-
+Goal'
+
+Summary
+Form:  ( DEFTHM W+CLOSED ...)
+Rules: ((:DEFINITION W+)
+        (:DEFINITION WP)
+        (:REWRITE F+CLOSED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  57
+W+CLOSED
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM W+COMM ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION W+)
+        (:DEFINITION WP))
+Hint-events: ((:USE F+COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  62
+(:DEFTHMD W+COMM)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM W+ASSOC ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION W+)
+        (:DEFINITION WP))
+Hint-events: ((:USE F+ASSOC))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  94
+(:DEFTHMD W+ASSOC)
+Goal'
+
+Summary
+Form:  ( DEFTHM W+ID ...)
+Rules: ((:DEFINITION W+)
+        (:DEFINITION W0)
+        (:DEFINITION WP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F0ID))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  65
+W+ID
+Goal'
+
+Summary
+Form:  ( DEFTHM W+INV ...)
+Rules: ((:DEFINITION W+)
+        (:DEFINITION W-)
+        (:DEFINITION W0)
+        (:DEFINITION WP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F+INV))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  70
+W+INV
+Goal'
+
+Summary
+Form:  ( DEFTHM W*CLOSED ...)
+Rules: ((:DEFINITION W*)
+        (:DEFINITION WP)
+        (:REWRITE F*CLOSED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  55
+W*CLOSED
+Goal'
+
+Summary
+Form:  ( DEFTHM W*ID ...)
+Rules: ((:DEFINITION W*)
+        (:DEFINITION WP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE F1ID2))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  40
+W*ID
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM W*ASSOC ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION W*)
+        (:DEFINITION WP))
+Hint-events: ((:USE F*ASSOC))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  87
+(:DEFTHMD W*ASSOC)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM WDISTF ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION W*)
+        (:DEFINITION W+)
+        (:DEFINITION WP))
+Hint-events: ((:USE FDIST-COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  96
+(:DEFTHMD WDISTF)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM WDISTW ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION W*)
+        (:DEFINITION W+)
+        (:DEFINITION WP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE FDIST)
+        (:REWRITE FDIST-COMM))
+Hint-events: ((:USE FDIST-COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  253
+(:DEFTHMD WDISTW)
+
+Summary
+Form:  ( DEFUN WLISTNP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WLISTNP
+
+Summary
+Form:  ( DEFUN WCOMB ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WCOMB
+
+Summary
+Form:  ( DEFUN WDIM ...)
+Rules: ((:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WDIM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM POSP-WDIM ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION LEN)
+        (:DEFINITION POSP)
+        (:DEFINITION WBASIS0)
+        (:DEFINITION WDIM)
+        (:EXECUTABLE-COUNTERPART <)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION POSP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  66
+(:DEFTHMD POSP-WDIM)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7434)
+Goal'
+
+Summary
+Form:  ( DEFTHM WLISTNP-BASIS0 ...)
+Rules: ((:DEFINITION LEN)
+        (:DEFINITION WBASIS0)
+        (:DEFINITION WDIM)
+        (:DEFINITION WLISTNP)
+        (:DEFINITION WP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE FPF1)
+        (:TYPE-PRESCRIPTION WLISTNP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  66
+WLISTNP-BASIS0
+Goal'
+
+Summary
+Form:  ( DEFTHM FLISTNP-WCOORDS0 ...)
+Rules: ((:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION WBASIS0)
+        (:DEFINITION WCOORDS0)
+        (:DEFINITION WDIM)
+        (:DEFINITION WP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  76
+FLISTNP-WCOORDS0
+Goal'
+
+Summary
+Form:  ( DEFTHM WBASIS0-SPANS ...)
+Rules: ((:DEFINITION W*)
+        (:DEFINITION W+)
+        (:DEFINITION W0)
+        (:DEFINITION WBASIS0)
+        (:DEFINITION WCOMB)
+        (:DEFINITION WCOORDS0)
+        (:DEFINITION WP)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F0ID)
+        (:REWRITE F1ID))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  111
+WBASIS0-SPANS
+Goal'
+Goal''
+Goal'''
+Goal'4'
+Goal'5'
+Subgoal *1/4
+Subgoal *1/4'
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/2.3
+Subgoal *1/2.3'
+Subgoal *1/2.2
+Subgoal *1/2.2'
+Subgoal *1/2.2''
+Subgoal *1/2.1
+Subgoal *1/2.1'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM WBASIS0-LIN-INDEP ...)
+Rules: ((:DEFINITION FLISTN0)
+        (:DEFINITION FLISTNP)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION W*)
+        (:DEFINITION W+)
+        (:DEFINITION W0)
+        (:DEFINITION WBASIS0)
+        (:DEFINITION WCOMB)
+        (:DEFINITION WDIM)
+        (:ELIM CAR-CDR-ELIM)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART CAR)
+        (:EXECUTABLE-COUNTERPART CDR)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART FLISTN0)
+        (:EXECUTABLE-COUNTERPART FLISTNP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART ZP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION FLISTNP)
+        (:INDUCTION WCOMB)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE F0ID)
+        (:REWRITE F1ID))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  4483
+(:DEFTHMD WBASIS0-LIN-INDEP)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7436)
+
+Summary
+Form:  ( ENCAPSULATE (((WP * ...) ...) ...) ...)
+Rules: NIL
+Time:  0.06 seconds (prove: 0.02, print: 0.00, other: 0.04)
+Prover steps counted:  5722
+(WP W+ W0 W- W* WBASIS0 WCOORDS0)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM W+ID-COMM ...)
+Rules: ((:CONGRUENCE IFF-IMPLIES-EQUAL-IMPLIES-1)
+        (:DEFINITION NOT)
+        (:REWRITE W+ID)
+        (:REWRITE WP-W0))
+Hint-events: ((:USE W+COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  106
+W+ID-COMM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM W+INV-COMM ...)
+Rules: ((:DEFINITION NOT)
+        (:REWRITE W+INV)
+        (:REWRITE WP-W-))
+Hint-events: ((:USE W+COMM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  127
+W+INV-COMM
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM C*W0 ...)
+Rules: ((:CONGRUENCE IFF-IMPLIES-EQUAL-IMPLIES-1)
+        (:DEFINITION NOT)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:REWRITE W*CLOSED)
+        (:REWRITE W+ID-COMM)
+        (:REWRITE W+INV-COMM)
+        (:REWRITE WP-W-)
+        (:REWRITE WP-W0))
+Hint-events: ((:USE W+ASSOC) (:USE WDISTW))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  397
+C*W0
+
+Summary
+Form:  ( DEFUN WCOORD-MAT ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+WCOORD-MAT
+
+Summary
+Form:  ( DEFUN WINDEPP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND WINDEPP)
+
+Summary
+Form:  ( DEFUN LIN ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LIN
+
+Summary
+Form:  ( DEFTHM LIN-VAL ...)
+Rules: ((:DEFINITION LIN)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:REWRITE WP-W0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  12
+LIN-VAL
+
+Summary
+Form:  ( DEFTHM LIN-V0 ...)
+Rules: ((:DEFINITION LIN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  5
+LIN-V0
+Goal'
+
+Summary
+Form:  ( DEFTHM LIN-V+ ...)
+Rules: ((:DEFINITION LIN)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE W+ID-COMM)
+        (:REWRITE WP-W0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  62
+LIN-V+
+Goal'
+
+Summary
+Form:  ( DEFTHM LIN-V* ...)
+Rules: ((:DEFINITION LIN)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE C*W0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  57
+LIN-V*
+
+Summary
+Form:  ( ENCAPSULATE (((LIN * ...) ...) ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  136
+LIN
+
+Summary
+Form:  ( DEFUN LIN-LIST ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LIN-LIST
+
+Summary
+Form:  ( DEFUN LIN-MAT ...)
+Rules: ((:TYPE-PRESCRIPTION WCOORD-MAT))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND LIN-MAT)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7433)
+
+Summary
+Form:  (DEFUN-SK LIN-INJECTIVE-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  337
+LIN-INJECTIVE-P
+
+Summary
+Form:  ( DEFCHOOSE LIN-PREIMAGE ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+LIN-PREIMAGE
+
+Summary
+Form:  (DEFUN-SK LIN-SURJECTIVE-P ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.02)
+Prover steps counted:  380
+LIN-SURJECTIVE-P
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7437)
+
+Summary
+Form:  ( DEFUN LIN-INV ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND LIN-INV)
+
+Summary
+Form:  ( DEFUN SP ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SP
+
+Summary
+Form:  ( DEFTHM SP-VP ...)
+Rules: ((:DEFINITION SP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  11
+SP-VP
+
+Summary
+Form:  ( DEFTHM SP-V0 ...)
+Rules: ((:DEFINITION SP) (:REWRITE VP-V0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  5
+SP-V0
+Goal'
+
+Summary
+Form:  ( DEFTHM SP-V- ...)
+Rules: ((:DEFINITION SP)
+        (:REWRITE SP-VP)
+        (:REWRITE VP-V-))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  42
+SP-V-
+Goal'
+
+Summary
+Form:  ( DEFTHM S+CLOSED ...)
+Rules: ((:DEFINITION SP)
+        (:REWRITE SP-VP)
+        (:REWRITE V+CLOSED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  67
+S+CLOSED
+Goal'
+
+Summary
+Form:  ( DEFTHM S*CLOSED ...)
+Rules: ((:DEFINITION SP)
+        (:REWRITE SP-VP)
+        (:REWRITE V*CLOSED))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  61
+S*CLOSED
+
+Summary
+Form:  ( ENCAPSULATE (((SP * ...) ...) ...) ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  186
+SP
+
+Summary
+Form:  ( DEFUN SLISTNP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SLISTNP
+Subgoal *1/5
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM SLISTNP-VLISTNP ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION SLISTNP)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION SLISTNP)
+        (:REWRITE SP-VP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  494
+SLISTNP-VLISTNP
+
+Summary
+Form:  ( DEFCHOOSE SUNSPANNED ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SUNSPANNED
+Goal'
+Subgoal 9
+Subgoal 8
+Subgoal 7
+Subgoal 6
+Subgoal 5
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFUN SBASIS0-AUX ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NFIX)
+        (:DEFINITION NOT)
+        (:DEFINITION O-FINP)
+        (:DEFINITION O-P)
+        (:DEFINITION O<)
+        (:DEFINITION SYNP)
+        (:DEFINITION VDEPP)
+        (:DEFINITION VLISTNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:EXECUTABLE-COUNTERPART NOT)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:EXECUTABLE-COUNTERPART UNARY--)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::COMMUTATIVITY-2-OF-+)
+        (:REWRITE ACL2::DISTRIBUTIVITY-OF-MINUS-OVER-+)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE SLISTNP-VLISTNP)
+        (:REWRITE SP-VP)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VDIM))
+Hint-events: ((:USE VDEPP-IF->-VDIM))
+Time:  0.02 seconds (prove: 0.01, print: 0.00, other: 0.01)
+Prover steps counted:  2966
+SBASIS0-AUX
+
+Summary
+Form:  ( DEFUN SBASIS0 ...)
+Rules: ((:TYPE-PRESCRIPTION SBASIS0-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND SBASIS0)
+
+Summary
+Form:  ( DEFUN SDIM ...)
+Rules: ((:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SDIM
+Goal'
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM SLISTNP-SBASIS0-AUX ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION SBASIS0-AUX)
+        (:DEFINITION SLISTNP)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION SBASIS0-AUX)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1849
+(:DEFTHMD SLISTNP-SBASIS0-AUX)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM SLISTNP-SBASIS0 ...)
+Rules: ((:DEFINITION HIDE)
+        (:DEFINITION NOT)
+        (:DEFINITION SBASIS0)
+        (:DEFINITION SDIM)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART SLISTNP)
+        (:TYPE-PRESCRIPTION SLISTNP))
+Hint-events: ((:USE SLISTNP-SBASIS0-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  232
+(:DEFTHMD SLISTNP-SBASIS0)
+Subgoal 2
+Subgoal 1
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM VINDEPP-SBASIS0-AUX ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION SBASIS0-AUX)
+        (:DEFINITION SLISTNP)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION SBASIS0-AUX)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Time:  0.01 seconds (prove: 0.01, print: 0.00, other: 0.00)
+Prover steps counted:  2014
+(:DEFTHMD VINDEPP-SBASIS0-AUX)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VINDEPP-SBASIS0 ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION SBASIS0)
+        (:DEFINITION SDIM)
+        (:EXECUTABLE-COUNTERPART IF)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART SLISTNP)
+        (:EXECUTABLE-COUNTERPART VINDEPP)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE VINDEPP-SBASIS0-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  54
+VINDEPP-SBASIS0
+Goal'
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/3'
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+Subgoal *1/1'
+
+Summary
+Form:  ( DEFTHM VDEPP-CONS-SBASIS0-AUX-1 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::ZP-COMPOUND-RECOGNIZER)
+        (:DEFINITION FIX)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION SBASIS0-AUX)
+        (:DEFINITION SLISTNP)
+        (:DEFINITION SYNP)
+        (:EXECUTABLE-COUNTERPART BINARY-+)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION SBASIS0-AUX)
+        (:REWRITE CAR-CONS)
+        (:REWRITE CDR-CONS)
+        (:REWRITE ACL2::FOLD-CONSTS-IN-+)
+        (:REWRITE UNICITY-OF-0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  2433
+(:DEFTHMD VDEPP-CONS-SBASIS0-AUX-1)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-CONS-SBASIS0-AUX ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION VDEPP)
+        (:TYPE-PRESCRIPTION VDEPP))
+Hint-events: ((:USE SUNSPANNED)
+              (:USE VDEPP-CONS-SBASIS0-AUX-1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  138
+(:DEFTHMD VDEPP-CONS-SBASIS0-AUX)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM VDEPP-CONS-SBASIS0 ...)
+Rules: ((:DEFINITION HIDE)
+        (:DEFINITION NOT)
+        (:DEFINITION SBASIS0)
+        (:DEFINITION VDEPP)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART SLISTNP)
+        (:EXECUTABLE-COUNTERPART VINDEPP)
+        (:TYPE-PRESCRIPTION VDEPP))
+Hint-events: ((:USE VDEPP-CONS-SBASIS0-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  165
+(:DEFTHMD VDEPP-CONS-SBASIS0)
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/2'
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-SBASIS0-AUX ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION SBASIS0-AUX)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION SBASIS0-AUX)
+        (:TYPE-PRESCRIPTION SBASIS0-AUX)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION TRUE-LISTP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1358
+TRUE-LISTP-SBASIS0-AUX
+
+Summary
+Form:  ( DEFTHM TRUE-LISTP-SBASIS0 ...)
+Rules: ((:DEFINITION SBASIS0)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:TYPE-PRESCRIPTION TRUE-LISTP))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  4
+(:DEFTHMD TRUE-LISTP-SBASIS0)
+Goal'
+Subgoal *1/4
+Subgoal *1/3
+Subgoal *1/2
+Subgoal *1/1
+
+Summary
+Form:  ( DEFTHM HACK-5 ...)
+Rules: ((:DEFINITION LEN)
+        (:EXECUTABLE-COUNTERPART <)
+        (:FAKE-RUNE-FOR-LINEAR-EQUALITIES NIL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:INDUCTION LEN)
+        (:INDUCTION TRUE-LISTP)
+        (:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  494
+(:DEFTHMD HACK-5)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM SDIM-0-NIL ...)
+Rules: ((:DEFINITION HIDE)
+        (:DEFINITION IFF)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION NULL)
+        (:DEFINITION SDIM)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION NULL))
+Hint-events: ((:USE HACK-5)
+              (:USE TRUE-LISTP-SBASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  476
+(:DEFTHMD SDIM-0-NIL)
+
+Summary
+Form:  ( DEFTHM CONSP-SBASIS0-1 ...)
+Rules: ((:TYPE-PRESCRIPTION SBASIS0-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFTHMD CONSP-SBASIS0-1)
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM CONSP-SBASIS0-2 ...)
+Rules: ((:DEFINITION IFF)
+        (:DEFINITION NOT)
+        (:DEFINITION SBASIS0)
+        (:DEFINITION SBASIS0-AUX)
+        (:EXECUTABLE-COUNTERPART LEN)
+        (:EXECUTABLE-COUNTERPART SLISTNP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION SBASIS0-AUX)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE CONSP-SBASIS0-1))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  332
+(:DEFTHMD CONSP-SBASIS0-2)
+Goal'
+Goal''
+Subgoal 4
+Subgoal 3
+Subgoal 2
+Subgoal 1
+
+Summary
+Form:  ( DEFTHM NOT-V0-POSP-SDIM ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::POSP-COMPOUND-RECOGNIZER)
+        (:DEFINITION HIDE)
+        (:DEFINITION IFF)
+        (:DEFINITION LEN)
+        (:DEFINITION NOT)
+        (:DEFINITION NULL)
+        (:DEFINITION SDIM)
+        (:EXECUTABLE-COUNTERPART CONSP)
+        (:EXECUTABLE-COUNTERPART EQUAL)
+        (:EXECUTABLE-COUNTERPART POSP)
+        (:EXECUTABLE-COUNTERPART SLISTNP)
+        (:EXECUTABLE-COUNTERPART TAU-SYSTEM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE SLISTNP-VLISTNP)
+        (:REWRITE SP-VP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION POSP)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE CONSP-SBASIS0-2)
+              (:USE SDIM-0-NIL)
+              (:USE SUNSPANNED)
+              (:USE VDEPP-V0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  1284
+(:DEFTHMD NOT-V0-POSP-SDIM)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7456)
+
+Summary
+Form:  ( DEFUN SCOORDS0 ...)
+Rules: ((:TYPE-PRESCRIPTION VCOORDS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND SCOORDS0)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM FLISTNP-SCOORDS0 ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:DEFINITION SCOORDS0)
+        (:DEFINITION SDIM)
+        (:REWRITE SLISTNP-VLISTNP)
+        (:REWRITE SP-VP)
+        (:REWRITE VINDEPP-SBASIS0)
+        (:TYPE-PRESCRIPTION FLISTNP)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP))
+Hint-events: ((:USE VDEPP-CONS-SBASIS0)
+              (:USE VDEPP-VCOMB)
+              (:USE VINDEPP-SBASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  407
+FLISTNP-SCOORDS0
+Goal'
+Goal''
+Goal'''
+
+Summary
+Form:  ( DEFTHM SBASIS0-SPANS ...)
+Rules: ((:COMPOUND-RECOGNIZER ACL2::NATP-COMPOUND-RECOGNIZER)
+        (:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION SCOORDS0)
+        (:DEFINITION SDIM)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:REWRITE LEN-VLISTNP)
+        (:REWRITE SLISTNP-VLISTNP)
+        (:REWRITE SP-V0)
+        (:REWRITE SP-VP)
+        (:REWRITE VINDEPP-SBASIS0)
+        (:TYPE-PRESCRIPTION LEN)
+        (:TYPE-PRESCRIPTION SLISTNP)
+        (:TYPE-PRESCRIPTION VDEPP))
+Hint-events: ((:USE NOT-V0-POSP-SDIM)
+              (:USE VDEPP-CONS-SBASIS0)
+              (:USE VDEPP-VCOMB)
+              (:USE VINDEPP-SBASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  725
+SBASIS0-SPANS
+
+Summary
+Form:  ( DEFUN SBASIS1 ...)
+Rules: ((:TYPE-PRESCRIPTION SBASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SBASIS1
+
+Summary
+Form:  ( DEFUN SCOORDS1 ...)
+Rules: ((:TYPE-PRESCRIPTION SCOORDS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SCOORDS1
+
+Summary
+Form:  ( DEFUN SDIM1 ...)
+Rules: ((:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+SDIM1
+Goal'
+
+Summary
+Form:  ( DEFTHM SLISTNP-SBASIS1 ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION SBASIS1)
+        (:DEFINITION SDIM)
+        (:DEFINITION SDIM1)
+        (:TYPE-PRESCRIPTION SLISTNP))
+Hint-events: ((:USE SLISTNP-SBASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  22
+(:DEFTHMD SLISTNP-SBASIS1)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM FLISTNP-SCOORDS1 ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION SBASIS1)
+        (:DEFINITION SCOORDS1)
+        (:DEFINITION SDIM)
+        (:DEFINITION SDIM1)
+        (:TYPE-PRESCRIPTION FLISTNP))
+Hint-events: ((:USE FLISTNP-SCOORDS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  54
+(:DEFTHMD FLISTNP-SCOORDS1)
+Goal'
+Goal''
+
+Summary
+Form:  ( DEFTHM SBASIS1-SPANS ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:DEFINITION SBASIS1)
+        (:DEFINITION SCOORDS1)
+        (:DEFINITION SDIM))
+Hint-events: ((:USE SBASIS0-SPANS))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  55
+(:DEFTHMD SBASIS1-SPANS)
+Goal'
+
+Summary
+Form:  ( DEFTHM VINDEPP-SBASIS1 ...)
+Rules: ((:DEFINITION SBASIS1)
+        (:DEFINITION SDIM)
+        (:REWRITE VINDEPP-SBASIS0)
+        (:TYPE-PRESCRIPTION VINDEPP))
+Hint-events: ((:USE VINDEPP-SBASIS0))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  17
+VINDEPP-SBASIS1
+
+Summary
+Form:  ( ENCAPSULATE (((SBASIS1 ...) ...) ...) ...)
+Rules: NIL
+Time:  0.02 seconds (prove: 0.00, print: 0.00, other: 0.01)
+Prover steps counted:  148
+(SBASIS1 SCOORDS1)
+
+Summary
+Form:  ( DEFUN IN-KERNEL-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND IN-KERNEL-P)
+
+Summary
+Form:  ( DEFUN KLISTNP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+KLISTNP
+
+Summary
+Form:  ( DEFUN KBASIS-COORD ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND KBASIS-COORD)
+Goal'
+
+Summary
+Form:  ( DEFUN KBASIS-COORDS-AUX ...)
+Rules: ((:DEFINITION NOT)
+        (:DEFINITION POSP)
+        (:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION BINARY-APPEND)
+        (:TYPE-PRESCRIPTION ACL2::TRUE-LISTP-APPEND))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+Prover steps counted:  24
+KBASIS-COORDS-AUX
+
+Summary
+Form:  ( DEFUN KBASIS-COORDS ...)
+Rules: ((:TYPE-PRESCRIPTION KBASIS-COORDS-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND KBASIS-COORDS)
+
+Summary
+Form:  ( DEFUN KBASIS-AUX ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+KBASIS-AUX
+
+Summary
+Form:  ( DEFUN KBASIS ...)
+Rules: ((:TYPE-PRESCRIPTION KBASIS-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND KBASIS)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7483)
+
+Summary
+Form:  ( DEFUN KDIM ...)
+Rules: ((:TYPE-PRESCRIPTION LEN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND KDIM)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7484)
+
+Summary
+Form:  ( DEFUN KCOORDS-AUX ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+KCOORDS-AUX
+
+Summary
+Form:  ( DEFUN KCOORDS ...)
+Rules: ((:TYPE-PRESCRIPTION KCOORDS-AUX))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND KCOORDS)
+
+Summary
+Form:  ( DEFUN IN-IMAGE-P ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND IN-IMAGE-P)
+
+Summary
+Form:  ( DEFUN IDIM ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL)
+        (:TYPE-PRESCRIPTION KDIM)
+        (:TYPE-PRESCRIPTION VDIM))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+IDIM
+
+Summary
+Form:  ( DEFUN EXTEND-KBASIS ...)
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND EXTEND-KBASIS)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7496)
+
+Summary
+Form:  ( DEFUN FIRSTN ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+FIRSTN
+
+Summary
+Form:  ( DEFUN IBASIS ...)
+Rules: ((:TYPE-PRESCRIPTION LIN-LIST))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND IBASIS)
+
+Summary
+Form:  ( IN-THEORY (DISABLE ...))
+Rules: NIL
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:NUMBER-OF-ENABLED-RUNES 7501)
+
+Summary
+Form:  ( DEFUN ILISTNP ...)
+Rules: ((:FAKE-RUNE-FOR-TYPE-SET NIL))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+ILISTNP
+
+Summary
+Form:  ( DEFUN ICOORDS ...)
+Rules: ((:TYPE-PRESCRIPTION FIRSTN))
+Time:  0.00 seconds (prove: 0.00, print: 0.00, other: 0.00)
+(:DEFUND ICOORDS)
+
+Summary
+Form:  ( INCLUDE-BOOK "defs" ...)
+Rules: NIL
+Time:  0.08 seconds (prove: 0.00, print: 0.00, other: 0.08)
+
+
+
+Summary
+Form:  (CERTIFY-BOOK "defs" ...)
+Rules: NIL
+Time:  2.57 seconds (prove: 1.85, print: 0.01, other: 0.71)
+Prover steps counted:  625413
+; (EV-REC *RETURN-LAST-ARG3* ...) took 
+; 2.57 seconds realtime, 2.55 seconds runtime
+; (423,748,480 bytes allocated).
+Exit code from ACL2 is 43
+-rw-r--r-- 1 root root 126612 Nov 12 23:21 defs.cert

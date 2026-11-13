@@ -1,0 +1,7 @@
+$ python3 -I tools/audit.py <transcripts> task-04
+task-04: CLEAN  pages=2 run_tool_calls=38 run_end=2026-11-12T05:27:52.577773Z post_run_calls=0 flags=0
+
+transcript complete (oldest page reached): True
+tool calls in the run: 38
+tools used: Bash
+server-side web search/fetch counters checked in 1 result event(s): all zero

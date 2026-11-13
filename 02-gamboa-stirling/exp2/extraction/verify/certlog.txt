@@ -1,0 +1,3 @@
+System books directory is /opt/acl2r/books
+Making <scratch>/given-gamboa-stirling/test-skip.cert on 12-Nov-2026 22:56:29.194
+[32mBuilt <scratch>/given-gamboa-stirling/test-skip.cert (0.428s) at 12-Nov-2026 22:56:29.629[0m

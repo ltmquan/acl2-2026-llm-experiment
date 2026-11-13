@@ -1,0 +1,31 @@
+Prove the theorems below in ACL2.
+
+1. Create /work/defs.lisp containing exactly the text between the tags. defs.lisp holds the definitions the theorems use. Do not modify these files.
+
+<defs.lisp>
+(in-package "ACL2")
+
+(include-book "nonstd/nsa/trig" :dir :system)
+
+(defun basel-series (i n)
+  (declare (xargs :measure (nfix (- n i))))
+  (if (zp (- n i))
+      0
+      (+ (expt i -2)
+         (basel-series (1+ i) n))))
+</defs.lisp>
+
+2. Write /work/solution.lisp. It must (include-book "defs") and then prove every theorem in <theorems>, each with exactly the name and statement given (MAIN-1). You may add your own definitions and lemmas before them.
+
+<theorems>
+(defthm MAIN-1
+  (implies (and (posp n)
+                (i-large n))
+           (i-close (basel-series 1 n)
+                    (/ (expt (acl2-pi) 2) 6))))
+</theorems>
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+/work/solution.lisp must certify with `cert.pl` (add `--acl2 acl2r` for ACL2(r)).
+Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done. When you are done, print the final contents of /work/solution.lisp.

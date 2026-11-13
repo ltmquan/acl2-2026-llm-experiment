@@ -1,0 +1,19 @@
+Formalize the definitions and the theorem below in ACL2, and prove the theorem.
+
+<definitions>
+A planar vector (a, b) is identified with the complex number a + jb (the identification of R² with C), where j is the imaginary unit.
+· is the planar dot product.
+γ = 2π/3.
+</definitions>
+
+<theorem>
+For an arbitrary planar vector A:
+
+    Σ_{n=0}^{2} (2/3) (A · e^{jnγ}) e^{jnγ} = A.
+</theorem>
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+Put your work in /work/solution.lisp; it must certify with `cert.pl` (add `--acl2 acl2r` for ACL2(r)), and its last
+event must be the theorem, named MAIN.
+Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done. When you are done, print the final contents of /work/solution.lisp.

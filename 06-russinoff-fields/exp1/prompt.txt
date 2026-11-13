@@ -1,0 +1,23 @@
+Formalize the definitions and the theorem below in ACL2, and prove the theorem.
+
+<definitions>
+A generic field F0 is defined through seven functions: a predicate that recognizes an element of the field; the field operations of addition and multiplication; the additive and multiplicative identities; and the additive and multiplicative inverse operators. Nothing is assumed about these functions except that they satisfy the usual field axioms.
+
+The theory of fields rests on two fundamental notions: base field and simple field extension. The fields of the rational numbers and of the integers modulo a prime are both base fields. Along with the rational and prime fields, the generic field F0 is included as a base field. Q, F_p, and F0 denote the rational field, the field of order p, and the generic field, respectively.
+
+A simple extension of a field f is constructed by the usual process of adjoining a root of an irreducible monic polynomial p over f of degree at least 2. The elements of such an extension are the polynomials over f of degree less than that of p; the field operations are polynomial addition and multiplication modulo p. A field is recursively defined to be either a base field or a simple extension of a field. The term field is reserved for these objects.
+
+A polynomial is monic if its leading coefficient is the multiplicative identity of f. A polynomial p over f is reducible if it has a non-constant monic divisor of lesser degree; otherwise p is irreducible.
+
+The functions of primary interest are those that characterize the structure of a field f: a predicate that recognizes an element of f; the field operations of addition and multiplication; the additive and multiplicative identities; and the additive and multiplicative inverses.
+</definitions>
+
+<theorem>
+If f is a field, then f satisfies the field axioms, i.e., the properties corresponding to the constraints on the field F0. In particular, for every nonzero element x of f, the product of x and its multiplicative inverse is the multiplicative identity of f.
+</theorem>
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+Put your work in /work/solution.lisp; it must certify with `cert.pl` (add `--acl2 acl2r` for ACL2(r)), and its last
+event must be the theorem, named MAIN.
+Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done. When you are done, print the final contents of /work/solution.lisp.

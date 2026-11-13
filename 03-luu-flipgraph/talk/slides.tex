@@ -1,0 +1,697 @@
+% Talk for the ACL2 Workshop 2026, 25 minutes.
+% Build: latexmk -pdf slides.tex
+\documentclass[aspectratio=169,10pt]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+% ---------------------------------------------------------------- listings
+\lstdefinelanguage{acl2}{
+  morekeywords={define,defrule,defruled,defun-sk,forall,implies,and,or,not,
+    if,let,let*,b*,cond,equal,list,cons,car,cdr,cadr,caddr,append,atom,
+    unless,natp,zp,null,consp,t,nil},
+  sensitive=false,
+  morecomment=[l]{;},
+  morestring=[b]",
+  alsoletter={-*?<>=:},
+}
+\lstset{
+  language=acl2,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue!60!black}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\hl}[1]{\textcolor{red!70!black}{#1}}
+\newcommand{\F}{\mathbb{F}_2}
+\newcommand{\M}{\mathcal{M}^{(n)}}
+
+% ---------------------------------------------------------------- title
+\title[Flip Graph Connectivity in ACL2]{Formalizing the Connectivity Theorem for the\\
+  Matrix Multiplication Flip Graph in ACL2}
+\author{Quan Luu \and Zeke Medley \and Panagiotis Manolios}
+\institute{Northeastern University}
+\date{ACL2 Workshop 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ================================================================ 1. Motivation
+\section{Motivation}
+
+\begin{frame}{Fast matrix multiplication, one format at a time}
+  \begin{itemize}
+    \item A \alert{scheme} computes the product of two $n\times n$ matrices;
+      its \alert{rank} is the number of scalar multiplications.
+    \item Naive: $n^3$. Strassen (1969): $7$ for $2\times 2$.
+    \item Rapid recent progress over $\F$:
+      \begin{center}
+        \begin{tabular}{lcccc}
+          \toprule
+          format & $4\times4$ & $5\times5$ & $6\times6$ & $7\times7$ \\
+          \midrule
+          rank   & 47 & 93 & 153 & 245 \\
+          naive  & 64 & 125 & 216 & 343 \\
+          \bottomrule
+        \end{tabular}
+      \end{center}
+    \item Most of these were found by \alert{searching the flip graph}
+      (Kauers \& Moosbauer, 2023):
+      \begin{itemize}
+        \item vertices: schemes
+        \item edges: local rewrites that keep what the scheme computes
+        \item search: walk from a known scheme, look for lower rank
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Which schemes can a search reach?}
+  \begin{itemize}
+    \item Kauers \& Moosbauer: flip + reduction edges, \alert{weakly} connected.
+    \item Arai et al.\ (2024): add \alert{plus} edges, \alert{strongly}
+      connected over $\F$.
+      \begin{itemize}
+        \item still needs reduction edges (expensive, usually left out of searches)
+        \item the main procedure relies on an invariant that is neither
+          established nor maintained; there is a counterexample to the procedure
+      \end{itemize}
+    \item Medley et al.\ (ALENEX 2027): over $\F$, \alert{flip and plus edges
+      alone} make the graph strongly connected.
+  \end{itemize}
+  \vfill
+  \begin{block}{This work}
+    A complete ACL2 proof of the Medley et al.\ theorem, so that every step
+    is checked and no gap remains.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Contributions}
+  \begin{itemize}
+    \item A complete ACL2 formalization of flip-plus connectivity over $\F$.
+      \begin{itemize}
+        \item 29 books, 215 definitions, 791 theorems
+        \item no trust tags, \code{skip-proofs} or \code{defaxiom}
+        \item the path is \alert{computed}: \code{main-path}
+      \end{itemize}
+    \item The vertices of the graph are exactly the bilinear matrix
+      multiplication algorithms, up to a natural equivalence.
+    \item Experience with an LLM as a proof-engineering assistant:
+      \begin{itemize}
+        \item a guided development (this paper)
+        \item an unassisted one, from the companion paper alone
+        \item ACL2s random testing that the two main theorems agree
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% ================================================================ 2. Background
+\section{Schemes and the flip graph}
+
+\begin{frame}{The matrix multiplication tensor}
+  $\M \in \F^{n\times n}\otimes\F^{n\times n}\otimes\F^{n\times n}$ is defined by
+  \[
+    (DF)_{k,\ell} = \sum_{g,h,i,j} \M_{g,h,i,j,k,\ell}\, D_{g,h}\,F_{i,j}.
+  \]
+  A \alert{rank-$R$ decomposition} writes it as a sum of rank-one tensors:
+  \[
+    \M = \sum_{r=1}^{R} A^{(r)}\otimes B^{(r)}\otimes C^{(r)}
+    \quad\Longrightarrow\quad
+    (DF)_{k,\ell} = \sum_{r=1}^{R} C^{(r)}_{k,\ell}\, m_r,
+  \]
+  \[
+    m_r = \Bigl(\sum_{g,h} A^{(r)}_{g,h} D_{g,h}\Bigr)
+          \Bigl(\sum_{i,j} B^{(r)}_{i,j} F_{i,j}\Bigr).
+  \]
+  \begin{itemize}
+    \item $R$ terms $=$ $R$ multiplications; everything else is addition.
+    \item A \alert{scheme} is a multiset of nonzero $A\otimes B\otimes C$
+      summing to $\M$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Example: Strassen over $\F$}
+  Write $a_{ij}, b_{ij}, c_{ij}$ for the unit matrix $E_{ij}$ in each position.
+  \begin{align*}
+    \mathcal{M}^{(2)} ={}& (a_{11}+a_{22})\otimes(b_{11}+b_{22})\otimes(c_{11}+c_{22})
+      + (a_{21}+a_{22})\otimes b_{11}\otimes(c_{21}+c_{22}) \\
+    &+ a_{11}\otimes(b_{12}+b_{22})\otimes(c_{12}+c_{22})
+      + a_{22}\otimes(b_{11}+b_{21})\otimes(c_{11}+c_{21}) \\
+    &+ (a_{11}+a_{12})\otimes b_{22}\otimes(c_{11}+c_{12})
+      + (a_{11}+a_{21})\otimes(b_{11}+b_{12})\otimes c_{22} \\
+    &+ (a_{12}+a_{22})\otimes(b_{21}+b_{22})\otimes c_{11}.
+  \end{align*}
+  \vfill
+  First summand: compute $(D_{11}+D_{22})(F_{11}+F_{22})$ once, add it into
+  entries $(1,1)$ and $(2,2)$ of the product.
+\end{frame}
+
+\begin{frame}{Edges: flip and plus (position $A$; $B$, $C$ analogous)}
+  \begin{description}[Flip.]
+    \item[Flip.] Two summands that \alert{agree at $A$}:
+      \[
+        A\otimes B\otimes C,\ A\otimes B'\otimes C'
+        \;\longrightarrow\;
+        A\otimes B\otimes (C+C'),\ A\otimes (B'-B)\otimes C'
+      \]
+    \item[Plus.] Any two summands; the second is split:
+      \[
+        A\otimes B\otimes C,\ A'\otimes B'\otimes C'
+        \;\longrightarrow\;
+        A\otimes B\otimes C,\ (A'-A)\otimes B'\otimes C',\ A\otimes B'\otimes C'
+      \]
+  \end{description}
+  In both cases, zero summands are deleted.
+  \vfill
+  \begin{itemize}
+    \item Both preserve the sum, so every neighbour of a scheme is a scheme.
+    \item Over $\F$: $-$ is $+$, and $X + X = 0$.
+  \end{itemize}
+\end{frame}
+
+% ================================================================ 3. ACL2 representation
+\section{The flip graph in ACL2}
+
+\begin{frame}[fragile]{Bit lists and bit matrices}
+  Two recognizers each: \alert{structural} for guards, \alert{dimensioned} for theorems.
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+(define bit-list-p (x)
+  :enabled t
+  :returns (yes/no booleanp)
+  (if (atom x)
+      (null x)
+    (and (bitp (car x))
+         (bit-list-p (cdr x)))))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+(define bit-listnp (x (n natp))
+  :returns (yes/no booleanp)
+  (if (zp n)
+      (null x)
+    (and (consp x)
+         (bitp (car x))
+         (bit-listnp (cdr x) (1- n)))))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+  \vspace{1ex}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+(define bit-list-add ((x bit-list-p)
+                      (y bit-list-p))
+  :returns (z bit-list-p)
+  (if (and (consp x) (consp y))
+      (cons (bitxor (car x) (car y))
+            (bit-list-add (cdr x) (cdr y)))
+    nil))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+;; the one fact that does all the cancelling
+(defrule bit-list-add-same
+  (implies (bit-listnp x n)
+           (equal (bit-list-add x x)
+                  (bit-listn0 n))))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Summands and schemes}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+(define summandp (s (n natp))
+  :enabled t
+  :returns (yes/no booleanp)
+  (and (mat-triplep s)
+       (bit-matp (car s) n n)
+       (bit-matp (cadr s) n n)
+       (bit-matp (caddr s) n n)
+       (not (summand0p s n))))
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+(define schemep (x (n natp))
+  :enabled t
+  :returns (yes/no booleanp)
+  (and (obag::bagp x)
+       (summand-listp x n)))
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+  \vfill
+  \begin{itemize}
+    \item A scheme is an \alert{ordered bag} (\code{std/obags}): a list sorted
+      by \code{<<}, repeats allowed.
+    \item Equal multisets are \code{equal}: no permutations, no
+      occurrence counting in the statements.
+    \item Summing to $\M$ is a separate predicate, \code{correct-schemep}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Flip and plus}
+  $s[p]$ is the factor at position $p\in\{0,1,2\}$; other positions by cyclic rotation.
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+(define flip ((s1 mat-triplep) (s2 mat-triplep) (p natp))
+  (let ((q (pos-next p))
+        (r (pos-prev p)))
+    (list (summand-set-pos s1 r (bit-mat-add (summand-get-pos s1 r)
+                                             (summand-get-pos s2 r)))
+          (summand-set-pos s2 q (bit-mat-add (summand-get-pos s2 q)
+                                             (summand-get-pos s1 q))))))
+
+(define plus ((target mat-triplep) (pivot mat-triplep) (p natp))
+  (list (summand-set-pos target p (bit-mat-add (summand-get-pos target p)
+                                               (summand-get-pos pivot p)))
+        (summand-set-pos target p (summand-get-pos pivot p))))
+\end{lstlisting}
+  \begin{itemize}
+    \item ``Zero summands deleted'': every insertion goes through
+      \code{insert-all-nonzero}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Moves, paths, and what a scheme computes}
+  \begin{itemize}
+    \item A move: \code{(:flip p s1 s2)} or \code{(:plus p s1 s2)}.
+      A path: a list of moves.
+    \item \code{path-validp}: each move's summands are present (multiplicity
+      2 if they are the same summand), and a flip's agree at $p$.
+    \item A tensor is a flat bit list of length $n^6$:
+      \code{(tensor a b c)} is the outer product of the flattened factors.
+  \end{itemize}
+\begin{lstlisting}
+(define correct-schemep (sch (n natp))
+  (and (schemep sch n)
+       (equal (scheme-sum sch n) (mm-tensor n))))
+
+(defrule correct-schemep-of-apply-moves
+  (implies (and (correct-schemep sch n)
+                (path-validp moves sch n)
+                (natp n))
+           (correct-schemep (apply-moves moves sch n) n)))
+\end{lstlisting}
+  Over $\F$, deleting a summand changes the sum like inserting it does.
+\end{frame}
+
+\begin{frame}[fragile]{The main theorem}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+(defrule flip-plus-connectivity
+  (implies (and (correct-schemep sch n)
+                (correct-schemep sch2 n)
+                (natp n) (<= 2 n))
+           (b* ((path (main-path sch sch2 n))
+                (res  (apply-moves path sch n)))
+             (and (path-validp path sch n)
+                  (equal res sch2)))))
+\end{lstlisting}
+  \vfill
+  \begin{itemize}
+    \item \alert{No existential quantifier}: the path is a function of the
+      two schemes.
+    \item Every lemma has the same shape: a path function, and a theorem
+      saying the path is valid and what it produces.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Schemes are algorithms}
+  A small expression language for bilinear algorithms
+  (\code{matmul-expr.lisp}).
+\begin{lstlisting}
+(defun-sk algo-correctp (alg n)
+  (forall (d f)
+    (implies (and (bit-matp d n n) (bit-matp f n n))
+             (equal (eval-algo alg d f n) (bit-mat-mul d f n)))))
+\end{lstlisting}
+  \begin{description}[Completeness]
+    \item[Existence] the textbook algorithm gives a correct scheme for every
+      $n$, so the main theorem is not vacuous
+    \item[Soundness] correct scheme $\Rightarrow$ correct algorithm
+      (\code{scheme-algo-correct})
+    \item[Completeness] correct bilinear algorithm $\Rightarrow$ correct scheme
+      (\code{algo-to-correct-scheme})
+    \item[Equivalence] \code{scheme-equiv} (a \code{defequiv}); its classes
+      are in bijection with schemes
+  \end{description}
+  \vfill
+  So any correct bilinear algorithm can be turned into any other by flips
+  and pluses.
+\end{frame}
+
+% ================================================================ 4. Proof
+\section{The proof}
+
+\begin{frame}{The proof, informally (Medley et al.)}
+  \begin{center}
+  \begin{tikzpicture}[
+      node distance=6mm and 10mm,
+      box/.style={draw, rounded corners, align=center, font=\small,
+                  minimum height=9mm, fill=blue!5},
+      main/.style={box, fill=red!10, thick},
+      >={Stealth}]
+    \node[box] (tensor) {Lemma 5.2\\ $\M=\sum E_{ij}\otimes E_{jk}\otimes E_{ik}$};
+    \node[box, right=of tensor] (span) {Lemma 5.3\\ components span};
+    \node[box, below=of tensor] (dup) {Lemma 5.4\\ add duplicate sum};
+    \node[box, right=of dup] (arb) {Lemma 5.5\\ add any $X\otimes Y\otimes Z$ twice};
+    \node[box, right=of span] (zero) {Lemma 5.6\\ remove zero-summing $R$};
+    \node[main, right=of arb] (thm) {Theorem\\ $S \leadsto S'$};
+    \draw[->] (tensor) -- (span);
+    \draw[->] (span) -- (arb);
+    \draw[->] (dup) -- (arb);
+    \draw[->] (tensor.north) to[bend left=20] (zero.north);
+    \draw[->] (arb) -- (zero);
+    \draw[->] (arb) -- (thm);
+    \draw[->] (zero) -- (thm);
+  \end{tikzpicture}
+  \end{center}
+  \vspace{1ex}
+  \[
+    S \;\xrightarrow{\text{5.5 for each } s\in S'}\; S \uplus S' \uplus S'
+      \;\xrightarrow{\text{5.6 with } R = S\uplus S'}\; S'
+  \]
+  since $S \uplus S'$ sums to $\M+\M = 0$ over $\F$.
+  \vfill
+  The one property of $\F$ used: two identical summands cancel,
+  and a flip of a summand with itself deletes the pair.
+\end{frame}
+
+\begin{frame}[fragile]{Spanning, with the witness made explicit}
+  \begin{itemize}
+    \item Lemma 5.2 becomes an entry law, \code{nth-of-mm-tensor};
+      every fact about matrix multiplication is derived from it.
+    \item We do not prove that a linear combination exists: we
+      \alert{compute} one.
+  \end{itemize}
+\begin{lstlisting}
+(defrule span-lemma
+  (implies (and (correct-schemep sch n)
+                (natp n) (< 0 n)
+                (natp i) (natp j) (natp k)
+                (< i n) (< j n) (< k n))
+           (equal (a-witness-sum sch i j k n)
+                  (bit-mat-unit i j n n))))
+\end{lstlisting}
+  \begin{itemize}
+    \item \code{a-witness-sum} adds the $A$-factors of the summands with
+      $B[j,k]\cdot C[i,k] = 1$.
+    \item Proof by comparing entries against the entry law.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Adding a duplicate sum (Lemma 5.4)}
+  Summands $s_1 = (A_1,B_1,C_1)$, $s_2 = (A_2,B_2,C_2)$, $X = A_1 + A_2$.
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+(define add-duplicate-path (a1 b1 c1 a2 b2 c2 n)
+  (let* ((x (bit-mat-add a1 a2)) (s1 (summand a1 b1 c1)) (s2 (summand a2 b2 c2)))
+    (cond ((equal x (bit-mat0 n n)) nil)
+          ((equal b1 b2)
+           (list (list :plus 0 s1 s2)
+                 (list :plus 0 (summand a2 b1 c1) (summand x b1 c1))))
+          (t
+           (list (list :plus 0 s1 s2)
+                 (list :plus 1 (summand x b1 c1) s2)
+                 (list :plus 0 (summand a2 b1 c1) (summand x (bit-mat-add b1 b2) c1))
+                 (list :flip 0 (summand x (bit-mat-add b1 b2) c1)
+                               (summand x b2 c1)))))))
+\end{lstlisting}
+  \begin{itemize}
+    \item The theorem \code{add-duplicate}: the path is valid and yields
+      the scheme with two copies of $(X, B_1, C_1)$ inserted.
+    \item Proved by \alert{symbolic execution} of the path.
+    \item No hypothesis $X \neq 0$: \code{insert-all-nonzero} drops zero summands.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Walking a chain: from $A_0$ to any nonzero $X$}
+  Carry a \alert{pair} of copies, changing one component at a time:
+  \begin{align*}
+    & S \uplus \{(p,B_0,C_0),(p,B_0,C_0)\} \\
+    \xrightarrow{\text{add-duplicate with } u}\;
+    & S \uplus \{(p,B_0,C_0),(p,B_0,C_0),(p+A_u,B_0,C_0),(p+A_u,B_0,C_0)\} \\
+    \xrightarrow{\text{flip } (p,B_0,C_0) \text{ with itself}}\;
+    & S \uplus \{(p+A_u,B_0,C_0),(p+A_u,B_0,C_0)\}
+  \end{align*}
+  \begin{itemize}
+    \item Chain $u_1,\dots,u_k$: summands with $A_0 + \sum A(u_i) = X$.
+    \item Every partial sum must be \alert{nonzero}, or the carried pair vanishes.
+    \item Our fix: a pool of \alert{independent} $A$-components, with the
+      \alert{seed placed last}.
+      \begin{itemize}
+        \item Medley et al.\ split into two cases on the coefficient of $A_0$;
+          ordering the pool this way removes the case split.
+      \end{itemize}
+    \item Then the $B$ leg and the $C$ leg, reusing the pair as the seed.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Adding an arbitrary summand (Lemma 5.5)}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+(defrule add-arbitrary
+  (implies (and (correct-schemep sch n)
+                (natp n) (<= 2 n)
+                (bit-matp x n n) (not (equal x (bit-mat0 n n)))
+                (bit-matp y n n) (not (equal y (bit-mat0 n n)))
+                (bit-matp z n n) (not (equal z (bit-mat0 n n))))
+           (let* ((path (add-arbitrary-path sch x y z n))
+                  (s    (summand x y z))
+                  (sch3 (apply-moves path sch n)))
+             (and (path-validp path sch n)
+                  (equal sch3 (obag::insert s (obag::insert s sch)))
+                  (correct-schemep sch3 n)))))
+\end{lstlisting}
+  \vfill
+  The hypotheses are those of the informal lemma.
+\end{frame}
+
+\begin{frame}{Removing a zero-summing submultiset (Lemma 5.6)}
+  \begin{itemize}
+    \item A zero sum need not contain an identical pair:
+      \[ (A,B,C),\ (A',B,C),\ (A+A',B,C),\qquad A\neq A'. \]
+    \item So first \alert{decompose} every summand into \alert{unit summands}
+      (all three factors unit matrices), one position at a time:
+      \begin{itemize}
+        \item add two copies of $s[p\to u]$, then flip against $s$:
+          $s \;\leadsto\; s[p\to u],\ s[p\to M+u]$
+        \item measure: the number of ones in $M$
+      \end{itemize}
+    \item Unit summands are linearly independent, so a zero sum means
+      every one occurs an \alert{even} number of times
+      (\code{even-occs-when-zero-scheme-sum}).
+    \item \code{delete-pairs-path} flips each with itself.
+  \end{itemize}
+  \vfill
+  \code{zero-subset-path} $=$ three sweeps (positions 0, 1, 2) $+$ delete pairs.
+  Later sweeps are built before earlier ones run, so \code{expand-pos-list}
+  computes their starting scheme.
+\end{frame}
+
+\begin{frame}[fragile]{Assembling connectivity}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+(define main-path ((sch obag::bagp) (sch2 obag::bagp) (n natp))
+  (append (graft-path sch sch2 n)
+          (zero-subset-path (insert-list sch2 (insert-list sch2 sch))
+                            (append sch sch2)
+                            n)))
+\end{lstlisting}
+  \begin{itemize}
+    \item \code{graft-path}: \code{add-arbitrary-path} for each summand of
+      $S'$, giving $S\uplus S'\uplus S'$ (\code{graft-invariant}).
+    \item \code{zero-subset-path}: remove $S\uplus S'$.
+    \item The main theorem: instantiate \code{graft-invariant} and
+      \code{zero-subset}. \alert{No induction needed.}
+  \end{itemize}
+\end{frame}
+
+% ================================================================ 5. LLM
+\section{Working with a language model}
+
+\begin{frame}{How the development was done}
+  Claude, through Claude Code (mostly Fable 5; Opus 5 and Fable 5.1 for
+  some sessions).
+  \begin{enumerate}
+    \item \alert{We} wrote the base: bit lists, bit matrices, their operations.
+    \item The model proposed representations for summands, schemes, moves,
+      paths; we reviewed them and fixed the conventions:
+      \begin{itemize}
+        \item \code{define} with \code{:returns}, \code{defrule}
+        \item structural recognizers in guards, dimensioned theorems alongside
+      \end{itemize}
+    \item The model formalized the rest. \alert{Within two days} it stated
+      and proved the main theorem and all intermediate lemmas.
+    \item Our role then: ask it to explain what it built and why, and order
+      changes (guard verification, removing needless guards and
+      \code{:returns}, renaming and restructuring books).
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{``In ACL2 everything runs''}
+  We asked the model what helped it most:
+  \begin{quote}\small
+    Before I tried to prove anything about a construction, I ran it at
+    $n = 2$ and looked at the output. That is how I found that my first
+    \code{mm-tensor} used the wrong index convention, and that three flags
+    in the parity book were stale [\dots] A theorem statement is a term over
+    executable functions, so I could evaluate the conclusion of the main
+    theorem on concrete schemes and see the path arrive before I had any
+    proof of it. In a prover where the statement cannot be run, I would
+    have had no way to tell a wrong construction from a hard proof.
+  \end{quote}
+  \vfill
+  \begin{block}{Practice}
+    Evaluate new constructions and candidate theorem statements on small
+    inputs before attempting their proofs.
+  \end{block}
+\end{frame}
+
+\begin{frame}{The other direction: an unassisted run}
+  A fresh session (Fable 5.1) got Medley et al.'s paper \alert{and nothing
+  else}: no conventions, no code, no feedback.
+  \begin{itemize}
+    \item 24 certified books covering the \alert{whole} paper: tensor
+      uniqueness, generalized flips, the rank-245 scheme checked by evaluation.
+    \item A \alert{simpler} chain for Lemma 5.5: build it greedily, picking
+      the first element that differs from the running sum (after cancelling
+      duplicate pairs). No independence needed.
+  \end{itemize}
+  \begin{center}\small
+    \begin{tabular}{lrrrrr}
+      \toprule
+      connectivity proof & books & lines & functions & theorems & cert.\ (wall) \\
+      \midrule
+      guided (this paper) & 19 & 6363 & 137 & 527 & 51\,s \\
+      unassisted          &  9 & 3005 & 108 & 409 & 1240\,s \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \begin{itemize}
+    \item The gap in time: we \alert{disable definitions by default}; the
+      unassisted run does not. Six theorems and two termination proofs
+      take 90\% of its time.
+    \item The unassisted run contributed mathematical ideas; human guidance
+      contributed proof engineering.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Do the two developments prove the same theorem?}
+  Checked with \alert{ACL2s} random testing (\code{defdata}, \code{test?}).
+  \begin{itemize}
+    \item A translation relates the two representations.
+    \item Random correct schemes for $n=2$ and $n=3$, by random walks from
+      the standard scheme; 300 trials per property.
+    \item Tested:
+      \begin{itemize}
+        \item the two notions of correct scheme agree
+        \item valid moves correspond
+        \item our \code{main-path} is valid and reaches its target under
+          \alert{their} definitions, and conversely
+      \end{itemize}
+    \item One disagreement found: the two encode the flip at position $B$
+      with the summands exchanged. Both fit the definition, which fixes
+      only position $A$. With the translation adjusted, all tests pass.
+  \end{itemize}
+\end{frame}
+
+% ================================================================ 6. Conclusion
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item Flip-plus connectivity of the matrix multiplication flip graph
+      over $\F$, fully in ACL2: 29 books, 215 definitions, 791 theorems.
+    \item The connecting path is computed by \code{main-path}; every lemma
+      states the scheme its path produces.
+    \item Vertices $=$ bilinear algorithms up to equivalence.
+    \item With an LLM: the human enforces style and conventions; the model
+      writes definitions, theorems and proofs.
+  \end{itemize}
+  \vfill
+  \begin{block}{Future work}
+    \begin{itemize}
+      \item Other fields (e.g.\ $\mathbb{Q}$): no informal proof is known yet.
+      \item Give a model only the definitions and the main statement, without
+        the companion paper: does it find the lemmas itself?
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \centering
+  \Large Thank you!\\[2ex]
+  \normalsize Books: \code{books/workshops/2026/luu-medley-manolios/}\\[1ex]
+  Start with \code{overview-prelims.lisp}
+\end{frame}
+
+% ================================================================ backup
+\appendix
+
+\begin{frame}[fragile]{Backup: removing a zero-summing submultiset}
+\begin{lstlisting}
+(defrule zero-subset
+  (implies (and (correct-schemep sch n)
+                (natp n) (<= 2 n)
+                (true-listp r)
+                (list-in-bagp r sch)
+                (equal (scheme-sum r n) (bit-listn0 (* n n n n n n))))
+           (b* ((path (zero-subset-path sch r n))
+                (res  (apply-moves path sch n)))
+             (and (path-validp path sch n)
+                  (equal res (delete-list r sch))
+                  (correct-schemep (delete-list r sch) n)))))
+
+(defrule even-occs-when-zero-scheme-sum
+  (implies (and (obag::bagp l)
+                (unit-summand-listp l n) (natp n)
+                (equal (scheme-sum l n) (bit-listn0 (* n n n n n n)))
+                (obag::in s l))
+           (evenp (obag::occs s l))))
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Backup: the chain}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+(define grow-chain ((p bit-list-listp) (b0 bit-list-listp) (c0 bit-list-listp)
+                    (us mat-triple-listp) (n natp))
+  (if (atom us)
+      nil
+    (let ((u (car us))
+          (s (summand p b0 c0)))
+      (append (append (add-duplicate-path p b0 c0 (car u) (cadr u) (caddr u) n)
+                      (list (list :flip 0 s s)))
+              (grow-chain (bit-mat-add p (car u)) b0 c0 (cdr us) n)))))
+
+(defruled select-chain-okp-when-independent
+  (implies (and (independentp (cons p (a-components l)) n n)
+                (bit-matp p n n)
+                (summand-dim-listp l n)
+                (natp n))
+           (select-chain-okp p c l n)))
+\end{lstlisting}
+  If the seed's component is used, it is used last, when the running total
+  is $X \neq 0$; every earlier total is a nontrivial combination of
+  independent matrices.
+\end{frame}
+
+\end{document}

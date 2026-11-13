@@ -50,7 +50,7 @@ development not described in this paper).
 | Result | proved (certified) | all 4 target(s) proved (certified, statements matched) |
 | Model time | 38 min | 1 h 57 min |
 | Tool calls | 91 | 237 |
-| Certification time of solution.lisp (ACL2 8.7) | 2.6 s | (being measured) |
+| Certification time of solution.lisp (ACL2 8.7) | 2.6 s | 750.5 s |
 | Audit | CLEAN | CLEAN |
 | solution.lisp: lines / definitions / theorems | 1541 / 58 / 230 | 3101 / 58 / 552 |
 

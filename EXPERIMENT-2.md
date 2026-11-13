@@ -152,7 +152,7 @@ All runs were first attempts, launched together late on 2026-11-12 (UTC).
 | 01 | Basel | 1 / 1 | 28 min | 120 | ACL2(r) | 11.6 s | clean | 712 / 9 / 84 |
 | 05 | Linear III | 6 / 6 | 55 min | 194 | ACL2 | 3.6 s | clean | 2038 / 20 / 248 |
 | 03 | Flip graph | 4 / 4 | 58 min | 166 | ACL2 | 56.1 s | clean | 3420 / 91 / 455 |
-| 06 | Fields | 4 / 4 | 1 h 57 min | 237 | ACL2 | FIELDS_CT | clean | 3101 / 58 / 552 |
+| 06 | Fields | 4 / 4 | 1 h 57 min | 237 | ACL2 | 750.5 s | clean | 3101 / 58 / 552 |
 | 02 | Stirling | 3 / 3 | 3 h 30 min | 222 | ACL2(r) | 390.7 s | clean | 1743 / 25 / 217 |
 
 Column definitions are as in experiment 1. Certification is against the checker's `defs.lisp`. No run needed

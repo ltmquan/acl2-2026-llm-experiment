@@ -22,7 +22,7 @@ runs stubbed out). The result is 3,101 lines and 133,566 bytes, exactly the size
 `cat` output, and the preview ends at the same point.
 
 ## Checker
-`tools/check-exp2.py`: **CERTIFIED** with ACL2 8.7; every target matched (time being measured).
+`tools/check-exp2.py`: **CERTIFIED** with ACL2 8.7; every target matched (750.5 s).
 
 ## Approach (from the transcript)
 - Built bottom-up in 12 staged books: base fields (Fermat for prime inverses), generic field lemmas, polynomial

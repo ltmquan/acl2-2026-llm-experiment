@@ -59,12 +59,13 @@ model must admit) or `optional.lisp` where present.
 
 Two environments. Both have the same network as experiments 1–2 (package registries only, which includes
 GitHub). Both install from the public toolchain repository
-[`ltmquan/acl2-2026-llm-toolchains`](https://github.com/ltmquan/acl2-2026-llm-toolchains) at a pinned commit.
+[`ltmquan/acl2-2026-llm-toolchains`](https://github.com/ltmquan/acl2-2026-llm-toolchains), branch `env-v1`
+(commit `2e3f27c`; if the branch is ever moved, the move is recorded here).
 
 | Environment | `install.sh` arguments | Used by |
 |---|---|---|
-| 8.7 | `--acl2 8.7 --extra charon --apt "z3 erlang-nox flex" --input aes-0.9.1.crate --submit acl2-2026-llm-experiment` | all 8.7 tasks |
-| master | `--acl2 master --remove books/workshops/2026 --submit acl2-2026-llm-experiment` | `tool-remora`, `fw-definductive-exec`, `zfc-*` |
+| `acl2-next-87` | `--acl2 8.7 --extra charon --apt "z3 erlang-nox flex" --input aes-0.9.1.crate --submit acl2-2026-llm-experiment` | all 8.7 tasks |
+| `acl2-next-master` | `--acl2 master --remove books/workshops/2026 --submit acl2-2026-llm-experiment` | `tool-remora`, `fw-definductive-exec`, `zfc-*` |
 
 - **Leaks:**
   - The master tasks need master because their inputs exist only there (the Remora interpreter,
@@ -76,5 +77,9 @@ GitHub). Both install from the public toolchain repository
   - Some answers are public on GitHub: the master `definductive` and multisets (`treebag`), and the Erlang
     and AES authors' repositories. GitHub stays reachable because it comes with package-registry access, so,
     as before, the prompt says "do not use the internet" and the transcript audit checks every network command.
-- **Tested:** setup takes about 40 s (8.7 bundle 25 s, master bundle 39 s). The Charon bundle and `submit`
-  are not yet tested in a cloud session.
+- **Tested** in cloud sessions on 2026-11-14:
+  - `acl2-next-87`: setup 35–48 s; ACL2(r) certifies; Charon runs on a test crate with `--mir elaborated`
+    (25 s, first run).
+  - `acl2-next-master`: setup 18–32 s; `workshops/2026` is gone; a ZFC book certifies.
+  - In both, `submit` pushes `results/<id>` and leaves no unpushed commit, and the checkout holds only the
+    `results-base` README.

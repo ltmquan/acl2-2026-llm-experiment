@@ -6,7 +6,7 @@
 
 (in-package "RTL")
 
-(include-book "arrayset6-thms")   ; gen/arrayset6 + verification functions
+(include-book "arrayset6-invariants") ; gen/arrayset6 + verification
 
 (assert-event (equal (arr_sz) 6))
 
@@ -124,6 +124,9 @@
 (assert-event (equal (+ (len (aset-used-list *fig4a*))
                         (len (aset-free-list *fig4a*)))
                      (1- (arr_sz))))
+(assert-event (aset-sizes-okp *init*))
+(assert-event (aset-sizes-okp *fig4a*))
+(assert-event (aset-sizes-okp *fig4b*))
 (assert-event (< (aset_find_val_from (ag 'used_lst *fig4a*) 22 *fig4a*)
                  (arr_sz)))
 

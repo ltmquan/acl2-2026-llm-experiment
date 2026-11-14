@@ -453,6 +453,45 @@
   :hints (("Goal" :in-theory (enable aset-free-list aset-free-nonemptyp
                                      ))))
 
+;; The used and free lists of the arrayset have the expected total length
+;; ARR_SZ - 1 (they partition the usable elements 1 .. ARR_SZ-1).
+(defund aset-sizes-okp (aset)
+  (= (+ (len (aset-used-list aset)) (len (aset-free-list aset)))
+     (1- (ARR_SZ))))
+
+(defthm aset_del_head-used-list
+  (implies
+   (and (asetp aset)
+        (aset-used-to-free-preconditionp aset)
+        (aset-sizes-okp aset))
+   (= (aset-used-list (aset_del_head aset))
+      (cdr (aset-used-list aset))))
+  :hints (("Goal"
+           :in-theory (e/d (aset-sizes-okp)
+                           (aset-walk-open aset-walk-closedp-open))
+           :use asetp-used-facts)))
+
+(defthm aset_del_head-free-list
+  (implies
+   (and (asetp aset)
+        (aset-used-to-free-preconditionp aset)
+        (aset-sizes-okp aset))
+   (= (aset-free-list (aset_del_head aset))
+      (cons (used_head aset) (aset-free-list aset))))
+  :hints (("Goal"
+           :in-theory (e/d (aset-sizes-okp)
+                           (aset-walk-open aset-walk-closedp-open))
+           :use (asetp-used-facts
+                 (:instance aset-walk-less-fuel
+                            (idx (ag (ag 'free_lst aset) (ag 'anext aset)))
+                            (tail (ag 'free_lst aset))
+                            (k (1- (arr_sz)))
+                            (j (- (arr_sz) 2))
+                            (anext (ag 'anext aset)))))))
+
+;;; ------------------------------------------------------------------
+;;; Figure 9.  (no-dups-anext is not needed by the proofs.)
+
 (defthm aset_del_head-used-list--thm
   (implies
    (and (asetp aset)
@@ -462,9 +501,7 @@
            (1- (ARR_SZ))))
    (= (aset-used-list (aset_del_head aset))
       (cdr (aset-used-list aset))))
-  :hints (("Goal"
-           :in-theory (disable aset-walk-open aset-walk-closedp-open)
-           :use asetp-used-facts)))
+  :hints (("Goal" :in-theory (enable aset-sizes-okp))))
 
 (defthm aset_del_head-free-list--thm
   (implies
@@ -475,12 +512,4 @@
            (1- (ARR_SZ))))
    (= (aset-free-list (aset_del_head aset))
       (cons (used_head aset) (aset-free-list aset))))
-  :hints (("Goal"
-           :in-theory (e/d () (aset-walk-open aset-walk-closedp-open))
-           :use (asetp-used-facts
-                 (:instance aset-walk-less-fuel
-                            (idx (ag (ag 'free_lst aset) (ag 'anext aset)))
-                            (tail (ag 'free_lst aset))
-                            (k (1- (arr_sz)))
-                            (j (- (arr_sz) 2))
-                            (anext (ag 'anext aset)))))))
+  :hints (("Goal" :in-theory (enable aset-sizes-okp))))

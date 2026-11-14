@@ -822,11 +822,14 @@ books at the commit pinned in the conclusion (see books/kestrel/rust/samples/REA
 3. The ACL2 MIR semantics of Section 6.1 (fixtypes and an executable interpreter) and the JSON importer of
    Section 6.2 certify with `cert.pl`. An import test book parses the JSON at certification time and checks
    that the result equals the program value the interpreter tests use.
-4. By execution with `assert-event`, the interpreter running the imported crate reproduces the FIPS-197
-   AES-128 ciphertexts of Appendix C.1 and Appendix B byte for byte, and decrypt inverts both.
-5. By execution, 66 inputs (2 corner cases and 64 pseudorandom key/block pairs) agree with
-   `aes::aes-128-encrypt` from `kestrel/crypto/aes/aes-spec`.
-6. All books certify with `cert.pl`.
+4. `/work/run.lisp` defines `(mir-aes-encrypt key block)` and `(mir-aes-decrypt key block)`, which run the
+   interpreter on the imported crate's `encrypt` and `decrypt`. They take and return the same representation
+   of keys and blocks as `aes::aes-128-encrypt` and `aes::aes-128-decrypt` in `kestrel/crypto/aes/aes-spec`.
+5. By execution with `assert-event` on `mir-aes-encrypt` and `mir-aes-decrypt`, the interpreter reproduces the
+   FIPS-197 AES-128 ciphertexts of Appendix C.1 and Appendix B byte for byte, and decrypt inverts both.
+6. By execution, `mir-aes-encrypt` agrees with `aes::aes-128-encrypt` on 66 inputs: 2 corner cases and 64
+   pseudorandom key/block pairs. The checker will also run its own inputs.
+7. All books certify with `cert.pl`.
 </requirements>
 
 ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.

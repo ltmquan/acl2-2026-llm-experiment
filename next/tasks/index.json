@@ -12,7 +12,7 @@
  "tool-erlang": {
   "env": "8.7",
   "setup": "8.7",
-  "prompt_bytes": 51985
+  "prompt_bytes": 52403
  },
  "tool-remora": {
   "env": "master",
@@ -27,7 +27,7 @@
  "tool-aes-mir": {
   "env": "8.7",
   "setup": "8.7+charon",
-  "prompt_bytes": 61348
+  "prompt_bytes": 61717
  },
  "fw-euler-product": {
   "env": "8.7",
@@ -62,7 +62,7 @@
  "fw-ftc-macro": {
   "env": "8.7",
   "setup": "8.7",
-  "prompt_bytes": 3152
+  "prompt_bytes": 3778
  },
  "fw-definductive-exec": {
   "env": "master",
@@ -72,7 +72,7 @@
  "fw-multisets": {
   "env": "8.7",
   "setup": "8.7",
-  "prompt_bytes": 2786
+  "prompt_bytes": 3339
  },
  "zfc-t1": {
   "env": "master",

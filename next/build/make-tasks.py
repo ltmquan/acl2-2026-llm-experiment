@@ -133,7 +133,9 @@ TASKS["tool-erlang"] = dict(env="8.7", setup="8.7", paper="bora-erlang",
  "A front end turns Erlang source into the ACL2 AST of Section 3 (with `erl_scan`/`erl_parse` or your own "
  "parser for the subset): `2 + 2.` becomes `(:binop + (:integer 2) (:integer 2))` or an FTY value of that "
  "shape. The subset covers integers, atoms, tuples, lists, binary operators, match, `if`, `case`, `try`/`catch`, "
- "funs and closures, local, remote and fun calls, send and receive. `/work/README.md` says how to run it.",
+ "funs and closures, local, remote and fun calls, send and receive. `/work/README.md` gives the exact command "
+ "that turns a `.erl` file into ACL2 forms, and the ACL2 form that runs a function of a loaded module on given "
+ "arguments with given fuel, under the executable scheduler.",
  "The CPS evaluator `eval-cont-list` of Sections 3.2–3.3 is admitted in logic mode with a natural-number fuel "
  "argument; running out of fuel returns an out-of-fuel status. On `receive` it yields to the scheduler.",
  "The scheduler is an `encapsulate` whose exported constraint is the fairness condition of Section 3.1, with an "
@@ -141,11 +143,13 @@ TASKS["tool-erlang"] = dict(env="8.7", setup="8.7", paper="bora-erlang",
  "`/work/examples.lisp` runs `add_pairs([1,2,3,4,5,6,7,8])` (Figure 1) to `[3,7,11,15]`, the two-process "
  "exchange of Section 4.3 to completion with both exit values, and the reduce of Section 4.3 on a small tree, "
  "with `assert-event`.",
- "`/work/sum-of-nats.lisp` proves the theorem of Section 4.1 (equation 1) for `sum_of_nats`, with your own "
- "explicit fuel bound linear in N.",
+ "`/work/sum-of-nats.lisp` proves the theorem of Section 4.1 (equation 1) for `sum_of_nats`, named "
+ "`sum-of-nats-correct`, with your own explicit fuel bound linear in N, and `(equal (sum-of-nats n) (/ (+ (* n n) n) 2))` "
+ "for natural n.",
  "`/work/reduce.lisp` proves the three reduce properties of Section 4.2 for every scheduler satisfying the "
- "constraint: the invariant is preserved, invariant plus no non-stuttering action implies no blocked worker, "
- "and if the root terminates its value is the sum of the indices.",
+ "constraint, named `reduce-invariant-preserved`, `reduce-no-blocked-worker` and `reduce-root-value`: the "
+ "invariant is preserved by message delivery and by running a process, invariant plus no non-stuttering action "
+ "implies no blocked worker, and if the root (index 0) terminates its value is the sum of the indices.",
  "All books certify with `cert.pl`."])
 
 TASKS["tool-remora"] = dict(env="master", setup="master", paper="gamboa-remora",
@@ -201,10 +205,13 @@ TASKS["tool-aes-mir"] = dict(env="8.7", setup="8.7+charon", paper="mccarthy-aes"
  "The ACL2 MIR semantics of Section 6.1 (fixtypes and an executable interpreter) and the JSON importer of Section "
  "6.2 certify with `cert.pl`. An import test book parses the JSON at certification time and checks that the "
  "result equals the program value the interpreter tests use.",
- "By execution with `assert-event`, the interpreter running the imported crate reproduces the FIPS-197 AES-128 "
- "ciphertexts of Appendix C.1 and Appendix B byte for byte, and decrypt inverts both.",
- "By execution, 66 inputs (2 corner cases and 64 pseudorandom key/block pairs) agree with "
- "`aes::aes-128-encrypt` from `kestrel/crypto/aes/aes-spec`.",
+ "`/work/run.lisp` defines `(mir-aes-encrypt key block)` and `(mir-aes-decrypt key block)`, which run the "
+ "interpreter on the imported crate's `encrypt` and `decrypt`. They take and return the same representation "
+ "of keys and blocks as `aes::aes-128-encrypt` and `aes::aes-128-decrypt` in `kestrel/crypto/aes/aes-spec`.",
+ "By execution with `assert-event` on `mir-aes-encrypt` and `mir-aes-decrypt`, the interpreter reproduces the "
+ "FIPS-197 AES-128 ciphertexts of Appendix C.1 and Appendix B byte for byte, and decrypt inverts both.",
+ "By execution, `mir-aes-encrypt` agrees with `aes::aes-128-encrypt` on 66 inputs: 2 corner cases and 64 "
+ "pseudorandom key/block pairs. The checker will also run its own inputs.",
  "All books certify with `cert.pl`."])
 
 # ---------------------------------------------------------------- future work: prove-these-statements tasks
@@ -252,13 +259,18 @@ Interface:
 The derivative theorem has the form
   (implies (and (standardp x) (inside-interval-p x dom) (inside-interval-p x1 dom) (i-close x x1) (not (= x x1)))
            (i-close (/ (- (F x) (F x1)) (- x x1)) (f x)))
-and the continuity theorem the analogous continuity form for f.
+and the continuity theorem the form (as `rcdfn-prime-continuous` in `ftc-2.lisp`)
+  (implies (and (standardp x) (inside-interval-p x dom) (i-close x x1) (inside-interval-p x1 dom))
+           (i-close (f x) (f x1)))
+where f and F stand for the given functions or lambdas applied to the argument.
 
 Generated events, named from `name`:
 - `name-integrand` (when f is a lambda), `map-name`, `riemann-name`, `strict-int-name` (a `defun-std`) and
   `int-name`, defined as the corresponding functions in `ftc-2.lisp`;
-- `int-name-is-integral`: for standard a ≤ b in dom and a partition p of [a, b] with infinitesimal mesh,
-  `(riemann-name p)` is infinitely close to `(strict-int-name a b)`;
+- `int-name-is-integral`, as `strict-int-rcdfn-prime-is-integral-of-rcdfn-prime` in `ftc-2.lisp`:
+  (implies (and (standardp a) (standardp b) (<= a b) (inside-interval-p a dom) (inside-interval-p b dom)
+                (partitionp p) (equal (car p) a) (equal (car (last p)) b) (i-small (mesh p)))
+           (i-close (riemann-name p) (strict-int-name a b)));
 - `int-name-ftc`: `(implies (and (inside-interval-p a dom) (inside-interval-p b dom)) (equal (int-name a b) (- (F b) (F a))))`.
 
 If `:derivative-thm` or `:continuity-thm` is omitted, the macro must try to prove that obligation itself, and on
@@ -266,7 +278,9 @@ failure stop with an error that prints the obligation. The macro must also prove
 `ftc-2` (realness of f and F on the domain, that the domain is an interval, non-triviality).
 
 Requirements:
-1. The macro is in /work/def-ftc-integral.lisp.
+1. The macro is in /work/def-ftc-integral.lisp and meets the specification above: the interface, the generated
+   events with exactly these names and forms, the automatic obligations, and the error on failure. The checker
+   will also run calls of its own.
 2. /work/tests.lisp includes it and contains at least these calls, each followed by a check that `int-name-ftc`
    gives the expected closed form at concrete endpoints:
    (a) f(x) = x², F(x) = x³/3, dom = (interval nil nil), with no theorems supplied;
@@ -341,9 +355,12 @@ Required theorems, as rewrite rules unless that is impossible:
   from-list}, giving the count in terms of the counts of the arguments (for `from-list`, in terms of `duplicity`
   from `std/lists/duplicity`);
 - `in` iff count > 0;
-- extensionality: for bags x and y, (equal x y) iff their counts agree on a witness element (with a `defun-sk`
-  or a witness function);
-- `subbag` iff pointwise ≤ of counts, with reflexivity, antisymmetry (for bags) and transitivity;
+- extensionality, with a witness function `(count-diff-witness x y)` and the theorem `bag-extensionality`:
+  for bags x and y, if (count (count-diff-witness x y) x) = (count (count-diff-witness x y) y), then x = y;
+- `subbag` iff pointwise ≤ of counts: `subbag-when-counts-le`, with a witness function
+  `(subbag-witness x y)`: if (count (subbag-witness x y) x) ≤ (count (subbag-witness x y) y) then
+  (subbag x y); and `count-le-when-subbag`: if (subbag x y) then (count a x) ≤ (count a y). Also
+  reflexivity, antisymmetry (for bags) and transitivity;
 - `cardinality` of empty, insert, delete (when in) and sum;
 - `(equal (from-list (to-list b)) (bfix b))` and `(equal (len (to-list b)) (cardinality b))`;
 - commutativity and associativity of `sum`, `union` and `intersect`.
@@ -352,6 +369,9 @@ Required theorems, as rewrite rules unless that is impossible:
 
 Requirements:
 1. The library is /work/mset.lisp, with the package in /work/package.lsp and a /work/cert.acl2 that loads it.
+   It meets the specification above: the functions, guard verification, `bequiv` congruences, the theorems, and
+   the implementation requirement. The checker will state the theorems in its own form and prove them from
+   your rules.
 2. /work/mset-tests.lisp includes the library and evaluates each function on concrete bags with `assert-event`.
 3. Both books certify with `cert.pl`.""")
 

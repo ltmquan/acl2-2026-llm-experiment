@@ -728,8 +728,9 @@ K. Bora, M.R. Greenstreet                                                       
 1. A front end turns Erlang source into the ACL2 AST of Section 3 (with `erl_scan`/`erl_parse` or your own
    parser for the subset): `2 + 2.` becomes `(:binop + (:integer 2) (:integer 2))` or an FTY value of that
    shape. The subset covers integers, atoms, tuples, lists, binary operators, match, `if`, `case`,
-   `try`/`catch`, funs and closures, local, remote and fun calls, send and receive. `/work/README.md` says how
-   to run it.
+   `try`/`catch`, funs and closures, local, remote and fun calls, send and receive. `/work/README.md` gives
+   the exact command that turns a `.erl` file into ACL2 forms, and the ACL2 form that runs a function of a
+   loaded module on given arguments with given fuel, under the executable scheduler.
 2. The CPS evaluator `eval-cont-list` of Sections 3.2–3.3 is admitted in logic mode with a natural-number fuel
    argument; running out of fuel returns an out-of-fuel status. On `receive` it yields to the scheduler.
 3. The scheduler is an `encapsulate` whose exported constraint is the fairness condition of Section 3.1, with
@@ -737,11 +738,13 @@ K. Bora, M.R. Greenstreet                                                       
 4. `/work/examples.lisp` runs `add_pairs([1,2,3,4,5,6,7,8])` (Figure 1) to `[3,7,11,15]`, the two-process
    exchange of Section 4.3 to completion with both exit values, and the reduce of Section 4.3 on a small tree,
    with `assert-event`.
-5. `/work/sum-of-nats.lisp` proves the theorem of Section 4.1 (equation 1) for `sum_of_nats`, with your own
-   explicit fuel bound linear in N.
+5. `/work/sum-of-nats.lisp` proves the theorem of Section 4.1 (equation 1) for `sum_of_nats`, named
+   `sum-of-nats-correct`, with your own explicit fuel bound linear in N, and `(equal (sum-of-nats n) (/ (+ (*
+   n n) n) 2))` for natural n.
 6. `/work/reduce.lisp` proves the three reduce properties of Section 4.2 for every scheduler satisfying the
-   constraint: the invariant is preserved, invariant plus no non-stuttering action implies no blocked worker,
-   and if the root terminates its value is the sum of the indices.
+   constraint, named `reduce-invariant-preserved`, `reduce-no-blocked-worker` and `reduce-root-value`: the
+   invariant is preserved by message delivery and by running a process, invariant plus no non-stuttering
+   action implies no blocked worker, and if the root (index 0) terminates its value is the sum of the indices.
 7. All books certify with `cert.pl`.
 </requirements>
 

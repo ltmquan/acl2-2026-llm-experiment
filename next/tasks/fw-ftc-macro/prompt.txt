@@ -15,13 +15,18 @@ Interface:
 The derivative theorem has the form
   (implies (and (standardp x) (inside-interval-p x dom) (inside-interval-p x1 dom) (i-close x x1) (not (= x x1)))
            (i-close (/ (- (F x) (F x1)) (- x x1)) (f x)))
-and the continuity theorem the analogous continuity form for f.
+and the continuity theorem the form (as `rcdfn-prime-continuous` in `ftc-2.lisp`)
+  (implies (and (standardp x) (inside-interval-p x dom) (i-close x x1) (inside-interval-p x1 dom))
+           (i-close (f x) (f x1)))
+where f and F stand for the given functions or lambdas applied to the argument.
 
 Generated events, named from `name`:
 - `name-integrand` (when f is a lambda), `map-name`, `riemann-name`, `strict-int-name` (a `defun-std`) and
   `int-name`, defined as the corresponding functions in `ftc-2.lisp`;
-- `int-name-is-integral`: for standard a ≤ b in dom and a partition p of [a, b] with infinitesimal mesh,
-  `(riemann-name p)` is infinitely close to `(strict-int-name a b)`;
+- `int-name-is-integral`, as `strict-int-rcdfn-prime-is-integral-of-rcdfn-prime` in `ftc-2.lisp`:
+  (implies (and (standardp a) (standardp b) (<= a b) (inside-interval-p a dom) (inside-interval-p b dom)
+                (partitionp p) (equal (car p) a) (equal (car (last p)) b) (i-small (mesh p)))
+           (i-close (riemann-name p) (strict-int-name a b)));
 - `int-name-ftc`: `(implies (and (inside-interval-p a dom) (inside-interval-p b dom)) (equal (int-name a b) (- (F b) (F a))))`.
 
 If `:derivative-thm` or `:continuity-thm` is omitted, the macro must try to prove that obligation itself, and on
@@ -29,7 +34,9 @@ failure stop with an error that prints the obligation. The macro must also prove
 `ftc-2` (realness of f and F on the domain, that the domain is an interval, non-triviality).
 
 Requirements:
-1. The macro is in /work/def-ftc-integral.lisp.
+1. The macro is in /work/def-ftc-integral.lisp and meets the specification above: the interface, the generated
+   events with exactly these names and forms, the automatic obligations, and the error on failure. The checker
+   will also run calls of its own.
 2. /work/tests.lisp includes it and contains at least these calls, each followed by a check that `int-name-ftc`
    gives the expected closed form at concrete endpoints:
    (a) f(x) = x², F(x) = x³/3, dom = (interval nil nil), with no theorems supplied;

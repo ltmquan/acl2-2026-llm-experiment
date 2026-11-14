@@ -1,0 +1,71 @@
+identical (25): type FixsliceKeys128, type State, fn inv_sub_bytes, fn sub_bytes, fn sub_bytes_nots, macro_rules! define_mix_columns {, define_mix_columns!(mix_columns_0), define_mix_columns!(mix_columns_1), fn delta_swap_1, fn delta_swap_2, fn shift_rows_2, fn shift_rows_3, fn inv_shift_rows_1, fn inv_shift_rows_2, fn xor_columns, fn bitslice, fn memshift32, fn add_round_key, fn add_round_constant_bit, fn ror, fn ror_distance, fn rotate_rows_1, fn rotate_rows_2, fn rotate_rows_and_columns_1_1, fn rotate_rows_and_columns_2_2
+
+changed (11):
+  type BatchBlocks
+      -pub ( crate ) type BatchBlocks = Array < Block , FixsliceBlocks > ;
+      +pub ( crate ) type BatchBlocks = [ Block ;
+      +2 ] ;
+  fn aes128_key_schedule
+      -} # [ cfg ( aes_backend_soft = "compact" ) ] {
+      -for i in ( 8 . . 88 ) . step_by ( 16 ) {
+      -inv_shift_rows_1 ( & mut rkeys [ i . . ( i + 8 ) ] ) ;
+      -} }
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] {
+      -for i in ( 8 . . 72 ) . step_by ( 32 ) {
+      +} for i in ( 8 . . 72 ) . step_by ( 32 ) {
+      -} for i in 1 . . 11 {
+      +for i in 1 . . 11 {
+  fn aes128_decrypt
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] {
+      -} let mut rk_off = 72 ;
+      +let mut rk_off = 72 ;
+      -# [ cfg ( aes_backend_soft = "compact" ) ] {
+      -inv_shift_rows_2 ( & mut state ) ;
+      -} add_round_key ( & mut state , & rkeys [ rk_off . . ( rk_off + 8 ) ] ) ;
+      +add_round_key ( & mut state , & rkeys [ rk_off . . ( rk_off + 8 ) ] ) ;
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] {
+      -} }
+      -add_round_key ( & mut state , & rkeys [ . . 8 ] ) ;
+      +} add_round_key ( & mut state , & rkeys [ . . 8 ] ) ;
+  fn aes128_encrypt
+      -# [ cfg ( aes_backend_soft = "compact" ) ] {
+      -shift_rows_2 ( & mut state ) ;
+      -} if rk_off = = 80 {
+      +if rk_off = = 80 {
+      -} # [ cfg ( not ( aes_backend_soft = "compact" ) ) ] {
+      -sub_bytes ( & mut state ) ;
+      +} sub_bytes ( & mut state ) ;
+      -} sub_bytes ( & mut state ) ;
+      +sub_bytes ( & mut state ) ;
+      -} # [ cfg ( not ( aes_backend_soft = "compact" ) ) ] {
+      -shift_rows_2 ( & mut state ) ;
+      -} sub_bytes ( & mut state ) ;
+      +} shift_rows_2 ( & mut state ) ;
+      +sub_bytes ( & mut state ) ;
+  define_mix_columns!(mix_columns_2)
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] define_mix_columns ! ( mix_columns_2 , inv_mix_columns_2 , rotate_rows_and_columns_1_2 , rotate_rows_2 ) ;
+      +define_mix_columns ! ( mix_columns_2 , inv_mix_columns_2 , rotate_rows_and_columns_1_2 , rotate_rows_2 ) ;
+  define_mix_columns!(mix_columns_3)
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] define_mix_columns ! ( mix_columns_3 , inv_mix_columns_3 , rotate_rows_and_columns_1_3 , rotate_rows_and_columns_2_2 ) ;
+      +define_mix_columns ! ( mix_columns_3 , inv_mix_columns_3 , rotate_rows_and_columns_1_3 , rotate_rows_and_columns_2_2 ) ;
+  fn shift_rows_1
+      -# [ cfg ( any ( not ( aes_backend_soft = "compact" ) , feature = "hazmat" ) ) ] # [ inline ] fn shift_rows_1 ( state : & mut [ u32 ] ) {
+      +# [ inline ] fn shift_rows_1 ( state : & mut [ u32 ] ) {
+  fn inv_shift_rows_3
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] # [ inline ( always ) ] fn inv_shift_rows_3 ( state : & mut [ u32 ] ) {
+      +# [ inline ( always ) ] fn inv_shift_rows_3 ( state : & mut [ u32 ] ) {
+  fn inv_bitslice
+      -let mut output = BatchBlocks : : default ( ) ;
+      +let mut output : BatchBlocks = [ [ 0u8 ;
+      +16 ] ;
+      +2 ] ;
+  fn rotate_rows_and_columns_1_2
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] # [ inline ( always ) ] # [ rustfmt : : skip ] fn rotate_rows_and_columns_1_2 ( x : u32 ) - > u32 {
+      +# [ inline ( always ) ] # [ rustfmt : : skip ] fn rotate_rows_and_columns_1_2 ( x : u32 ) - > u32 {
+  fn rotate_rows_and_columns_1_3
+      -# [ cfg ( not ( aes_backend_soft = "compact" ) ) ] # [ inline ( always ) ] # [ rustfmt : : skip ] fn rotate_rows_and_columns_1_3 ( x : u32 ) - > u32 {
+      +# [ inline ( always ) ] # [ rustfmt : : skip ] fn rotate_rows_and_columns_1_3 ( x : u32 ) - > u32 {
+
+removed (12): use crate::Block, use cipher::{array::Array, consts::U2}, type FixsliceBlocks, type FixsliceKeys192, type FixsliceKeys256, fn aes192_key_schedule, fn aes256_key_schedule, fn aes192_decrypt, fn aes192_encrypt, fn aes256_decrypt, fn aes256_encrypt, mod hazmat {
+
+added (5): type Block, fn encrypt_block, fn decrypt_block, fn encrypt, fn decrypt

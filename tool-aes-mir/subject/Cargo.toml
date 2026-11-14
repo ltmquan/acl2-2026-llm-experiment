@@ -1,0 +1,11 @@
+[package]
+name = "aes_fixslice"
+version = "0.1.0"
+edition = "2024"
+description = "AES-128-only adaptation of RustCrypto aes 0.9.1 src/soft/fixslice32.rs (subject for the ACL2 MIR interpreter)"
+license = "MIT OR Apache-2.0"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]

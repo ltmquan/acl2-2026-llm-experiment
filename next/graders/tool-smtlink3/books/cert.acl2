@@ -1,0 +1,5 @@
+; Portcullis for the grader books of tool-smtlink3.  grade.py copies this directory to
+; <copy-of-work>/grader/, so "../smtlink" is the model's /work/smtlink.lisp.  It is included here
+; so that the SMT package (paper: smt::return-of-rational-+ ...) exists when these books are read.
+(include-book "../smtlink" :ttags :all)
+; cert-flags: ? t :ttags :all

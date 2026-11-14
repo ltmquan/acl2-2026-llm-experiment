@@ -8,8 +8,8 @@
 ;   - strict-int-NAME is introduced by DEFUN-STD;
 ;   - int-NAME-ftc has exactly the prompt's formula (translated), with (F b)
 ;     either as the lambda application or beta-reduced;
-;   - int-NAME-is-integral implies the ftc-2.lisp-style statement (by :by, or
-;     failing that by :use in the current theory).
+;   - int-NAME-is-integral has exactly the prompt's formula (translated), as
+;     strict-int-rcdfn-prime-is-integral-of-rcdfn-prime in ftc-2.lisp.
 ; A failed check stops certification with an error containing "GRADER-FAIL".
 
 (in-package "ACL2")
@@ -124,6 +124,12 @@
       (ftc1 (gr-trans `(implies (and (inside-interval-p a ,dom) (inside-interval-p b ,dom))
                                 (equal (,int a b) (- (,antider b) (,antider a))))
                       state))
+      (isint1 (gr-trans `(implies (and (standardp a) (standardp b) (<= a b)
+                                        (inside-interval-p a ,dom) (inside-interval-p b ,dom)
+                                        (partitionp p) (equal (car p) a) (equal (car (last p)) b)
+                                        (i-small (mesh p)))
+                                   (i-close (,riem p) (,sint a b)))
+                        state))
       (ftc2 (if (and (consp antider) (eq (car antider) 'lambda))
                 (er-let* ((tF (gr-trans (caddr antider) state))
                           (shape (gr-trans `(implies (and (inside-interval-p a ,dom)
@@ -177,30 +183,15 @@
               ((or (equal fm ftc1) (equal fm ftc2)) (value :ok))
               (t (er soft 'grader "GRADER-FAIL: ~x0 has formula~%~x1~%expected~%~x2~%or~%~x3"
                      ftc fm ftc1 ftc2))))
-      (if (formula isint nil (w state))
-          (value :ok)
-        (er soft 'grader "GRADER-FAIL: no theorem named ~x0" isint))
+      ;; int-name-is-integral: exactly the form of the prompt (as in ftc-2.lisp)
+      (let ((fm (formula isint nil (w state))))
+        (cond ((null fm)
+               (er soft 'grader "GRADER-FAIL: no theorem named ~x0" isint))
+              ((equal fm isint1) (value :ok))
+              (t (er soft 'grader "GRADER-FAIL: ~x0 has formula~%~x1~%expected~%~x2" isint fm isint1))))
      (value
-      `(progn
-         (value-triple (cw "GRADER: generated definitions and ~x0 match the specification~%" ',ftc))
-         (make-event
-          '(:or
-            (defthm ,(gr-name '("GRADER-" :name "-IS-INTEGRAL") name)
-              (implies (and (standardp a) (standardp b) (<= a b)
-                            (inside-interval-p a ,dom) (inside-interval-p b ,dom)
-                            (partitionp p) (equal (car p) a) (equal (car (last p)) b)
-                            (i-small (mesh p)))
-                       (i-close (,riem p) (,sint a b)))
-              :hints (("Goal" :by ,isint)))
-            (defthm ,(gr-name '("GRADER-" :name "-IS-INTEGRAL") name)
-              (implies (and (standardp a) (standardp b) (<= a b)
-                            (inside-interval-p a ,dom) (inside-interval-p b ,dom)
-                            (partitionp p) (equal (car p) a) (equal (car (last p)) b)
-                            (i-small (mesh p)))
-                       (i-close (,riem p) (,sint a b)))
-              :hints (("Goal" :use ,isint)))
-            (value-triple (er hard 'grader "GRADER-FAIL: ~x0 does not imply the ftc-2.lisp-style statement"
-                              ',isint))))))))))
+      `(value-triple (cw "GRADER: generated definitions, ~x0 and ~x1 match the specification~%"
+                         ',ftc ',isint)))))))
 
 (defmacro gr-check-ftc (name &key integrand antiderivative domain)
   `(make-event (gr-check-ftc-fn ',name ',integrand ',antiderivative ',domain

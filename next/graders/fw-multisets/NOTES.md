@@ -3,12 +3,11 @@
 ## Mapping of requirements
 | R | how | mechanical? |
 |---|---|---|
-| 1 | files (`mset.lisp`, `package.lsp` with `(defpkg "MSET" ...)`, `cert.acl2` mentioning `package.lsp`), and the library meets the prompt's specification: `grade-r1-defs.lisp`, `grade-r1-thms.lisp`, generated `grade-r1-witness.lisp` | mechanical part; then MANUAL (R1-M: documentation of non-bag behavior) |
+| 1 | files (`mset.lisp`, `package.lsp` with `(defpkg "MSET" ...)`, `cert.acl2` mentioning `package.lsp`), and the library meets the prompt's specification: `grade-r1-defs.lisp`, `grade-r1-thms.lisp`; `grade-r1-witness.lisp` only as a fallback | mechanical part; then MANUAL (R1-M: documentation of non-bag behavior) |
 | 2 | `mset-tests.lisp` includes `"mset"`; every required function name occurs inside some `assert-event` (or `assert-equal`) | yes |
 | 3 | `cert.pl --acl2 /opt/acl2/saved_acl2` on both books | yes |
 
-The numbered requirements do not list the functions and theorems; we read R1 ("the library") as "a library
-meeting the specification above". Please confirm.
+Revised prompt: R1 now explicitly covers the specification, and the witness names are fixed.
 
 ## What R1 checks
 - `grade-r1-defs.lisp`: (a) guards verified (`symbol-class` = `:common-lisp-compliant`) for all 20 required
@@ -24,18 +23,24 @@ meeting the specification above". Please confirm.
   `true-list-fix`, `list-fix`, `set::mergesort`. Library functions (OMAP, ACL2, SET) are not entered: an omap
   is an alist internally, which is not a "conversion". `bfix` is entered, so a `bfix` that converts to lists
   makes `count` fail.
-- `grade-r1-thms.lisp`: 61 checks, our statements in package ACL2 with `mset::` prefixes: closure of bfix,
+- `grade-r1-thms.lisp`: 66 checks, our statements in package ACL2 with `mset::` prefixes: closure of bfix,
   empty, insert, insert-n, delete, delete-all, sum, union, intersect, diff, from-list; `(natp (count a b))`; the
   ten `count-of-X` exist and have `:rewrite` rules, and our statements of them (insert-n with `(nfix n)`, delete
   with `(nfix (- c 1))`, diff with `(nfix (- cx cy))`, union `max`, intersect `min`, from-list `duplicity`);
   `(iff (in a b) (< 0 (count a b)))`; `support` = `(omap::keys (bfix b))` and is a `set::setp`; subbag soundness
-  `(implies (subbag x y) (<= (count a x) (count a y)))`, reflexivity, antisymmetry (with bagp), transitivity;
+  `count-le-when-subbag` (exists; `(implies (subbag x y) (<= (count a x) (count a y)))`, `:by` it), reflexivity, antisymmetry (with bagp), transitivity;
   cardinality of empty, insert, delete (when `in`), sum; `(equal (from-list (to-list b)) (bfix b))`,
   `(equal (len (to-list b)) (cardinality b))`; commutativity and associativity of sum, union, intersect.
-- `grade-r1-witness.lisp` (generated): extensionality `(implies (and (bagp x) (bagp y)) (equal (equal x y)
-  (equal (count (W x y) x) (count (W x y) y))))` and subbag completeness `(implies (and (bagp x) (bagp y)
-  (<= (count (W x y) x) (count (W x y) y))) (subbag x y))`, for each candidate witness W (both argument
-  orders). With soundness this gives "subbag iff pointwise <=".
+- Witness theorems with the prompt's names (in `grade-r1-thms.lisp`): `bag-extensionality` and
+  `subbag-when-counts-le` exist, and our statements `(implies (and (bagp x) (bagp y) (equal (count
+  (count-diff-witness x y) x) (count (count-diff-witness x y) y))) (equal x y))` and `(implies (<= (count
+  (subbag-witness x y) x) (count (subbag-witness x y) y)) (subbag x y))` (bagp hypotheses as fallback) are proved
+  `:by` them or by the policy below. Only the `count-of-X` are checked for `:rewrite` (extensionality cannot be
+  a rewrite rule).
+- Fallback (`grade-r1-witness.lisp`, generated only if one of the two fixed-name witness statements fails): the
+  same statements with each candidate witness (defun-sk skolems, defchooses, other 2-argument functions of
+  mset.lisp, both argument orders), each by `gr-thm`. A success turns that failure (and its missing-name
+  failure) into MANUAL; otherwise it stays FAIL.
 
 ## Hint policy (recorded as asked)
 Each statement passes if one of these succeeds, in order (each under a prover step limit):
@@ -53,7 +58,7 @@ expansion passes (e.g. commutativity of `sum` from extensionality + `count-of-su
 "available as rewrite rules". Only the ten `count-of-X` are checked for `:rewrite` rule classes, since the
 other names are not fixed.
 Every check prints `GRADER-OK`/`GRADER-FAIL` and does not stop the book, so failures do not mask each other;
-grade.py checks that all 61 checks of `grade-r1-thms` reported.
+grade.py checks that all 66 checks of `grade-r1-thms` reported.
 
 ## Interpretations
 - `support` "the keys, as an oset": `(omap::keys (bfix b))` (or with `(bagp b)`), and `set::setp`.
@@ -64,10 +69,15 @@ grade.py checks that all 61 checks of `grade-r1-thms` reported.
 - R2 accepts `assert-equal` as well as `assert-event` (both from std/testing; the prompt says assert-event).
 
 ## Validation (scratch only)
+- Revised prompt (fixed witness names): stub with `count-diff-witness`, `bag-extensionality` (:rule-classes
+  nil), `subbag-witness`, `subbag-when-counts-le`, `count-le-when-subbag`: all 66 theorem checks OK, R1 MANUAL
+  (doc only), R2/R3 PASS. Stub with the witness and theorem renamed (`my-diff-w`, `my-ext`): fixed-name checks
+  fail, the fallback finds `my-diff-w` (:by `my-ext`), R1 reported MANUAL with that reason.
+Earlier runs (before the revision):
 - Stub library (functions on omaps; theorems with exactly our statements under `skip-proofs`, antisymmetry and
   transitivity as `:rule-classes nil`; a `defun-sk` witness and a 2-argument `subbag-witness`), run through a
   harness that disables only the banned scan: R1 MANUAL (all 44 defs checks and 61 theorem checks OK, both
-  witness theorems OK), R2 PASS, R3 PASS.
+  witness theorems OK by search), R2 PASS, R3 PASS.
 - Negative stub (insert-n calls `omap::keys`, `count-of-diff` renamed, `to-list` guards not verified, union's
   2nd congruence removed, sum-commutativity lemma removed): FAIL lines for the guard, the congruence, nolist
   insert (reachable via insert-n), and the missing `count-of-diff` name/rule; our count-of-diff statement still

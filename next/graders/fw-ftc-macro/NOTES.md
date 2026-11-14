@@ -7,8 +7,8 @@
 | 2 | `tests.lisp` parsed; calls (a)-(d) identified; for each a generated `grade-r2-<x>.lisp` proves the closed form at concrete endpoints from the model's `int-NAME-ftc`; the model's own check after each call is detected syntactically; (e) a must-fail with a numerically wrong antiderivative | yes (MANUAL only if (e) cannot be evaluated) |
 | 3 | `cert.pl --acl2 /opt/acl2r/saved_acl2r` on both books | yes |
 
-The numbered requirements do not list the interface; we read R1 ("the macro") as "a macro meeting the interface
-above", so the hidden tests are graded under R1. Please confirm this reading.
+Revised prompt: R1 now explicitly covers the specification and announces the checker's own calls; the
+continuity and `int-name-is-integral` forms are stated exactly.
 
 ## Hidden tests (R1)
 - `grade-r1-lin`: lambda integrand 2x, antiderivative x^2, (interval nil nil), no theorems; values
@@ -24,9 +24,8 @@ above", so the hidden tests are graded under R1. Please confirm this reading.
   `NAME-integrand` (lambda case) has the lambda's body; `map-NAME`, `riemann-NAME`, `int-NAME` have the
   ftc-2.lisp bodies; `strict-int-NAME` is introduced by `defun-std` with the ftc-2.lisp body (bodies are taken
   from `get-event`, translated, formals renamed); `int-NAME-ftc`'s formula equals the translation of the
-  prompt's form exactly; `int-NAME-is-integral` implies our ftc-2.lisp-style statement (hypotheses standardp a,
-  standardp b, a <= b, both in dom, partitionp p, car p = a, car (last p) = b, i-small (mesh p); conclusion
-  `(i-close (riemann-NAME p) (strict-int-NAME a b))`) by `:by`, or failing that by `:use` in the current theory.
+  prompt's form exactly; `int-NAME-is-integral`'s formula equals the translation of the prompt's form exactly
+  (the hypotheses in the prompt's order, as `strict-int-rcdfn-prime-is-integral-of-rcdfn-prime`).
 
 ## Interpretations
 - Names are interned in the package of NAME (`int-NAME-ftc` etc.), and `NAME-integrand` exists only for a
@@ -34,12 +33,8 @@ above", so the hidden tests are graded under R1. Please confirm this reading.
 - The domain inside `strict-int-NAME` may be the `:domain` term, its quoted value, or a call of a 0-ary function
   whose body is one of those (ftc-2.lisp itself uses `rcdfn-domain`). In `int-NAME-ftc` it must be the term.
 - For a lambda antiderivative, `(F b)` in `int-NAME-ftc` may be the lambda application or its beta-reduction.
-- The continuity theorem form is not spelled out ("analogous continuity form"). Our supplied one has the shape
-  of `rcdfn-prime-continuous` in ftc-2.lisp: `(implies (and (standardp x) (inside-interval-p x dom)
-  (i-close x x1) (inside-interval-p x1 dom)) (i-close (f x) (f x1)))`. A macro that insists on another order
-  fails `grade-r1-exp`. **Suggestion:** state the continuity form explicitly in the prompt.
-- `int-NAME-is-integral` is stated in English only; we accept any statement that implies ours (`:by`
-  subsumption or `:use`).
+- The continuity theorem supplied in `grade-r1-exp` has exactly the prompt's form (as `rcdfn-prime-continuous`);
+  the derivative theorem exactly the prompt's derivative form.
 - R2 identification: (a) and (c) by exact rational evaluation of the lambdas (or unary `defun`s of tests.lisp)
   at 2, 3, 5; (b) by the symbols `acl2-cosine`/`acl2-sine` (or eta-expanded lambdas); (d) by `acl2-ln`, and its
   antiderivative is checked in ACL2 to equal x ln x - x for x > 0 (with `arithmetic/top`). (a)-(c) must not
@@ -52,6 +47,9 @@ above", so the hidden tests are graded under R1. Please confirm this reading.
   comments enabling skip-proofs or ttags. `make-event` is allowed (the macro needs it).
 
 ## Validation (scratch only)
+- After the revision: stub mock again R1 MANUAL (all four hidden books PASS), R2 PASS, R3 PASS; a stub with the
+  first two hypotheses of `int-NAME-is-integral` swapped -> GRADER-FAIL with the formula.
+Earlier:
 - A stub `def-ftc-integral` (generates the events, theorems under `skip-proofs`, refuses pairs not in a list of
   correct ones) with `skip-proofs-okp` cert flags; the grader was run through a harness that only disables the
   banned scan. All four R1 books certify; `gr-check-ftc` reports nothing.

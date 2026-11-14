@@ -1,6 +1,6 @@
 ; grader-aes-adapter.lisp -- TEMPLATE.  A person writes this file for one
 ; submission, from the invocation the model's /work/README.md documents, and
-; passes it to grade.sh with --adapter (see CHECKLIST.md, R4/R5).  It is copied
+; passes it to grade.sh with --adapter (override; see CHECKLIST.md, R5/R6).  It is copied
 ; to the root of the work copy, so include-book paths are relative to /work.
 ;
 ; It must define, in the ACL2 package, two functions (program mode is fine)

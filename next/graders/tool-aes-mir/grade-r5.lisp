@@ -1,71 +1,33 @@
-; Grader R5 (tool-aes-mir): 66 inputs of our own, run through the adapter,
-; agree with aes::aes-128-encrypt:
-;   2 corner cases: all-zero key and block; all-#xff key and block;
-;   64 pseudorandom key/block pairs from splitmix64 with the fixed seed
-;   #x4752414445522D44 (ASCII "GRADER-D"): pair i uses the generator outputs
-;   4i .. 4i+3, each split into 8 bytes little-endian; key = bytes 0..15,
-;   block = bytes 16..31.
+; Grader R5 (tool-aes-mir): the interpreter, run through the adapter (by default
+; generated over the model's mir-aes-encrypt/-decrypt in run.lisp), reproduces the FIPS-197 AES-128 ciphertexts of
+; Appendix C.1 and Appendix B byte for byte, and decrypt inverts both.
+; The vectors are transcribed from FIPS-197; they are first checked against
+; aes::aes-128-encrypt, so the expected values do not rest on the transcription.
 (in-package "ACL2")
 (include-book "kestrel/crypto/aes/aes-spec" :dir :system)
 (include-book "grader-aes-adapter")
 
-(program)
+; FIPS-197 Appendix C.1 (AES-128)
+(defconst *gr-c1-key*   '(#x00 #x01 #x02 #x03 #x04 #x05 #x06 #x07 #x08 #x09 #x0a #x0b #x0c #x0d #x0e #x0f))
+(defconst *gr-c1-plain* '(#x00 #x11 #x22 #x33 #x44 #x55 #x66 #x77 #x88 #x99 #xaa #xbb #xcc #xdd #xee #xff))
+(defconst *gr-c1-ciph*  '(#x69 #xc4 #xe0 #xd8 #x6a #x7b #x04 #x30 #xd8 #xcd #xb7 #x80 #x70 #xb4 #xc5 #x5a))
+; FIPS-197 Appendix B (cipher example)
+(defconst *gr-b-key*    '(#x2b #x7e #x15 #x16 #x28 #xae #xd2 #xa6 #xab #xf7 #x15 #x88 #x09 #xcf #x4f #x3c))
+(defconst *gr-b-plain*  '(#x32 #x43 #xf6 #xa8 #x88 #x5a #x30 #x8d #x31 #x31 #x98 #xa2 #xe0 #x37 #x07 #x34))
+(defconst *gr-b-ciph*   '(#x39 #x25 #x84 #x1d #x02 #xdc #x09 #xfb #xdc #x11 #x85 #x97 #x19 #x6a #x0b #x32))
 
-(defconst *gr-seed* #x4752414445522D44)
-(defconst *gr-m64* (expt 2 64))
+; the transcription agrees with the specification (argument order: plaintext, key)
+(assert-event (equal (aes::aes-128-encrypt *gr-c1-plain* *gr-c1-key*) *gr-c1-ciph*))
+(assert-event (equal (aes::aes-128-decrypt *gr-c1-ciph* *gr-c1-key*) *gr-c1-plain*))
+(assert-event (equal (aes::aes-128-encrypt *gr-b-plain* *gr-b-key*) *gr-b-ciph*))
+(assert-event (equal (aes::aes-128-decrypt *gr-b-ciph* *gr-b-key*) *gr-b-plain*))
 
-; splitmix64: state += golden gamma; output = mix(state)
-(defun gr-sm64-mix (z)
-  (let* ((z (mod (* (logxor z (ash z -30)) #xBF58476D1CE4E5B9) *gr-m64*))
-         (z (mod (* (logxor z (ash z -27)) #x94D049BB133111EB) *gr-m64*)))
-    (logxor z (ash z -31))))
-
-(defun gr-sm64-outputs (n state64)
-  ;; the next n outputs
-  (if (zp n)
-      nil
-    (let ((s (mod (+ state64 #x9E3779B97F4A7C15) *gr-m64*)))
-      (cons (gr-sm64-mix s) (gr-sm64-outputs (1- n) s)))))
-
-(defun gr-u64-bytes (w k)
-  (if (zp k) nil (cons (logand w #xff) (gr-u64-bytes (ash w -8) (1- k)))))
-
-(defun gr-words-bytes (ws)
-  (if (endp ws) nil (append (gr-u64-bytes (car ws) 8) (gr-words-bytes (cdr ws)))))
-
-(defun gr-pairs (ws)
-  ;; groups of 4 words -> (key . block)
-  (if (or (endp ws) (endp (cdr ws)) (endp (cddr ws)) (endp (cdddr ws)))
-      nil
-    (let ((bytes (gr-words-bytes (list (first ws) (second ws) (third ws) (fourth ws)))))
-      (cons (cons (take 16 bytes) (nthcdr 16 bytes))
-            (gr-pairs (nthcdr 4 ws))))))
-
-(defconst *gr-inputs*
-  (append (list (cons (repeat 16 0) (repeat 16 0))
-                (cons (repeat 16 #xff) (repeat 16 #xff)))
-          (gr-pairs (gr-sm64-outputs 256 *gr-seed*))))
-
-(defun gr-check (inputs i)
-  ;; list of indices where the interpreter disagrees with the specification
-  (if (endp inputs)
-      nil
-    (let* ((key (car (car inputs)))
-           (blk (cdr (car inputs)))
-           (got (grader-aes-encrypt key blk))
-           (exp (aes::aes-128-encrypt blk key)))
-      (if (equal got exp)
-          (gr-check (cdr inputs) (1+ i))
-        (prog2$ (cw "GRADER-FAIL input ~x0: key ~x1 block ~x2 expected ~x3 got ~x4~%" i key blk exp got)
-                (cons i (gr-check (cdr inputs) (1+ i))))))))
-
-(logic)
-
-(assert-event (equal (len *gr-inputs*) 66))
-(assert-event (and (aes::inp (cdr (nth 65 *gr-inputs*))) (aes::keyp (car (nth 65 *gr-inputs*)) 4)))
-; the first generated key, recorded in NOTES.md, so that the inputs can be reproduced
-(value-triple (cw "GRADER: first pseudorandom pair ~x0~%" (nth 2 *gr-inputs*)))
-
-(assert-event (null (gr-check *gr-inputs* 0))
-              :msg "GRADER-FAIL: the interpreter disagrees with aes::aes-128-encrypt (see above)")
-(value-triple (cw "GRADER-OK all 66 inputs agree~%"))
+; the interpreter (adapter argument order: key, block)
+(assert-event (equal (grader-aes-encrypt *gr-c1-key* *gr-c1-plain*) *gr-c1-ciph*)
+              :msg "GRADER-FAIL: encrypt on FIPS-197 C.1")
+(assert-event (equal (grader-aes-decrypt *gr-c1-key* *gr-c1-ciph*) *gr-c1-plain*)
+              :msg "GRADER-FAIL: decrypt on FIPS-197 C.1")
+(assert-event (equal (grader-aes-encrypt *gr-b-key* *gr-b-plain*) *gr-b-ciph*)
+              :msg "GRADER-FAIL: encrypt on FIPS-197 B")
+(assert-event (equal (grader-aes-decrypt *gr-b-key* *gr-b-ciph*) *gr-b-plain*)
+              :msg "GRADER-FAIL: decrypt on FIPS-197 B")

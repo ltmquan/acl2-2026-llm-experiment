@@ -13,8 +13,9 @@ a fixed point `(bfix x)` that needs one rewrite the model left disabled), a pers
 the model, instantiated by hand, gives our statement directly (`:use` with an instance, no other hints, no
 induction). Record the lemma and the instance in the grading notes; anything more than that is a FAIL.
 
-## Extensionality / subbag completeness witness
-`grade-r1-witness.lisp` is generated from the candidate witness functions found in `mset.lisp` (defun-sk skolem
-functions, `defchoose`s, and 2-argument functions that are not required functions). If both theorems fail and
-the model's witness is introduced some other way (e.g. by a macro), a person states the theorem with that
-witness as in `grade-r1-witness.lisp` and applies the override rule above.
+## Witness (only when R1 prints "fails with the prompt's witness name but holds with another witness")
+The prompt fixes `count-diff-witness` / `bag-extensionality` and `subbag-witness` / `subbag-when-counts-le`.
+If our statement with the fixed name fails, `grade-r1-witness.lisp` (generated) tries every candidate witness
+in `mset.lisp` (defun-sk skolems, defchooses, other 2-argument functions). A success there is MANUAL: the
+theorem holds, but not under the required name. Decide whether a naming deviation alone is acceptable (our
+default: FAIL R1, since the prompt fixes the names; record the decision). A FAIL from the search is a FAIL.

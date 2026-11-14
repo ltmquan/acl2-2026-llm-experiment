@@ -1,6 +1,6 @@
 # tool-aes-mir: what a person must inspect
 
-`grade.sh <work-dir> [--adapter <file>]` prints `R1`..`R6`. Logs are under `<copy>/work/grader-logs/`.
+`grade.sh <work-dir> [--adapter <file>]` prints `R1`..`R7`. Logs are under `<copy>/work/grader-logs/`.
 
 ## R1 (always MANUAL once the prechecks pass)
 Prechecks (mechanical, FAIL if not met): `subject/Cargo.toml`, `subject/ADAPTATION.md`, and a `.rs` file under
@@ -37,16 +37,22 @@ Mechanical: all books certify, and some certified book names the JSON file. A pe
 2. The import test book reads the JSON in `/work/subject/` **at certification time** (e.g. via a
    `make-event` or `defconsts` that calls the JSON parser on the file; not a pasted constant), runs the importer,
    and asserts (`assert-event`/`assert-equal`) that the result is `equal` to the program constant that the
-   interpreter test books (R4) run on. A test that only checks that parsing succeeds fails R3.
+   interpreter test books (R5) run on. A test that only checks that parsing succeeds fails R3.
 
-## R4, R5 (MANUAL without `--adapter`)
-Write `grader-aes-adapter.lisp` (template: `adapter-template.lisp`) from the README's instructions for running
-encrypt/decrypt: include the model's interpreter and program books, and define `grader-aes-encrypt` and
-`grader-aes-decrypt` (key, block as 16-byte lists -> 16-byte list). Only conversions and the documented call
-belong in it. Then `grade.sh <work-dir> --adapter <file>`; R4 and R5 become mechanical:
-- R4 (`grade-r4.lisp`): C.1 and B encrypt to the FIPS-197 ciphertexts; decrypt inverts both.
-- R5 (`grade-r5.lisp`): our 66 inputs (2 corner cases, 64 from splitmix64 seed `#x4752414445522D44`) agree with
+## R4 (mechanical)
+`grade-r4.lisp` is generated with the package of `/work/run.lisp` (its `in-package`): it includes `run` and
+checks that `mir-aes-encrypt` and `mir-aes-decrypt` are logic-mode functions of arity 2; run.lisp must certify.
+A person only needs to look if `run.lisp` defines them in a package other than its `in-package` (then grade
+with `--adapter`, below, and decide R4 by hand).
+
+## R5, R6 (mechanical; `--adapter` is an override)
+By default the grader generates `grader-aes-adapter.lisp` that calls `mir-aes-encrypt`/`mir-aes-decrypt`
+directly (the prompt fixes the representation: that of `aes::aes-128-encrypt`, lists of 16 bytes):
+- R5 (`grade-r5.lisp`): C.1 and B encrypt to the FIPS-197 ciphertexts; decrypt inverts both.
+- R6 (`grade-r6.lisp`): our 66 inputs (2 corner cases, 64 from splitmix64 seed `#x4752414445522D44`) agree with
   `aes::aes-128-encrypt`.
-If the README gives no usable invocation, a person may derive it from the model's own interpreter test book;
-record that in the grading notes. If no invocation can be found at all, R4 and R5 fail.
-Also check that the model's own R4/R5 test books exist and use `assert-event` (they are certified under R6).
+Override, only if R4 fails for a reason that does not touch the interpreter (e.g. names in another package):
+write `grader-aes-adapter.lisp` from `adapter-template.lisp` (conversions and the documented call only) and run
+`grade.sh <work-dir> --adapter <file>`; record that the override was used. R4 stays FAIL in that case.
+Also check that the model's own R5/R6 test books exist and use `assert-event` on `mir-aes-encrypt`/`-decrypt`
+(they are certified under R7).

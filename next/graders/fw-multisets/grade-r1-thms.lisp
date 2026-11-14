@@ -98,11 +98,25 @@
   :hyps ((mset::bagp b)))
 (gr-thm gr-setp-of-support (set::setp (mset::support b)))
 
-; ---------------------------------------------------------------- subbag
-(gr-thm gr-subbag-count-leq
+; ---------------------------------------------------------------- extensionality, subbag (names fixed by the prompt)
+(gr-name-exists mset::bag-extensionality)
+(gr-name-exists mset::subbag-when-counts-le)
+(gr-name-exists mset::count-le-when-subbag)
+(gr-thm gr-bag-extensionality
+  (implies (and (mset::bagp x) (mset::bagp y)
+                (equal (mset::count (mset::count-diff-witness x y) x)
+                       (mset::count (mset::count-diff-witness x y) y)))
+           (equal x y))
+  :by mset::bag-extensionality)
+(gr-thm gr-subbag-when-counts-le
+  (implies (<= (mset::count (mset::subbag-witness x y) x)
+               (mset::count (mset::subbag-witness x y) y))
+           (mset::subbag x y))
+  :hyps ((mset::bagp x) (mset::bagp y)) :by mset::subbag-when-counts-le)
+(gr-thm gr-count-le-when-subbag
   (implies (mset::subbag x y)
            (<= (mset::count a x) (mset::count a y)))
-  :hyps ((mset::bagp x) (mset::bagp y)))
+  :hyps ((mset::bagp x) (mset::bagp y)) :by mset::count-le-when-subbag)
 (gr-thm gr-subbag-reflexive (mset::subbag x x) :hyps ((mset::bagp x)))
 (gr-thm gr-subbag-antisymmetric
   (implies (and (mset::bagp x) (mset::bagp y) (mset::subbag x y) (mset::subbag y x))

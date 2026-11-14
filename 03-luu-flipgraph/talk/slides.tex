@@ -614,8 +614,6 @@
     \item ``There is a path'' becomes a \alert{function} that returns the
       path. No existential quantifier.
     \item The theorem says the path is valid and where it lands.
-    \item Not vacuous: the textbook algorithm gives a correct scheme for
-      every $n$ (\code{correct-schemep-of-naive-algo-scheme}).
   \end{itemize}
   \note{
     \textbf{[13:00]} And this is the main theorem. For two correct schemes
@@ -627,10 +625,60 @@
     \code{main-path} is an ordinary function that builds the path from the
     two schemes, and the theorem says what that path does.
 
-    We also proved that correct schemes exist for every $n$, so the
-    theorem isn't vacuous. In the paper we go further and show that
-    correct schemes correspond exactly to bilinear multiplication
-    algorithms; I have a backup slide on that.
+    Notice the theorem is about correct schemes, which are bags of matrix
+    triples. The next slide connects those to algorithms.
+  }
+\end{frame}
+
+\begin{frame}[fragile]{Schemes are algorithms, and algorithms are schemes}
+  The theorem is about bags of matrix triples. Are those really
+  \alert{multiplication algorithms}? We proved it.
+  \vspace{0.5ex}
+
+  A small language of bilinear algorithms: $R$ products of a linear form in
+  $D$ by a linear form in $F$, and a table saying which products are summed
+  into each output entry.
+\begin{lstlisting}
+(defun-sk algo-correctp (alg n)
+  (forall (d f) (implies (and (bit-matp d n n) (bit-matp f n n))
+                         (equal (eval-algo alg d f n) (bit-mat-mul d f n)))))
+\end{lstlisting}
+  \begin{description}[Completeness]
+    \item[Soundness] a correct scheme converts to a correct algorithm
+    \item[Completeness] a correct algorithm translates to a correct scheme,
+      of rank $\le$ its number of products
+    \item[Existence] the textbook algorithm gives a correct scheme for every
+      $n$: the main theorem is \alert{not vacuous}
+    \item[Equivalence] two algorithms are equivalent if they translate to
+      the same scheme (\code{defequiv}); the classes are in bijection with
+      schemes
+  \end{description}
+  \vspace{0.5ex}
+  So: \alert{any correct bilinear algorithm can be turned into any other by
+  flips and pluses.}
+  \note{
+    \textbf{[13:45]} One addition that the connectivity proof doesn't
+    need. The theorem is about bags of matrix triples. Everyone says those
+    are matrix multiplication algorithms, and the theorem is only
+    interesting because of that. So we proved it.
+
+    We defined a small language of bilinear algorithms: a list of
+    products, each a linear form in the first matrix times a linear form
+    in the second, and a table saying which products are added into each
+    output entry. An algorithm is correct if it returns the matrix product
+    on all inputs.
+
+    Then, in both directions. A correct scheme converts to a correct
+    algorithm. A correct algorithm translates to a correct scheme, whose
+    rank is at most the number of products. The textbook algorithm gives a
+    correct scheme for every $n$, so the main theorem is never vacuous.
+    And translation forgets things like the order of the products, so two
+    algorithms are equivalent when they give the same scheme; that's a
+    real ACL2 equivalence relation, and its classes are exactly the
+    schemes.
+
+    So the main theorem says: any correct bilinear algorithm can be turned
+    into any other by flips and pluses.
   }
 \end{frame}
 
@@ -657,7 +705,7 @@
   The conventions are what made the result something we could read,
   maintain and certify in a minute.
   \note{
-    \textbf{[14:00]} Now the proof engineering, and I want to be clear
+    \textbf{[14:45]} Now the proof engineering, and I want to be clear
     about how it was done: with an AI assistant, Claude, through Claude
     Code.
 
@@ -702,7 +750,7 @@
            (bit-listnp (bit-list-add x y) n)))
 \end{lstlisting}
   \note{
-    \textbf{[15:00]} The basic conventions first. \code{define} and
+    \textbf{[15:45]} The basic conventions first. \code{define} and
     \code{defrule} from std, everywhere, instead of \code{defun} and
     \code{defthm}. There isn't a single \code{defun} in the connectivity
     books.
@@ -722,13 +770,12 @@
 \end{frame}
 
 \begin{frame}[fragile]{Conventions 2: how to prove things}
+  \textbf{Ours}
   \begin{itemize}
     \item \alert{No new induction schemes.} Induct the way the functions
       in the goal recurse (or with \code{std/basic/inductions}). When a
       proof fails, read the \alert{key checkpoints} and turn them into
       lemmas.
-    \item \alert{Compute, don't quantify.} Every ``there exists'' becomes
-      a function that returns the witness.
     \item \alert{An invariant theorem at every step.} Every path-building
       function comes with a theorem of the same shape:
   \end{itemize}
@@ -741,23 +788,22 @@
                   (equal res (insert-list l (insert-list l sch)))    ; 2. lands here
                   (correct-schemep res n)))))                        ; 3. still correct
 \end{lstlisting}
-  \begin{itemize}
-    \item Because each theorem \alert{names the scheme it lands on}, the
-      next lemma can pick up from there.
-    \item \alert{Run before you prove}: every function is executable, so
-      every construction was run at $n = 2$ first.
-  \end{itemize}
+  \begin{block}{What the model came up with itself}
+    \begin{itemize}
+      \item \alert{Compute, don't quantify}: every ``there exists'' becomes
+        a function that returns the witness.
+      \item \alert{Run before you prove}: every function is executable, so
+        it ran each construction at $n = 2$ first.
+    \end{itemize}
+  \end{block}
   \note{
-    \textbf{[16:00]} Then the higher-level ones, about how to prove
+    \textbf{[16:45]} Then the higher-level ones, about how to prove
     things.
 
     Don't define new induction schemes. Let ACL2 induct along the
     functions already in the goal, and when a proof fails, read the key
     checkpoints and turn what you see into an intermediate lemma. That
     keeps the proofs in the shape ACL2 is good at.
-
-    Compute, don't quantify: every existential in the paper proof becomes
-    a function that returns the witness.
 
     And an invariant theorem at every step. Every function that builds a
     path has a theorem like this one: the path is valid, applying it gives
@@ -766,10 +812,13 @@
     where you end up, the next lemma starts from a known term, and the
     lemmas chain together.
 
-    A side effect: everything is executable, so every construction was
-    run on two by two schemes before anyone tried to prove it. The model
-    told us this was the single most useful thing: it could tell a wrong
-    construction from a hard proof in seconds.
+    Two more practices were not ours; the model came up with them. First,
+    compute, don't quantify: every existential in the paper proof became a
+    function that returns the witness. Second, run before you prove.
+    Since everything is executable, it ran every construction on two by
+    two schemes before trying to prove anything. When we asked what helped
+    it most, this was its answer: it could tell a wrong construction from
+    a hard proof in seconds.
   }
 \end{frame}
 
@@ -799,7 +848,7 @@
     \item \code{span-witness} returns the coefficients, one bit per matrix.
   \end{itemize}
   \note{
-    \textbf{[17:00]} Now the lemmas as they are in ACL2. I'll only point
+    \textbf{[17:30]} Now the lemmas as they are in ACL2. I'll only point
     out where they differ from the paper.
 
     Spanning is the one that changed the most, because ``spans'' is an
@@ -845,7 +894,7 @@
       \alert{disappears}: the order of the list handles it.
   \end{itemize}
   \note{
-    \textbf{[18:00]} Adding summands. The statements match the paper.
+    \textbf{[18:15]} Adding summands. The statements match the paper.
     Adding a duplicate sum is the paper's four moves, and its proof is
     just symbolic execution of those moves.
 
@@ -935,7 +984,7 @@
       \end{itemize}
   \end{itemize}
   \note{
-    \textbf{[20:00]} Now the experiment. We wanted to know how much of the
+    \textbf{[19:45]} Now the experiment. We wanted to know how much of the
     result depended on us. So we started a fresh session, gave the model
     the companion paper and nothing else, and asked it to formalize the
     paper in ACL2. No conventions, none of our code, no feedback. It
@@ -976,7 +1025,7 @@
       using a quantifier.
   \end{itemize}
   \note{
-    \textbf{[21:00]} It made different choices from ours almost
+    \textbf{[20:45]} It made different choices from ours almost
     everywhere. Matrices are flat vectors, not lists of rows. Schemes are
     plain lists, considered up to permutation, so its main theorem ends
     with \code{perm} where ours ends with \code{equal}. It used plain
@@ -1026,7 +1075,7 @@
       against our 791-line span theory plus a 2505-line book.
   \end{itemize}
   \note{
-    \textbf{[22:00]} The most interesting difference is mathematical.
+    \textbf{[21:45]} The most interesting difference is mathematical.
     Remember the chain needs nonzero partial sums.
 
     We got that from independence: thin the A-components to an independent
@@ -1081,7 +1130,7 @@
   \alert{The unassisted run contributed mathematics; the guidance
   contributed proof engineering.}
   \note{
-    \textbf{[23:00]} The numbers, for the connectivity proof only, on the
+    \textbf{[22:45]} The numbers, for the connectivity proof only, on the
     same machine. The unassisted proof is half the size of ours. But it
     takes 24 times as long to certify: twenty minutes against fifty
     seconds.
@@ -1136,9 +1185,9 @@
   \end{block}
   \note{
     \textbf{[24:00]} To conclude. Flip-plus connectivity over $\F$ is
-    fully proved in ACL2, with no axioms or skipped proofs. We also proved
-    that correct schemes are exactly the bilinear algorithms up to a
-    natural equivalence, which I didn't have time for.
+    fully proved in ACL2, with no axioms or skipped proofs, and correct
+    schemes are exactly the bilinear algorithms up to a natural
+    equivalence.
 
     The proof computes its path, and every lemma says where its path
     lands. With an AI assistant, the split that worked was: we set the
@@ -1272,38 +1321,6 @@
 % ================================================================ backup
 \global\qapagefalse
 \appendix
-
-\begin{frame}[fragile]{Backup: schemes are algorithms}
-  A small language of bilinear algorithms: products of a linear form in
-  $D$ and a linear form in $F$, and a table saying which products go into
-  each output entry.
-\begin{lstlisting}
-(defun-sk algo-correctp (alg n)
-  (forall (d f) (implies (and (bit-matp d n n) (bit-matp f n n))
-                         (equal (eval-algo alg d f n) (bit-mat-mul d f n)))))
-\end{lstlisting}
-  \begin{description}[Completeness]
-    \item[Existence] the textbook algorithm translates to a correct scheme
-      for every $n$
-    \item[Soundness] correct scheme $\Rightarrow$ correct algorithm
-      (\code{scheme-algo-correct})
-    \item[Completeness] correct algorithm $\Rightarrow$ correct scheme, of
-      rank $\le$ its number of products (\code{algo-to-correct-scheme})
-    \item[Equivalence] \code{scheme-equiv}: same scheme. A \code{defequiv};
-      its classes are in bijection with schemes
-  \end{description}
-  \vspace{1ex}
-  So any correct bilinear algorithm can be turned into any other by flips
-  and pluses on its scheme.
-  \note{
-    Backup. The main theorem is about bags of matrix triples. This part
-    connects them to algorithms in the usual sense. Translation from an
-    algorithm to a scheme forgets the order of products and how the forms
-    are written, so two algorithms are equivalent when they give the same
-    scheme. Strassen's algorithm and the textbook one compute the same
-    function but are not equivalent.
-  }
-\end{frame}
 
 \begin{frame}[fragile]{Backup: adding a duplicate sum}
   $s_1 = (A_1,B_1,C_1)$, $s_2 = (A_2,B_2,C_2)$, $X = A_1 + A_2$.

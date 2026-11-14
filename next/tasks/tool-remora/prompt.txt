@@ -1,0 +1,471 @@
+Formalize, in ACL2, the work described in the paper below. The Remora interpreter it builds on is in the
+community books (`books/kestrel/remora`). The author's own lemmas are not available; write your own,
+following the paper. Where the paper gives names and statements, use them exactly. The requirements after
+the paper say what will be checked.
+
+<paper>
+Towards Formalizing the Semantics of Lifting Argument
+         Frames When Evaluating Remora Expressions*
+
+                                                       Ruben Gamboa†
+                                                        Kestrel Institute
+                                                      Palo Alto, California
+                                                    & University of Wyoming
+                                                       Laramie, Wyoming
+                                                       ruben@uwyo.edu
+
+
+       Based on APL, Remora is a rank-polymorphic language designed to simplify the task of writing
+       efﬁcient, GPU-aware code. As such, it avoids using iteration (including loops and recursion) by
+       deﬁning a “lifting” mechanism that automatically runs a function that expects an argument of a
+       given dimension over all matching parts of a higher-dimension argument. In simple cases, this is
+       straightforward; e.g., calling abs on a vector performs an implicit map, so it returns a new vector
+       with the absolute value of each of its elements. More generally, the exact mechanics of this lifting
+       process are quite complicated, as they depend on all arguments to the function, which need only
+       partially match in shape. In this paper, we describe a methodology that we follow to reason about the
+       behavior of lifting primitive operations over compatible arguments.
+
+
+1     Introduction
+Remora is a recent modern programming language that intends to ﬁll a very speciﬁc niche. Based on
+APL, it is a rank-polymorphic language designed to simplify the task of writing efﬁcient, GPU-aware
+code. The programmer writes code that may beneﬁt from parallelization, and the compiler automatically
+generates code that uses the GPU to perform the computation, including planning the data transfer be-
+tween the CPU and GPU. As such, it makes some unusual design decisions, such as avoiding the use of
+iteration—no loops, no recursion [3].
+     In part, Remora avoids the use of iteration by supporting many of the standard higher-order functions,
+such as map, reduce, and scan. Another trick up Remora’s sleeves is rank-polymorphism, which allows
+functions to vary their behavior based on the shape of the arguments. The key concept is that all data
+structures are n–dimensional arrays. A function expects to receive parameters of a given rank (also
+known as dimension), but it can be called with an argument of higher rank, in which case the system
+automatically “lifts” the function to operate on the higher–ranked arguments. I think of this is as an
+implicit map operation, where Remora automatically uses map to run a scalar (rank-0) operation on a
+vector (rank-1) argument.
+     The semantics of lifting is further complicated by the fact that Remora functions allow for multiple
+parameters, and the actual run-time semantics differs based on the shape of all of its arguments. For
+example, when you add a vector and a matrix, the system automatically lifts the vector to a matrix by
+   * This work was partially supported by the Defense Advanced Research Projects Agency under award number
+HR0011259E006. The views, opinions and/or ﬁndings expressed are those of the authors and should not be interpreted as
+representing the ofﬁcial views or policies of the Department of Defense or the U.S. Government. Distribution Statement “A”
+(Approved for Public Release, Distribution Unlimited).
+   † The author would like to express his tremendous gratitude to the Kestrel Institute for their support, and for giving the author
+
+wickedly fun projects in a fantastic environment.
+
+                                                                                         © Gamboa
+A. Coglio and S. Srinivasan (Eds.): 20th ACL2 Workshop (ACL2-2026)
+                                                                                         This work is licensed under the
+EPTCS ??, 2026, pp. 1–9, doi:10.4204/EPTCS.??.??
+                                                                                         Creative Commons Attribution License.
+
+2                                                                                          Remora Lifting
+
+
+replicating it. The result is a matrix where each row is added to the vector. As the documentation states,
+learning how lifting works and ﬁguring out how to use it to one’s advantage are the hallmark of a good
+Remora programmer [3].
+    The ofﬁcial implementation of Remora is written in Haskell, and it is hosted on GitHub [4]. Kestrel
+Institute has been developing a new implementation of Remora in ACL2. The goal of this project is to
+focus on the correctness of the implementation stack, especially on any compiler transformations that
+are performed to optimize the code for GPU use. Our own focus is more modest and more traditional
+in scope. What we want to do is to reason about Remora programs, so that we can prove properties
+about them. For example, one of the reference Remora examples is an implementation of the Darknet
+convolutional neural network [2]. This is truly an impressive example, but even some of the Remora
+maintainers admit to having doubts about the correctness of the implementation, and they have even
+posed this as a challenge to the formal methods community.
+    The Remora language is still under development, and the evolution is somewhat frenetic. The ref-
+erence implementation and the language itself are still evolving, and the documentation lags quite a bit
+behind. Remora is also a very complicated language, with multiple different types of “function appli-
+cation” for instance. This is properly the concern of the language implementers, both at Kestrel and
+Remora HQ. But as a programmer, I want to use it and reason about the programs I write, and I want that
+to be easy.
+    This paper takes a step in that direction. We report on recent work that seeks to develop a general
+methodology for reasoning about Remora programs. The focus of this paper is on the semantics of lifting,
+and we limit the discussion to primitive operations, such as addition and multiplication. In Sect. 2, we
+give an overview of the real semantics as implemented in the Kestrel implementation. Then, in Sect. 3,
+we present the infrastructure we have developed for reasoning about function application in Remora.
+Sect. 4 describes more recent (“just-in-time research”) work on showing a close connection between
+Remora programs and equivalent ACL2 functions. This has promise for using ACL2 as a speciﬁcation
+language for Remora programs, e.g., a speciﬁcation for Darknet that can be used to prove properties
+about the Remora showcase.
+
+
+2     The Real Semantics of Lifting
+As mentioned above, Remora is a complicated language, involving different types of function application—
+ordinary function application over values, but also application over the space of types, and another type
+of application over indices. The molecules of Remora programs are cells, which can hold numbers,
+booleans, and the like. Values, what variables1 in Remora programs actually store, are arrays of cells.
+    More precisely, Remora arrays have a speciﬁc shape and rank. The rank corresponds to the number of
+dimensions, e.g., a three-dimensional array requires three indexes to access a speciﬁc cell. Additionally,
+a shape describes the size of each dimension. E.g., a vector is a rank-1 data structure, so it can be indexed
+with a single index. The shape tells us how many cells it has in that direction. Thus, a 3-element vector
+and a 10-element vector have the same rank, but different shape. The shape of an array is usually given
+as a vector of natural numbers, and the rank is the length of that vector. For example, a 3x4 matrix has
+shape [3 4] and rank 2. Scalars, the only types that can appear inside a Remora array, are considered to
+be rank-0.
+    Rank-polymorphism in Remora applies to differences in rank, not shape. For example, consider the
+addition primitive operation. In Remora syntax, which superﬁcially resembles Lisp, we can write (+ 1
+    1 Unless they’re type variables or index variables!
+
+Gamboa                                                                                                      3
+
+
+2) to add two scalars. Unsurprisingly, the result is 3.
+     The same operator handles arguments of higher rank. For example, the vectors [1 2 3] and [4 5 6]
+can be added element-wise to produce [5 7 9]. In this case, we are adding two rank-1 arrays with a
+rank-0 operator. But the operator will not work on arguments of different shape, as opposed to rank. For
+example, if you try to add the vectors [1 2 3] and [4 5], you will get a run-time error. The same will
+happen if you try to add the vector [1 2 3 4] and the matrix [[1 2] [3 4]], even though they have the same
+number of cells.
+     The more interesting case is when the arguments have different, but compatible ranks. There are, of
+course, important limitations. What should be the result of adding [1 2] and [[1 2] [3 4]]? Or how about
+[1 2] and [[1 2] [[5 6]]]? The ﬁrst example works, and the result is [[2 3] [5 6]]. The second example, on
+the other hand, does not work and instead produces a run-time error.
+     The rule governing this behavior is as follows. The system starts by comparing the shapes of the
+arguments. In the ﬁrst case, the shapes are [2] and [2 2]. The important think to notice is that [2] is a
+preﬁx of [2 2]. For the second example, the shapes are [2] and [3 2]. In this case, neither shape is a preﬁx
+of the other, so the system produces a run-time error.
+     After determining that the shapes are compatible, the shape of the output can be determined. It is
+simply the shape of the argument with the longer shape. In order to carry out the operation, Remora
+seemingly lifts the shorter argument by copying it to match the shape of the longer one. This is best
+understood in terms of indexing. Suppose the shorter argument has shape [10 5] and the larger one has
+shape [10 5 3 4]. The shorter argument is lifted from rank-2 to rank-4, and the way this is done is by
+returning the value in A[i, j] when asked for the value of A[i, j, k, l]. In other words, the shorter argument
+is replicated along the extra dimensions.
+     There are many other complications, but one in particular must be addressed. The semantics of
+Remora use Currying for function application. So the computation of (+ 1 2) is actually performed in
+multiple steps:
+   1. First, the arguments are grouped into a single list, so we really have something like (+ (1 2)).
+   2. Then, the function is applied to the ﬁrst argument, resulting in a new anonymous function that I
+      call 1+ in homage to ACL2. We now have (1+ (2)).
+   3. Next, the function 1+ is applied to the second argument, resulting in a new anonymous function
+      that I call 3+. We now have (3+ ()).
+   4. At this point, we are out of arguments, so the function returns the hidden argument in 3+, which is
+      to say 3 as expected.
+   To give a better idea of what’s going on, consider the example of adding the vectors [1 2] and [3 4].
+The steps proceed as follows:
+   1. (+ ([1 2] [3 4])), treating the operation as a function working on a list of (Curried) argu-
+      ments.
+   2. ([1+ 2+] ([3 4])), where the “function” is now a vector in its own right.
+   3. ([4+ 6+] ()), where each function in the vector operates on it corresponding argument (and
+      returns a function).
+   4. [4 6], the ﬁnal answer.
+You may have been surprised at the second step, where the function became an array of functions. This
+is naturally permitted in Remora, as a higher-order language. When a function isn’t scalar, it is treated
+
+4                                                                                             Remora Lifting
+
+
+as an ordinary vector for the purpose of function application. In this example, it was applied to an
+isomorphic vector of arguments, but if it hadn’t been, the same lifting rules mentioned above would
+apply. It is interesting that the idea of function vectors is seemingly esoteric, but it’s actually used in all
+(data) vectors operations because of Currying.
+     All of these details and more are handled by the ACL2 implementation of Remora. In the interest of
+full disclosure, I had no part in that implementation; I am simply in awe of it. For my purpose, it serves
+as the “gold standard” for the semantics of Remora, and I use it to reason about my Remora programs.
+Technically, the proofs are not about Remora programs, but rather about what the ACL2 implementation
+of Remora does when it evaluates those programs. This is all good, but it comes at a price. Even simple
+Remora programs require reasoning about the details of the “gold standard” implementation, which has
+to deal with all of the complications. This can be done, e.g., as in the PLT Redex project [1] or any
+number of complicated hardware models in ACL2, but it is not easy.
+     For the remaining of the paper, it is useful to have a very rough idea of the ACL2 implementation
+of Remora. The relevant portion is a clique of mutually recursive functions that interpret a Remora
+expression. The entry point is eval-expr, which looks at an expression and dispatches execution to
+a specialized member of the clique. For function applications, including built-in functions, it calls the
+function eval-app, which manages the entire process including the Currying loop described above.
+At each iteration, eval-loop calls eval-app-list, which evaluates a function vector on a vector of
+arguments. The result is a vector, which is then repackaged by eval-app into the appropriate shape.
+
+
+3    The Simpliﬁed Semantics
+In this section, we describe the methodology we’ve developed to reason about the behavior of the ACL2
+Remora implementation. We focus on the lifting semantics, because this is the more interesting aspect
+of the language (besides the GPU compilation, which is the real prize.)
+
+Algorithm 1 Function Application in the Interpreter
+ 1: function E VAL A PP( f unval, argvals, limit)               ⊲ Evaluate a function on a list of arguments
+ 2:    if limit ≤ 0 then                                                        ⊲ Check for recursion limit
+ 3:         return error
+ 4:    end if
+ 5:    if arglvals is empty then
+ 6:         return funval
+ 7:    end if
+ 8:    argval ← C AR(argvals)
+ 9:    paramdims ← PARAM S HAPE ( f unval)                                    ⊲ Propagate failure as needed
+10:    argdims ← S HAPE (argval)
+11:    arg f rame ← M ERGE PARAM S HAPE (paramdims, argdims)                  ⊲ Propagate failure as needed
+12:     f un f rame ← S HAPE ( f unval)                                       ⊲ Propagate failure as needed
+13:    p f rame ← M ERGE S HAPE ( f un f rame, arg f rame)                    ⊲ Propagate failure as needed
+14:     f uncells ← G ET C ELLS ( f unval, f un f rame, p f rame)             ⊲ Propagate failure as needed
+15:    argcells ← G ET C ELLS (argval, arg f rame, p f rame)                  ⊲ Propagate failure as needed
+16:    resultcells ← E VAL A PP L IST ( f uncells, argcells, limit − 1)       ⊲ Propagate failure as needed
+17:    return E VAL A PP (M AKE V ECTOR (resultcells, p f rame), C DR (argvals), limit − 1)
+18: end function
+
+Gamboa                                                                                                                      5
+
+
+    The bulk of the work was to create ACL2 functions that can reason about the interpreter shown in
+Alg. 1. As you can see, there is a signiﬁcant amount of error checking, which must be reasoned about
+carefully. At ﬁrst, I was expecting to capture what a good call to one the clique functions was, i.e., how
+can the caller be sure that the arguments are within the expected range. However, I soon realized that it
+was more effective to take a page from partial correctness and reason about the function results when the
+function returns without error. This still requires careful reasoning about error propagation, such as the
+following rule:
+( defthm
+      propagate-not-reserrp-cells-at-depth-in-expr-value-list-when-vector
+      ( i m p l i e s ( and ( equal ( e x p r - v a l u e - k i n d val ) : vector )
+                                ( e x p r - v a l u e - w f p val )
+                                ( not
+                                  ( r e s e r r p ( c e l l s - a t - d e p t h - i n - e x p r - v a l u e val depth )))
+                                ( equal depth ( len ( d i m s - o f - e x p r - v a l u e val ))))
+                      ( not
+                        ( reserrp
+                          ( cells-at-depth-in-expr-value-list
+                            ( e x p r - v a l u e - ve ct or - > elems val )
+                            (+ -1 depth )))))
+   : hints ...)
+This rule guarantees that if cells-at-depth-in-expr-value did not raise an error, neither can that
+same function with a speciﬁc different set of arguments. Dealing with errors in a disciplined manner was
+one of the big challenges of this project. (Mutual recursion was the other.)
+    To clarify our approach, consider the following lemma. This describes a single roundtrip of the
+function eval-app-list in the case that it’s called with a simple binary operator, e.g., plus, and an
+arbitrary list of arguments. Recall that it gets only a single vector argument, since Remora’s execution is
+Curried:
+( defthm e v a l - a p p - l i s t - w h e n - p r i m o p - b i n a r y - a n d - b a s e s
+   ( i m p l i e s ( and ( l i s t - o f - p r i m o p - i n t - b i n a r y f u n c e l l s)
+                         ( l i s t - o f - b a s e - v a l u e s a r g c e l l s)
+                         ( equal ( len f u n c e l l s ) ( len a r g c e l l s ))
+                         ( not ( r e s e r r p ( e v a l - a p p - l i s t f u n c e l l s a r g c e l l s limit ))))
+                   ( equal ( e v a l - a p p - l i s t f u n c e l l s a r g c e l l s limit )
+                             ( p a i r w i s e - c u r r y - b i n a r y - f n f u n c e l l s a r g c e l l s )))
+   : hints ...)
+Notice how we check for the validity of the result in the hypothesis, thus providing something similar to
+partial correctness. The function pairwise-curry-binary-fn is an ACL2 function that implements
+addition over lists. It does not need to worry about arbitrary shapes, since eval-app extracts all the
+cells from the arguments before making the call to this function—and it recovers the shape of the result
+after the call. It should be stated that this function is extremely simple because it explicitly expects the
+function to be a binary operator, which is always treated as a scalar, i.e., rank-0 function. The result may
+be a vector of Curried functions, but the function funval is always a scalar here. That greatly simpliﬁes
+the shape reasoning, e.g., the result shape is always exactly the same as the argument shape, and all
+arguments have compatible shapes at this point.
+    The situation is a little more complicated for the call to eval-app. For this particular case, where
+the function is a binary operator and not a vector of functions, the situation is not too bad. The following
+theorem describes a single run through the function eval-app:
+
+6                                                                                                               Remora Lifting
+
+
+( defthm e v a l - a p p - w h e n - f u n v a l - i s - b i n a r y - o p
+   ( i m p l i e s ( and ( equal f u n - f r a m e ( d i m s - o f - e x p r - v a l u e funval ))
+                          ( e x p r - v a l u e p funval )
+                          ( e x p r - v a l u e - c a s e funval : primop )
+                          ( p r i m o p - v a l u e - c a s e ( e x p r - v a l u e - pr imo p- > val funval )
+                                                                : int-binary)
+                          ( equal argval ( car a r g v a l s ))
+                          ( e x p r - v a l u e - w f p argval )
+                          ( e x p r - v a l u e p argval )
+                          ( e x p r - i s - n e s t e d - v e c t o r s - o f - b a s e - v a l u e s argval )
+                          ( equal a r g - f r a m e ( d i m s - o f - e x p r - v a l u e argval ))
+                          ( equal pframe a r g - f r a m e)
+                          ( equal f u n c e l l s ( l i f t - e x p r - v a l u e - t o - f r a m e
+                                                              funval f u n - f r a m e pframe ))
+                          ( equal a r g c e l l s ( l i f t - e x p r - v a l u e - t o - f r a m e
+                                                              argval a r g - f r a m e pframe ))
+                          ( not ( r e s e r r p ( e v a l - a p p funval a r g v a l s limit ))))
+                     ( equal ( e v a l - a p p funval a r g v a l s limit )
+                                ( eval-app ( expr-value-with-nonempty-dims
+                                                      pframe
+                                                      ( pairwise-curry-binary-fn funcells
+                                                                                                       a r g c e l l s ))
+                                                    ( cdr a r g v a l s)
+                                                    (1- limit ))))
+   : hints ...)
+
+     Similar functions describe the behavior of eval-app and eval-app-list when the function being
+executed is a Curried function vector, which as mentioned previously is extremely common in Remora.
+The theorems are similar but more complex.
+     The more important point is that these theorems can be daisy-chained to reason about an entire
+function call. Doing that lets us reason about what the “plus” function does, while completely ignoring
+the details of the interpreter. E.g., Currying is handled by the interpreter behind the curtain, but we can
+still live in a world where the semantics is just beta-reduction. That requires some care in connecting
+the output of one call to eval-app to the next. One immediate complication is that eval-app works by
+splitting its argument into a linear list of cell values, then it combines the resulting list of values into a
+Remora (possibly multidimensional) vector. The next call to eval-app is expecting a Remora vector, so
+we have to ensure that the taking apart and putting back together works as expected. We did this in the
+following lemma:
+( defthm u n d o - e x p r - v a l u e - w i t h - n o n e m p t y - d i m s - 3
+   ( i m p l i e s ( and ( e x p r - v a l u e - l i s t p cells )
+                         ( e x p r - v a l u e - l i s t - w f p cells )
+                         ( p o s - l i s t p frame )
+                         ( equal ( len cells )
+                                       ( n a t - l i s t - p r o d u c t frame ))
+                         ( p r e f i x p frame pframe )
+                         ( not ( r e s e r r p
+                                     ( cells-at-depth-in-expr-value
+                                         ( e x p r - v a l u e - w i t h - n o n e m p t y - d i m s frame cells )
+                                         ( len frame )))))
+                   ( equal ( l i f t - e x p r - v a l u e - t o - f r a m e
+
+Gamboa                                                                                                                 7
+
+
+                                ( e x p r - v a l u e - w i t h - n o n e m p t y - d i m s frame cells )
+                                    frame
+                                    pframe )
+                              ( repeat-each ( nat-list-product
+                                                        ( nthcdr ( len frame ) pframe ))
+                                                        cells )
+                              ))
+   : hints ...)
+Notice the conclusion of the theorem. The function expr-value-with-nonempty-dims is the last
+thing that the inner eval-app does, in order to package the result cells into a Remora vector. Then the
+function lift-expr-value-to-frame is the ﬁrst thing that the outer call to eval-app does, when it
+takes the input arguments and extracts all its cells. The result of putting back and taking apart again is
+a call to repeat-each, which in this context takes the result cells and replicates them along the extra
+dimensions as necessary. The point is that the actual result of all this is the cells variable, which
+was created in the inner iteration and passed unchanged to the outer one. There are other similar “glue”
+lemmas that are needed, but this is the most interesting one. These theorems can now be grouped together
+to reason about the entire function application, resulting in a very simple β -reduction semantics. We
+acknowledge that this means our approach simply does not work for programs that deliberately use
+Currying, but we think the tradeoff is well worth it, especially after spending a lot of time doing it the
+hard way!
+    All of this leads to the following theorem, which completely characterizes the behavior of eval-app
+when the function is a binary operator and the arguments are a pair of compatible vectors. The proof pro-
+ceeds by unfolding the evaluation of eval-app and eval-app-list using the theorems above, and then
+using the “glue” lemmas to connect the output of one iteration to the next. The ﬁnal piece is to simplify
+the resulting expression that uses pairwise-curry-binary-fn and pairwise-curry-binary-x-fn
+to carry the Curried arguments into an equivalent expression that performs the binary operation on the
+two lists at once. This particular simpliﬁcation is done purely by reasoning about lists in ACL2, and
+does not require any knowledge of the Remora semantics or the ACL2 interpreter. Note that this ﬁnal
+result has the shape of a commutative diagram. It equates the behavior of eval-app by ﬁrst converting
+the two arguments into ACL2 lists (using get-cells-from-expr-value), then performing the binary
+operation using an ACL2 function (pairwise-binary-args-fn), and ﬁnally converting the result back
+into a Remora vector (using expr-value-with-nonempty-dims). The ﬁnal result is below:
+( defthm e v a l - a p p - w h e n - f u n v a l - i s - b i n a r y - o p - f u l l y
+     ( i m p l i e s ( and ( e x p r - v a l u e p funval )
+                             ( e x p r - v a l u e - c a s e funval : primop )
+                             ( p r i m o p - v a l u e - c a s e ( e x p r - v a l u e -p ri mo p- > val funval )
+                                                                   : i n t - b i n a r y)
+                             ( e x p r - v a l u e - w f p arg1 )
+                             ( e x p r - v a l u e p arg1 )
+                             ( e x p r - v a l u e - w f p arg2 )
+                             ( e x p r - v a l u e p arg2l )
+                             ( e x p r - i s - n e s t e d - v e c t o r s - o f - b a s e - v a l u e s arg1 )
+                             ( e x p r - i s - n e s t e d - v e c t o r s - o f - b a s e - v a l u e s arg2 )
+                             ( equal a r g 1 - f r a m e ( d i m s - o f - e x p r - v a l u e arg1 ))
+                             ( equal a r g 2 - f r a m e ( d i m s - o f - e x p r - v a l u e arg2 ))
+                             ( equal ( l i s t - p r e f i x - j o i n ( list a r g 1 - f r a m e a r g 2 - f r a m e ))
+                                           ( mv t pframe ))
+                             ( not
+
+8                                                                                                   Remora Lifting
+
+
+                        ( r e s e r r p ( e v a l - a p p funval ( list arg1 arg2 ) limit )))
+                      )
+                ( equal ( e v a l - a p p funval ( list arg1 arg2 ) limit )
+                          ( expr-value-with-nonempty-dims
+                            pframe
+                            ( pairwise-binary-args-fn
+                              ( r e p e a t - e a c h ( n a t - l i s t - p r o d u c t pframe )
+                                                        ( g e t - c e l l s - f r o m - e x p r - v a l u e funval ))
+                              ( repeat-each ( nat-list-product
+                                                        ( nthcdr ( len a r g 1 - f r a m e ) pframe ))
+                                                      ( g e t - c e l l s - f r o m - e x p r - v a l u e arg1 ))
+                              ( repeat-each ( nat-list-product
+                                                        ( nthcdr ( len a r g 2 - f r a m e ) pframe ))
+                                                      ( g e t - c e l l s - f r o m - e x p r - v a l u e arg2 ))))))
+      : hints ...)
+    The fact that the results of the operation from one iteration to the next is kept in a simple list turns
+out to be quite convenient. Think, for example, of a commutative operator, like addition. The theorem
+above tells us that the entire process of adding two vectors is equivalent to a simple map operation that
+does addition over two lists. This “map” operation is very common in ACL2, and we’re very good
+at reasoning about them. So it was straightforward to show that commutativity of addition lifts to the
+vector case. Using the theorems above, we now have a theorem about the commutativity of addition in
+Remora.
+
+
+4    Equivalent Expressions in ACL2
+While the previous sections described the work we’ve done for the past year, this section describes work
+that we’re wrapping up right now. Our original plan was that we could deﬁne the semantics of Remora
+programs by providing an equivalent ACL2 function. We abandoned that approach because it doesn’t
+appear feasible, but after doing the work described in the previous sections, we changed our mind and
+started experimenting.
+     The key idea is related to the “glue” theorems described above. But in this case, the round trip is to
+an ACL2 list of lists, as opposed to a single ﬂat list. The ACL2 lists hold ACL2 objects instead of the
+Remora cells, so functions on those data structures are POAL, as in Plain Old ACL2 Lists.
+     We have a pair of encoder/decoder functions that convert from Remora vectors to ACL2 nested lists.
+We also have a ﬂattener that takes a nested list and turns into a linear list of cells and back. What’s
+missing is the connection between that linear list and the one used between steps in the β -reduction.
+That will establish the commutative diagram that shows you can execute the Remora program or convert
+the arguments to ACL2 lists, run the equivalent ACL2 program on lists, then convert the result back to
+Remora—and end up with the same answer as the original Remora program. Another way to look at this
+is to use the ACL2 program as a speciﬁcation for the Remora program, and end up with a proof that the
+Remora program meets that speciﬁcation, but obviously much faster.
+     The most interesting part of the project is the function nested-map that takes as arguments a “func-
+tion” and its arguments. Right now, the function argument is an ACL2 identiﬁer that is used to look up
+one of the built-in functions in a table. After all, ACL2 is not higher-order. But the other arguments can
+be arbitrary nested lists, as long as they are compatible. The result is a new rested list of the appropriate
+shape. The ongoing work is to prove this function returns the same shape that the Remora semantics
+expects.
+
+Gamboa                                                                                                 9
+
+
+   To be clear, this will not work for all Remora programs, but it will work with many of the existing
+examples. In particular, we’re hoping it will enable us to formalize the Darknet example.
+
+
+5    Conclusion
+Novel programming languages come and go, but the Remora language is especially interesting, because
+of its signiﬁcant potential for GPU programming. As the Darknet example shows, they are focused on
+AI applications, more so than on traditional scientiﬁc computing—though it could obviously be used for
+that as well.
+     We have been working on building a methodology to reason about the correctness of Remora pro-
+grams, without sacriﬁcing the relative ease of reasoning about pure Lisp functions. In the future, we
+plan to cover more and more of the language semantics. Particularly lacking right now is any thought
+of supporting user-deﬁned functions, so that is our next step. That will present a challenge, because the
+Remora semantics allows a function to specify the shape of its input arguments. The current code expects
+function to work only on scalars, so that is a signiﬁcant simpliﬁcation.
+     After that, we hope to work on formalizing signiﬁcant Remora examples, like the Darknet showcase.
+
+
+References
+[1] Matthias Felleisen, Robert Bruce Findler & Matthew Flatt (2009):      Semantics En-
+    gineering with PLT Redex.         MIT Press,    Cambridge,  Mass.       Available at
+    https://mitpress.mit.edu/9780262062756/semantics-engineering-with-plt-redex/.
+[2] Joseph Redmon (2013–2016):             Darknet:       Open    Source    Neural   Networks    in   C.
+    https://pjreddie.com/darknet/.
+[3] Olin Shivers, Justin Slepak & Panagiotis Manolios (2019): Introduction to Rank-polymorphic Pro-
+    gramming in Remora (Draft). CoRR abs/1912.13451, doi:10.48550/ARXIV.1912.13451. Available at
+    http://arxiv.org/abs/1912.13451.
+[4] Justin Slepak (2020): Remora: A Dependently-Typed Language with Iverson-Style Implicit Lifting.
+    https://github.com/jrslepak/Remora.
+[5] Justin Slepak (2020): A Typed Programming Language: The Semantics of Rank Polymorphism. Ph.D. thesis,
+    Northeastern University. Available at https://ccs.neu.edu/~jrslepak/Dissertation.pdf.
+</paper>
+
+<requirements>
+1. Define the helper functions the paper uses: `pairwise-curry-binary-fn`, `pairwise-curry-binary-x-fn`,
+   `pairwise-binary-args-fn`, `get-cells-from-expr-value`, `expr-is-nested-vectors-of-base-values`,
+   `list-of-primop-int-binary` and `list-of-base-values`.
+2. Prove the paper's theorems with the paper's names and statements, against the interpreter in the books:
+   `propagate-not-reserrp-cells-at-depth-in-expr-value-list-when-vector`,
+   `eval-app-list-when-primop-binary-and-bases`, `eval-app-when-funval-is-binary-op`,
+   `undo-expr-value-with-nonempty-dims-3` and `eval-app-when-funval-is-binary-op-fully` (read `arg2l` as
+   `arg2`). If the interpreter has changed so that a statement must change, make the smallest change and list
+   every change in `/work/README.md`.
+3. Prove the commutativity corollary at the end of Section 3 for integer addition, in a statement of your own.
+4. `/work/examples.lisp` checks by evaluation the examples of Section 2: `[1 2] + [[1 2] [3 4]]` gives `[[2 3]
+   [5 6]]`, and the two ill-formed additions give errors.
+5. All books certify with `cert.pl`.
+</requirements>
+
+ACL2 (`acl2`) and ACL2(r) (`acl2r`) are installed at a development version newer than 8.7
+(git commit 1d2b39a424 of 2026-11-12), with the community books. Books are certified with `cert.pl`
+(add `--acl2 acl2r` for ACL2(r)).
+Put all your work in /work. Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done.
+When you are done, run `submit tool-remora`, which saves /work. Then print a short summary: the files you
+wrote, and for each numbered requirement whether it is met.

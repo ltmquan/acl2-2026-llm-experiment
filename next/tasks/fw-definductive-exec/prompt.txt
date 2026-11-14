@@ -1,0 +1,50 @@
+You are given the event macro `definductive` in the community books (`books/std/util/definductive.lisp`, with
+`definductive-doc.lisp` and `definductive-tests.lisp`). It defines predicates p₁, …, p_k from inference rules as
+`defun-sk` existentials over proof trees, and generates rule theorems and induction principles. Extend it with
+an optional facility that also generates an executable definition of each predicate and proves it equivalent
+to the original predicate.
+
+New optional inputs (default nil; behavior must be unchanged when they are absent):
+
+:exec ((p1 :name p1-exec :measure m1)       ; one entry per predicate in :preds
+       (p2 :name p2-exec :measure m2) ...)  ; mi: term over pi's formals (o-p valued)
+:exec-binds ((rule-name (v term) ...) ...)  ; per rule: how to compute each rule variable that is not
+                                            ; literally a conclusion argument, as a term over the formals
+                                            ; of the conclusion's predicate
+:exec-hints ...                             ; optional hints for the generated obligations
+
+Semantics. For a rule r with conclusion (p t₁ … t_n), where p has formals x₁ … x_n, each rule variable v gets a
+value: from :exec-binds, or x_i when t_i is literally v. A rule variable with no value is an error. Under those
+values, (p-exec x₁ … x_n) holds iff for some rule with conclusion predicate p, each x_i equals the instantiated
+t_i and the instantiated premises hold, in order, where a premise on a defined predicate q is evaluated by
+q-exec. The p-exec functions of a clique are mutually recursive and use the given measures.
+
+The tool must prove automatically, or stop with an error that shows the failed obligation:
+(a) termination, for each recursive premise under the preceding tests;
+(b) binding adequacy: if the x_i equal the t_i under some values of the rule variables and the non-predicate
+    premises hold, then the bound terms evaluate to those values.
+It must then generate and prove `p-exec-correct`, (iff (p-exec x1 ... xn) (p x1 ... xn)), and
+`booleanp-of-p-exec`, for every p. The p-exec functions must not call the defun-sk predicates, their witnesses
+or any defchoose, so that they execute on concrete data.
+
+Requirements:
+1. Your extended tool is /work/definductive.lisp (a modified copy of the books' file, under the same name in
+   /work); other changed files are also in /work.
+2. A copy of `definductive-tests.lisp` that includes your /work/definductive.lisp instead certifies unchanged.
+3. /work/exec-tests.lisp certifies, with:
+   (i) even/odd on naturals (conclusions (even 0), (odd (1+ n)) and (even (1+ n)), with premise (natp n) before
+       the recursive premise);
+   (ii) naturals plus finitely branching trees of naturals (conclusions using cons);
+   (iii) a typing judgement for a small expression language of your choice, with at least three predicates in one
+         clique;
+   (iv) `must-fail` on reflexive-transitive closure with the transitivity rule and no binding for its middle
+        variable;
+   (v) `assert-event` evaluations of each p-exec on concrete inputs.
+
+ACL2 (`acl2`) and ACL2(r) (`acl2r`) are installed at a development version newer than 8.7
+(git commit 1d2b39a424 of 2026-11-12), with the community books. Books are certified with `cert.pl`
+(add `--acl2 acl2r` for ACL2(r)).
+Put all your work in /work. Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done.
+When you are done, run `submit fw-definductive-exec`, which saves /work. Then print a short summary: the files you
+wrote, and for each numbered requirement whether it is met.

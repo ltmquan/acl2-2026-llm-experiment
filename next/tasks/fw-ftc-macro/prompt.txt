@@ -1,0 +1,47 @@
+Work in ACL2(r). Write an event macro `def-ftc-integral` that, given an integrand and a user-supplied
+antiderivative, introduces the definite integral of the integrand and proves its value by the Fundamental
+Theorem of Calculus, by functional instantiation of `ftc-2` in `nonstd/integrals/ftc-2.lisp`.
+
+Interface:
+
+(def-ftc-integral name
+  :integrand      f          ; unary function symbol, or (lambda (x) term)
+  :antiderivative F          ; unary function symbol, or (lambda (x) term)
+  :domain         dom        ; a ground term evaluating to an interval, e.g. (interval 1 nil)
+  :derivative-thm thm1       ; optional: name of an existing theorem of the form below
+  :continuity-thm thm2       ; optional: name of an existing theorem of the form below
+  :hints          hints)     ; optional: hints for the obligations the macro must prove
+
+The derivative theorem has the form
+  (implies (and (standardp x) (inside-interval-p x dom) (inside-interval-p x1 dom) (i-close x x1) (not (= x x1)))
+           (i-close (/ (- (F x) (F x1)) (- x x1)) (f x)))
+and the continuity theorem the analogous continuity form for f.
+
+Generated events, named from `name`:
+- `name-integrand` (when f is a lambda), `map-name`, `riemann-name`, `strict-int-name` (a `defun-std`) and
+  `int-name`, defined as the corresponding functions in `ftc-2.lisp`;
+- `int-name-is-integral`: for standard a ≤ b in dom and a partition p of [a, b] with infinitesimal mesh,
+  `(riemann-name p)` is infinitely close to `(strict-int-name a b)`;
+- `int-name-ftc`: `(implies (and (inside-interval-p a dom) (inside-interval-p b dom)) (equal (int-name a b) (- (F b) (F a))))`.
+
+If `:derivative-thm` or `:continuity-thm` is omitted, the macro must try to prove that obligation itself, and on
+failure stop with an error that prints the obligation. The macro must also prove the other side conditions of
+`ftc-2` (realness of f and F on the domain, that the domain is an interval, non-triviality).
+
+Requirements:
+1. The macro is in /work/def-ftc-integral.lisp.
+2. /work/tests.lisp includes it and contains at least these calls, each followed by a check that `int-name-ftc`
+   gives the expected closed form at concrete endpoints:
+   (a) f(x) = x², F(x) = x³/3, dom = (interval nil nil), with no theorems supplied;
+   (b) f = `acl2-cosine`, F = `acl2-sine`, dom = (interval nil nil), with no theorems supplied;
+   (c) f(x) = 1/x², F(x) = −1/x, dom = (interval 1 nil), with no theorems supplied;
+   (d) f = `acl2-ln`, F(x) = x·ln x − x, dom = (interval 1 nil); you may supply the theorems;
+   (e) a call with a wrong antiderivative, wrapped in `must-fail`.
+3. Both books certify with `cert.pl --acl2 acl2r`.
+
+ACL2 8.7 (`acl2`) and ACL2(r) 8.7 (`acl2r`) are installed, with the community books.
+Books are certified with `cert.pl` (add `--acl2 acl2r` for ACL2(r)).
+Put all your work in /work. Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
+questions; work until you are done.
+When you are done, run `submit fw-ftc-macro`, which saves /work. Then print a short summary: the files you
+wrote, and for each numbered requirement whether it is met.

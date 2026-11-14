@@ -1,0 +1,132 @@
+{
+ "tool-definductive": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 67539
+ },
+ "tool-smtlink3": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 61806
+ },
+ "tool-erlang": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 51985
+ },
+ "tool-remora": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 35921
+ },
+ "tool-arrayset": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 51807
+ },
+ "tool-aes-mir": {
+  "env": "8.7",
+  "setup": "8.7+charon",
+  "prompt_bytes": 61348
+ },
+ "fw-euler-product": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 2269
+ },
+ "fw-trapezoid": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 5038
+ },
+ "fw-stirling-bounds": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 1614
+ },
+ "fw-inductance": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 2869
+ },
+ "fw-rectifier-rows": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 3873
+ },
+ "fw-rectifier-master": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 4364
+ },
+ "fw-ftc-macro": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 3152
+ },
+ "fw-definductive-exec": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 3686
+ },
+ "fw-multisets": {
+  "env": "8.7",
+  "setup": "8.7",
+  "prompt_bytes": 2786
+ },
+ "zfc-t1": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 4378
+ },
+ "zfc-t2": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 3386
+ },
+ "zfc-t3": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 3911
+ },
+ "zfc-t4": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 3350
+ },
+ "zfc-t5": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 2533
+ },
+ "zfc-t6": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 2727
+ },
+ "zfc-t7": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 3173
+ },
+ "zfc-t8": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 5149
+ },
+ "zfc-t9": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 5585
+ },
+ "zfc-t10": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 3656
+ },
+ "zfc-t11": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 5542
+ }
+}

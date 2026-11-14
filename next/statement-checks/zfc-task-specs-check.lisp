@@ -256,7 +256,7 @@
            (equal y (apply inv x)))
   :props (zfc prod2$prop domain$prop inverse$prop))
 (chk subgroup-is-group
-  (implies (and (groupp s op e inv) (subgroup-p h s op e inv))
+  (implies (and (groupp s op e inv) (funp op) (funp inv) (subgroup-p h s op e inv))
            (groupp h (restrict op (prod2 h h)) e (restrict inv h)))
   :props (zfc prod2$prop domain$prop inverse$prop restrict$prop diff$prop))
 (chk intersection-of-subgroups
@@ -298,10 +298,12 @@
                     (apply2 add (apply2 mul x y) (apply2 mul x z))))))
 (defun nonzeros (s zero) (diff s (singleton zero)))
 (defun fieldp (s add mul zero one neg recip)
-  (and (abelian-group-p s add zero neg)
+  (and (funp add) (funp mul) (funp neg) (funp recip)
+       (abelian-group-p s add zero neg)
        (not (equal zero one))
        (equal (domain mul) (prod2 s s))
        (subset (image mul) s)
+       (abelian-p s mul)
        (abelian-group-p (nonzeros s zero)
                         (restrict mul (prod2 (nonzeros s zero)
                                              (nonzeros s zero)))

@@ -128,5 +128,15 @@
   "env": "master",
   "setup": "master",
   "prompt_bytes": 5542
+ },
+ "zfc-t8-r2": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 5173
+ },
+ "zfc-t9-r2": {
+  "env": "master",
+  "setup": "master",
+  "prompt_bytes": 5666
  }
 }

@@ -83,3 +83,25 @@ GitHub). Both install from the public toolchain repository
   - `acl2-next-master`: setup 18–32 s; `workshops/2026` is gone; a ZFC book certifies.
   - In both, `submit` pushes `results/<id>` and leaves no unpushed commit, and the checkout holds only the
     `results-base` README.
+
+## Corrections after the first runs (2026-11-14)
+
+Two ZFC target statements were wrong. They had been checked only to translate, not proved. The first-run
+models found both errors:
+
+- **`zfc-t8`, `subgroup-is-group`:** the books' `groupp` does not require the operation or the inverse to be a
+  function. `apply` on a relation that is not a function picks a value by choice, so the statement cannot be
+  proved as written. The model proved the other 7 targets, and also proved the statement with `(funp op)`
+  and `(funp inv)` added.
+- **`zfc-t9`, our `fieldp`:** it constrained multiplication only on nonzero elements and had only left
+  distributivity, so 0·x = 0 did not follow. The model proved, in ACL2, a counterexample to
+  `complex-construction-is-field` and `complex-i-squared`: a structure on the rationals with 0·y = y. It
+  also proved `rationals-form-field`.
+
+Corrected tasks `zfc-t8-r2` and `zfc-t9-r2`:
+- `subgroup-is-group` has the hypotheses `(funp op)` and `(funp inv)`;
+- `fieldp` also requires `(funp add)`, `(funp mul)`, `(funp neg)`, `(funp recip)` and `(abelian-p s mul)`.
+
+Both packages pass the same checks as the others. The corrected statements are also in
+`statement-checks/zfc-task-specs-check.lisp`. The first-run results stay on `results/zfc-t8` and
+`results/zfc-t9`. The reruns save to `results/zfc-t8-r2` and `results/zfc-t9-r2`.

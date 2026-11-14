@@ -12,9 +12,16 @@
 - `books/grade-r3.lisp` (includes ../examples and ../reduce): at least one constrained function has an
   attachment that was not present before the model's books were included. The pairs are printed.
 - `books/grade-r5.lisp` (includes ../sum-of-nats): sum-of-nats, sum-test-world-p, erl-val-integer->val
-  and eval-cont-list are logic-mode functions, make-erl-val-integer is a macro or function, and
-  `(sum-of-nats k)` = k(k+1)/2 for k = 0..30.
-- `books/grade-r6.lisp` (includes ../reduce): wtree-p and create-wtree are logic-mode functions.
+  and eval-cont-list are logic-mode functions, make-erl-val-integer is a macro or function, and the
+  theorem sum-of-nats-correct exists (its statement is printed). The prompt's exact
+  `(implies (natp n) (equal (sum-of-nats n) (/ (+ (* n n) n) 2)))` (with the model's sum-of-nats, any
+  package) is proved with `:by`, trying sum-of-nats-correct first and then every world theorem that
+  mentions only sum-of-nats and arithmetic/propositional primitives. `:by` accepts variable renaming,
+  so a model's `erl::n` is fine.
+- `books/grade-r6.lisp` (includes ../reduce): wtree-p and create-wtree are logic-mode functions, and
+  reduce-invariant-preserved, reduce-no-blocked-worker and reduce-root-value exist (statements printed).
+- `run-erl.sh`: helper for the manual R1/R4 runs. It converts an .erl file with the README's command
+  ({erl}/{out} placeholders) and runs the README's ACL2 forms in the grading copy.
 - `erlang/`: the paper's Erlang programs, transcribed from the PDF (pdftotext drops underscores:
   "sum of nats" is `sum_of_nats`, "is integer" is `is_integer`, "helper( , [])" is `helper(_, [])`).
   Only `-module`/`-export` lines were added. Also `subset.erl` (ours), one function per construct of
@@ -23,12 +30,12 @@
 ## Requirement table
 | R | how | mechanical part | manual part |
 |---|-----|-----------------|-------------|
-| 1 | MANUAL | README.md exists | run front end on `2 + 2.` and erlang/*.erl |
+| 1 | MANUAL | README.md exists | README's command and run form via run-erl.sh on erlang/*.erl |
 | 2 | MANUAL after mech. | grade-r2 | fuel, out-of-fuel status, receive yields |
 | 3 | MANUAL after mech. | grade-r3 (attachment to a constrained fn) | constraint = fairness |
-| 4 | MANUAL after mech. | examples certifies, ≥3 assert forms | the three runs and their expected values |
-| 5 | MANUAL after mech. | grade-r5, a defthm in sum-of-nats.lisp | main theorem shape, linear fuel, non-vacuity |
-| 6 | MANUAL after mech. | grade-r6, ≥3 defthms in reduce.lisp | the three properties, over the constrained scheduler |
+| 4 | MANUAL after mech. | examples certifies, ≥3 assert forms | the three asserts; add_pairs rerun via README run form |
+| 5 | MANUAL after mech. | grade-r5: names, sum-of-nats-correct exists, exact closed form by :by | statement of sum-of-nats-correct (linear fuel, hyps), non-vacuity |
+| 6 | MANUAL after mech. | grade-r6: wtree-p, create-wtree, the three named theorems exist | their statements, over the constrained scheduler |
 | 7 | PASS/FAIL | all .lisp certify, no banned events | — |
 
 ## Interpretations
@@ -60,6 +67,19 @@
   reduce.lisp → BANNED and R7 FAIL; a book that does not certify → dependent requirements FAIL and the
   dependent grader books are skipped.
 - Not validated: the model's front-end interface (unknown in advance), hence R1 is MANUAL.
+
+## Revision (prompt v2: README run interface, named theorems)
+- The README's command and run form are free text, so grade.py cannot run add_pairs through them
+  without guessing placeholder conventions. Instead, run-erl.sh makes the person's run deterministic
+  once they copy the README's command and form (CHECKLIST R1, R4).
+- Validation of the revision:
+  - stub with sum-of-nats-correct = closed form and the three reduce names: R5, R6 MANUAL (mechanical
+    parts pass; statements printed);
+  - stub where the closed form is a differently named lemma and sum-of-nats-correct says something
+    else: R5 still passes the :by check, via a candidate lemma;
+  - stub with no closed form and reduce-root-value missing: R5 FAIL, R6 FAIL;
+  - run-erl.sh with a stub escript converter (epp:parse_file) on add_pairs.erl: conversion ran, the
+    output was loaded by `ld` after `(include-book "examples")`.
 
 ## Possible prompt issues
 - R5 says "proves the theorem of Section 4.1 (equation 1)". The paper states equation 1 informally, so

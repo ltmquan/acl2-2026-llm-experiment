@@ -14,9 +14,11 @@ The paper fixes few names, so most requirements are MANUAL after mechanical prec
  3. certify every model .lisp file with cert.pl and default cert flags;
  4. copy books/ to <copy>/grader/ and certify: grade-r2 (eval-cont-list exists, logic mode,
     recursive), grade-r3 (a constrained function of the model's books has an attachment),
-    grade-r5 (sum-of-nats, sum-test-world-p, erl-val-integer->val, make-erl-val-integer exist;
-    sum-of-nats computes N(N+1)/2), grade-r6 (wtree-p, create-wtree exist);
- 5. structural checks: assert-event forms in examples.lisp, defthms in sum-of-nats.lisp/reduce.lisp.
+    grade-r5 (paper's names exist, theorem sum-of-nats-correct exists, and the exact closed form
+    of sum-of-nats follows by :by from a model theorem), grade-r6 (wtree-p, create-wtree and the
+    theorems reduce-invariant-preserved, reduce-no-blocked-worker, reduce-root-value exist);
+ 5. structural check: assert-event forms in examples.lisp.  R1/R4 runs through the README's
+    command and run form are done by a person with run-erl.sh (CHECKLIST.md).
 """
 import os, re, shutil, subprocess, sys, tempfile
 
@@ -212,7 +214,7 @@ def main():
 
     # R1
     res[1] = ("FAIL", "README.md missing") if not os.path.exists(os.path.join(root, "README.md")) else \
-             ("MANUAL", "run the front end per README.md on grader erlang/*.erl and on \"2 + 2.\" (CHECKLIST R1)")
+             ("MANUAL", "use README.md's convert command and run form with run-erl.sh on erlang/*.erl (CHECKLIST R1)")
     # R2
     res[2] = need("examples", "") or (("MANUAL", "eval-cont-list is a recursive logic-mode function; check fuel, "
               "out-of-fuel status and receive yield (CHECKLIST R2)") if g["grade-r2"] else
@@ -224,18 +226,17 @@ def main():
     # R4
     ae = heads(os.path.join(root, "examples.lisp"), ("assert-event", "assert!", "assert-equal", "assert?"))
     res[4] = need("examples", "") or (("MANUAL", f"{len(ae)} assert forms in examples.lisp; check they cover "
-              "add_pairs, the two-process exchange and reduce (CHECKLIST R4)") if len(ae) >= 3 else
+              "add_pairs, the two-process exchange and reduce; rerun add_pairs via run-erl.sh (CHECKLIST R4)") if len(ae) >= 3 else
               ("FAIL", f"examples.lisp has {len(ae)} assert-event forms, need at least 3"))
     # R5
-    th5 = heads(os.path.join(root, "sum-of-nats.lisp"), ("defthm", "defthmd"))
-    res[5] = need("sum-of-nats", "") or (("FAIL", "paper's names missing or sum-of-nats wrong (grade-r5)")
-              if not g["grade-r5"] else ("FAIL", "no defthm in sum-of-nats.lisp") if not th5 else
-              ("MANUAL", "inspect the main theorem of sum-of-nats.lisp (CHECKLIST R5)"))
+    res[5] = need("sum-of-nats", "") or (("MANUAL", "sum-of-nats-correct exists and the closed form follows by :by; "
+              "check its statement (printed in grader/grade-r5.cert.out) per CHECKLIST R5") if g["grade-r5"] else
+              ("FAIL", "grade-r5 failed: paper's names, sum-of-nats-correct, or the exact closed form "
+               "(implies (natp n) (equal (sum-of-nats n) (/ (+ (* n n) n) 2))) by :by (see its .cert.out)"))
     # R6
-    th6 = heads(os.path.join(root, "reduce.lisp"), ("defthm", "defthmd"))
-    res[6] = need("reduce", "") or (("FAIL", "wtree-p / create-wtree missing (grade-r6)") if not g["grade-r6"] else
-              ("FAIL", f"reduce.lisp has {len(th6)} defthms, need at least 3") if len(th6) < 3 else
-              ("MANUAL", "identify and inspect the three reduce theorems (CHECKLIST R6)"))
+    res[6] = need("reduce", "") or (("MANUAL", "reduce-invariant-preserved, reduce-no-blocked-worker, reduce-root-value "
+              "exist; check their statements (printed in grader/grade-r6.cert.out) per CHECKLIST R6") if g["grade-r6"] else
+              ("FAIL", "grade-r6 failed: wtree-p/create-wtree or a named reduce theorem missing"))
     # R7
     if failed: res[7] = ("FAIL", "not certified: " + ", ".join(failed))
     elif banned: res[7] = ("FAIL", "banned events present (see BANNED lines)")

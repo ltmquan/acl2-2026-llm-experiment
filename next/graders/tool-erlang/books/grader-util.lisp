@@ -60,3 +60,33 @@
   `(assert-event (grader-all-logic-fns ',names (w state))
                  :msg (msg "Missing or non-logic-mode (or ambiguous) function among ~x0: ~x1"
                            ',names (grader-missing ',names (w state)))))
+
+(defun grader-thms1 (syms w)
+  (declare (xargs :mode :program))
+  (cond ((endp syms) nil)
+        ((getpropc (car syms) 'theorem nil w) (cons (car syms) (grader-thms1 (cdr syms) w)))
+        (t (grader-thms1 (cdr syms) w))))
+
+(defun grader-thms (name w)
+  ;; all theorem names (defthm/defthmd) named NAME, any package
+  (declare (xargs :mode :program))
+  (grader-thms1 (grader-syms name (grader-pkgs (strip-cars (global-val 'known-package-alist w)))) w))
+
+; (grader-require-thms ("NAME" ...)) : every name is a theorem (in exactly one package)
+(defmacro grader-require-thms (names)
+  `(assert-event (grader-all-thms ',names (w state))
+                 :msg (msg "Missing (or ambiguous) theorem among ~x0" ',names)))
+
+(defun grader-all-thms (names w)
+  (declare (xargs :mode :program))
+  (or (endp names)
+      (and (equal (len (grader-thms (car names) w)) 1)
+           (grader-all-thms (cdr names) w))))
+
+(defun grader-print-thms (names w)
+  ;; print each named theorem's formula, for the person checking CHECKLIST items
+  (declare (xargs :mode :program))
+  (if (endp names) nil
+    (prog2$ (cw "~%GRADER-THEOREM ~s0:~%~x1~%" (car names)
+                (getpropc (car (grader-thms (car names) w)) 'theorem nil w))
+            (grader-print-thms (cdr names) w))))

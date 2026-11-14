@@ -99,8 +99,8 @@ TASKS["tool-definductive"] = dict(env="8.7", setup="8.7", paper="coglio-jurgense
  "Invalid definitions are rejected with an ACL2 error, not a raw Lisp error: the paper's `no-proof-trees`, and "
  "premises that are `and`, `or`, `not` or `implies` of defined predicates. Show each with `must-fail` in "
  "`/work/examples.lisp`.",
- "The proofs that `definductive` generates do not depend on the current theory: every call in requirement 2 "
- "also succeeds after `(in-theory nil)` and after enabling unrelated rewrite rules.",
+ "The proofs that `definductive` generates do not depend on the user's current theory: every call in "
+ "requirement 2 also succeeds after including unrelated arithmetic books and enabling unrelated rewrite rules.",
  "Both books certify with `cert.pl`."])
 
 TASKS["tool-smtlink3"] = dict(env="8.7", setup="8.7", paper="chen-smtlink3",
@@ -319,8 +319,8 @@ The tool must prove automatically, or stop with an error that shows the failed o
 (a) termination, for each recursive premise under the preceding tests;
 (b) binding adequacy: if the x_i equal the t_i under some values of the rule variables and the non-predicate
     premises hold, then the bound terms evaluate to those values.
-It must then generate and prove `p-exec-correct`, (iff (p-exec x1 ... xn) (p x1 ... xn)), and
-`booleanp-of-p-exec`, for every p. The p-exec functions must not call the defun-sk predicates, their witnesses
+It must then generate and prove, for every p with `:name e`, the theorems `e-correct`,
+(iff (e x1 ... xn) (p x1 ... xn)), and `booleanp-of-e`. The p-exec functions must not call the defun-sk predicates, their witnesses
 or any defchoose, so that they execute on concrete data.
 
 Requirements:
@@ -335,7 +335,9 @@ Requirements:
          clique;
    (iv) `must-fail` on reflexive-transitive closure with the transitivity rule and no binding for its middle
         variable;
-   (v) `assert-event` evaluations of each p-exec on concrete inputs.""")
+   (v) `assert-event` evaluations of each p-exec on concrete inputs.
+4. The checker's own definitions with `:exec` (not shown to you) are admitted, with `e-correct` and
+   `booleanp-of-e` in exactly the form above, and the executable functions run on concrete inputs.""")
 
 TASKS["fw-multisets"] = dict(env="8.7", setup="8.7", kind="text", text="""Work in ACL2. Using the ordered-map library `std/omaps` (`omap::mapp`, `omap::update`, `omap::lookup`,
 `omap::assoc`, `omap::delete`, `omap::keys`, ...), implement a library of finite multisets (bags) in a new

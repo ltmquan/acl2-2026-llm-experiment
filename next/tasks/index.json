@@ -2,7 +2,7 @@
  "tool-definductive": {
   "env": "8.7",
   "setup": "8.7",
-  "prompt_bytes": 67539
+  "prompt_bytes": 67562
  },
  "tool-smtlink3": {
   "env": "8.7",
@@ -67,7 +67,7 @@
  "fw-definductive-exec": {
   "env": "master",
   "setup": "master",
-  "prompt_bytes": 3686
+  "prompt_bytes": 3899
  },
  "fw-multisets": {
   "env": "8.7",

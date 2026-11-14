@@ -942,8 +942,9 @@ A. Coglio and G. Jurgensen                                                      
 4. Invalid definitions are rejected with an ACL2 error, not a raw Lisp error: the paper's `no-proof-trees`,
    and premises that are `and`, `or`, `not` or `implies` of defined predicates. Show each with `must-fail` in
    `/work/examples.lisp`.
-5. The proofs that `definductive` generates do not depend on the current theory: every call in requirement 2
-   also succeeds after `(in-theory nil)` and after enabling unrelated rewrite rules.
+5. The proofs that `definductive` generates do not depend on the user's current theory: every call in
+   requirement 2 also succeeds after including unrelated arithmetic books and enabling unrelated rewrite
+   rules.
 6. Both books certify with `cert.pl`.
 </requirements>
 

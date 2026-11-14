@@ -787,13 +787,16 @@ References
 
 <requirements>
 1. `/work/src/arrayset.rs` is the Restricted Algorithmic Rust arrayset of Section 5.1 and compiles with
-   `rustc`. `free_head`, `used_head`, `aset_add`, `aset_del_head` and `aset_del` are as in Figures 5–6; write
-   `aset_transfer`, `aset_find_val_from` and `aset_init` from the text.
+   `rustc`. `free_head`, `used_head`, `aset_add`, `aset_del_head` and `aset_del` are as in Figures 5–6 (`uint`
+   in Figure 5 is not a Rust type; use an unsigned integer type of your choice); write `aset_transfer`,
+   `aset_find_val_from` and `aset_init` from the text.
 2. ACL2 code for these functions is produced mechanically by the RAC translator (`books/projects/rac`), from
    RAC source that your own transpiler or you produce from the Rust. The generated `ASET_DEL` has the form of
    Figure 7 and certifies against `rtl/rel11/lib/rac`. `/work/README.md` gives the commands.
-3. `/work/examples.lisp` reproduces the example of Figure 4(b) by execution with `assert-event` (the text of
-   Section 5 is authoritative where the figure differs).
+3. `/work/examples.lisp` reproduces the example of Figure 4 by execution with `assert-event`: from the state
+   of panel (a), `aset_del` of 22 gives the state of panel (b). The example has 5 usable cells, so use an
+   instance of your functions with `ARR_SZ` = 6 (the text of Section 5 is authoritative where the figure
+   differs).
 4. Prove `aset_add-val-at-used_head--thm` and `aset_del-val-at-free_head--thm` (Figure 8) and
    `aset_del_head-used-list--thm` and `aset_del_head-free-list--thm` (Figure 9), with the paper's names and
    statements, over your own `asetp`, preconditions, `no-dups-anext` and list functions.

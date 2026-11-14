@@ -454,11 +454,12 @@ References
    `propagate-not-reserrp-cells-at-depth-in-expr-value-list-when-vector`,
    `eval-app-list-when-primop-binary-and-bases`, `eval-app-when-funval-is-binary-op`,
    `undo-expr-value-with-nonempty-dims-3` and `eval-app-when-funval-is-binary-op-fully` (read `arg2l` as
-   `arg2`). If the interpreter has changed so that a statement must change, make the smallest change and list
-   every change in `/work/README.md`.
+   `arg2`, and `pos-listp` as `acl2::pos-listp`, which the REMORA package does not import). If the interpreter
+   has changed so that a statement must change, make the smallest change and list every change in
+   `/work/README.md`.
 3. Prove the commutativity corollary at the end of Section 3 for integer addition, in a statement of your own.
 4. `/work/examples.lisp` checks by evaluation the examples of Section 2: `[1 2] + [[1 2] [3 4]]` gives `[[2 3]
-   [5 6]]`, and the two ill-formed additions give errors.
+   [5 6]]`, and the ill-formed additions of Section 2 give errors.
 5. All books certify with `cert.pl`.
 </requirements>
 

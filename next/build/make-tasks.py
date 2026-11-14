@@ -165,11 +165,12 @@ TASKS["tool-remora"] = dict(env="master", setup="master", paper="gamboa-remora",
  "`propagate-not-reserrp-cells-at-depth-in-expr-value-list-when-vector`, "
  "`eval-app-list-when-primop-binary-and-bases`, `eval-app-when-funval-is-binary-op`, "
  "`undo-expr-value-with-nonempty-dims-3` and `eval-app-when-funval-is-binary-op-fully` (read `arg2l` as "
- "`arg2`). If the interpreter has changed so that a statement must change, make the smallest change and list "
- "every change in `/work/README.md`.",
+ "`arg2`, and `pos-listp` as `acl2::pos-listp`, which the REMORA package does not import). If the interpreter "
+ "has changed so that a statement must change, make the smallest change and list every change in "
+ "`/work/README.md`.",
  "Prove the commutativity corollary at the end of Section 3 for integer addition, in a statement of your own.",
  "`/work/examples.lisp` checks by evaluation the examples of Section 2: `[1 2] + [[1 2] [3 4]]` gives "
- "`[[2 3] [5 6]]`, and the two ill-formed additions give errors.",
+ "`[[2 3] [5 6]]`, and the ill-formed additions of Section 2 give errors.",
  "All books certify with `cert.pl`."])
 
 TASKS["tool-arrayset"] = dict(env="8.7", setup="8.7", paper="hardin-arrayset",
@@ -177,13 +178,16 @@ TASKS["tool-arrayset"] = dict(env="8.7", setup="8.7", paper="hardin-arrayset",
                               "make, rustc and cargo (no crate registry access)."),
  reqs=[
  "`/work/src/arrayset.rs` is the Restricted Algorithmic Rust arrayset of Section 5.1 and compiles with "
- "`rustc`. `free_head`, `used_head`, `aset_add`, `aset_del_head` and `aset_del` are as in Figures 5–6; write "
+ "`rustc`. `free_head`, `used_head`, `aset_add`, `aset_del_head` and `aset_del` are as in Figures 5–6 "
+ "(`uint` in Figure 5 is not a Rust type; use an unsigned integer type of your choice); write "
  "`aset_transfer`, `aset_find_val_from` and `aset_init` from the text.",
  "ACL2 code for these functions is produced mechanically by the RAC translator (`books/projects/rac`), from RAC "
  "source that your own transpiler or you produce from the Rust. The generated `ASET_DEL` has the form of Figure "
  "7 and certifies against `rtl/rel11/lib/rac`. `/work/README.md` gives the commands.",
- "`/work/examples.lisp` reproduces the example of Figure 4(b) by execution with `assert-event` (the text of "
- "Section 5 is authoritative where the figure differs).",
+ "`/work/examples.lisp` reproduces the example of Figure 4 by execution with `assert-event`: from the state of "
+ "panel (a), `aset_del` of 22 gives the state of panel (b). The example has 5 usable cells, so use an "
+ "instance of your functions with `ARR_SZ` = 6 (the text of Section 5 is authoritative where the figure "
+ "differs).",
  "Prove `aset_add-val-at-used_head--thm` and `aset_del-val-at-free_head--thm` (Figure 8) and "
  "`aset_del_head-used-list--thm` and `aset_del_head-free-list--thm` (Figure 9), with the paper's names and "
  "statements, over your own `asetp`, preconditions, `no-dups-anext` and list functions.",

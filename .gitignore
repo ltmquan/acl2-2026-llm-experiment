@@ -7,3 +7,4 @@
 *.pcert1
 *.acl2x
 .DS_Store
+__pycache__/

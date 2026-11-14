@@ -17,12 +17,12 @@
  "tool-remora": {
   "env": "master",
   "setup": "master",
-  "prompt_bytes": 35921
+  "prompt_bytes": 36013
  },
  "tool-arrayset": {
   "env": "8.7",
   "setup": "8.7",
-  "prompt_bytes": 51807
+  "prompt_bytes": 52062
  },
  "tool-aes-mir": {
   "env": "8.7",

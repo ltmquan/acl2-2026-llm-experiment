@@ -49,9 +49,11 @@ model must admit) or `optional.lisp` where present.
 6. **AES:** the paper's MIR JSON comes from the authors' hand-adapted copy of `fixslice32.rs`. The model
    gets the pristine crate (from crates.io) and an upstream Charon build, and does the adaptation and the JSON
    export itself (requirements 1–2).
-7. **Saving the work:** each prompt ends with `submit <id>`, which commits `/work` (without build outputs) to
-   a private results repository attached to the session and pushes it. This avoids rebuilding solutions from
-   transcripts, which experiment 2 needed for three papers.
+7. **Saving the work:** each prompt ends with `submit <id>`. It commits `/work` (without build outputs) and
+   pushes it to the branch `results/<id>` of this private repository. Each session is started on the nearly
+   empty branch `results-base`, so none of our files are on its disk. This avoids rebuilding solutions from
+   transcripts, which experiment 2 needed for three papers. A session could still fetch `main`, but nothing
+   there answers these tasks, and the audit flags any git fetch.
 
 ## Setups
 
@@ -61,8 +63,8 @@ GitHub). Both install from the public toolchain repository
 
 | Environment | `install.sh` arguments | Used by |
 |---|---|---|
-| 8.7 | `--acl2 8.7 --extra charon --apt "z3 erlang-nox flex" --input aes-0.9.1.crate --submit acl2-2026-llm-outputs` | all 8.7 tasks |
-| master | `--acl2 master --remove books/workshops/2026 --submit acl2-2026-llm-outputs` | `tool-remora`, `fw-definductive-exec`, `zfc-*` |
+| 8.7 | `--acl2 8.7 --extra charon --apt "z3 erlang-nox flex" --input aes-0.9.1.crate --submit acl2-2026-llm-experiment` | all 8.7 tasks |
+| master | `--acl2 master --remove books/workshops/2026 --submit acl2-2026-llm-experiment` | `tool-remora`, `fw-definductive-exec`, `zfc-*` |
 
 - **Leaks:**
   - The master tasks need master because their inputs exist only there (the Remora interpreter,

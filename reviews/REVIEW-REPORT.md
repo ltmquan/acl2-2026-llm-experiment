@@ -11,7 +11,7 @@ files listed at the end.
 |---|---|---|---|---|
 | 04 Chandy–Lamport | yes | yes; stronger in one respect | yes | Starting-state hypothesis differs from the paper's; segment-completion definitions are not used by the proof |
 | 05 Linear III | yes | yes, exactly | yes | Extra `booleanp` constraints on recognizers (not needed by the proof) |
-| 06 Fields | yes | yes | yes | Extension multiplication is not proved to be polynomial multiplication mod p |
+| 06 Fields | yes | yes | yes | Extension multiplication (`vapply`) equals multiplication mod p only by an informal argument from proved lemmas, plus tests; correct only for monic p, which `fieldp` requires |
 
 For all three, I found no problem that makes `MAIN` false, weaker than the prompt, or vacuous.
 
@@ -171,18 +171,66 @@ A certified book proves:
 - F₄ = F₂[x]/(x²+x+1) is a field;
 - α·α⁻¹ = 1 in F₄.
 
-**Potential problems.**
-1. **Moderate.** Extension multiplication is the solution's own step-by-step routine (`vapply`). It is not proved
-   to equal "multiply as polynomials, then take the remainder mod p", which is how the paper defines it. `MAIN`
-   proves the result is *a* field; it doesn't prove that the field is F[X]/p. Tests agree with hand calculation.
-2. **Moderate, related.** Divisibility, and therefore irreducibility and `fieldp`, uses the same routine. A bug in
-   it would affect both `fieldp` and multiplication, and neither would catch it.
-3. **Low.** The solution doesn't prove that an extension contains f or a root of p. Neither the prompt nor this part
-   of the paper asks for it.
-4. **Low.** Non-vacuity was checked for one level of extension only.
+**How extension multiplication is computed.** The paper defines it as "multiply as polynomials, then take the
+remainder mod p" (`prem(pmul x y, p)`). The solution computes it with its own routine, `vapply`:
+- **Elements** of the extension are residue vectors: lists of exactly n = deg p coefficients from the base field
+  `b`, constant term first.
+- **Multiplying by X** is `vtimesx`: shift the coefficients up one place, subtract (top coefficient)·p, and drop
+  the top coefficient.
+- **`vapply`** computes a·v by Horner's rule, multiplying by X with `vtimesx` at each step. So every intermediate
+  value stays reduced.
 
-**Suggested follow-up.** Prove that `vapply` equals multiplication followed by remainder mod p. That would close
-items 1 and 2.
+`vapply` serves three purposes:
+- field multiplication (`fmul`);
+- remainder: `pmod(a, p)` is `vapply(a, 1)`;
+- divisibility (`pdivides`), and through it irreducibility and `fieldp`.
+
+**The monic assumption.** The routine is correct only for **monic** p, i.e. leading coefficient 1:
+- **Why.** Subtracting (top coefficient)·p cancels the Xⁿ term only when p's leading coefficient is 1. For monic
+  p, X·v = shift(v) + v_{n−1}Xⁿ and Xⁿ ≡ −(p₀ + … + p_{n−1}X^{n−1}). So `vtimesx` is exactly "multiply by X, reduce
+  mod p", which is the formula proved as `vtimesx-as-shift`.
+- **By Horner's rule,** `vapply`(a, v) is then (a·v) mod p.
+- **What the file proves about `vapply`.** It is bilinear, commutative (`vapply-comm-vec`) and associative
+  (`vapply-assoc`). The constant 1 is a unit (`vapply-vone-left`, `vapply-vone-right-vec`). Shifting a's
+  coefficients applies `vtimesx` (`vapply-cons-zero`). For monic p, p acts as 0 (`vapply-modulus`). These pin down
+  multiplication in F[X]/(p).
+- **What is not proved.** No ACL2 theorem compares `vapply` with an independently defined polynomial product or
+  remainder; the file has no `pmul` or `prem`. The equivalence follows from the lemmas above by the short argument
+  in this paragraph, not by a mechanized proof.
+
+**On-domain: no difference.** For inputs `MAIN` can involve, `vapply`, `pmod` and `pdivides` agree with an
+independent schoolbook multiplication and long division. I checked 2,000 random cases, comparing the reference
+written in Python with the ACL2 functions evaluated on the certified solution:
+- base fields F₂, F₅, F₇ and Q;
+- monic p of degree 1–5, random a, and v of length deg p;
+- 400 of the cases had p genuinely dividing a.
+
+All 2,000 agreed.
+
+**Off-domain: real differences.**
+- **Non-monic p.** For p = 2x² + 1 over Q, `pmod` of x² gives −1, while the true remainder is −1/2. `vapply` gives
+  the same wrong answer for x·x.
+- **Wrong length.** A v with more than deg p coefficients is not reduced. For example, 1·(1 + x²) mod (x² − 2)
+  returns `(1 0 1)` instead of 3.
+
+Neither kind of input can reach `MAIN`:
+- `fieldp` requires the extension polynomial to be monic (`monicp`);
+- `fep` requires exactly deg p coefficients (`vecp`);
+- `reducible` only tests monic divisors q.
+
+**Potential problems.**
+1. **Low.** Extension multiplication, and with it remainder, divisibility, irreducibility and `fieldp`, rests on
+   `vapply`. Its equivalence to multiplication mod p follows from proved lemmas by a short informal argument and
+   agrees with an independent implementation on 2,000 cases. It is not stated as an ACL2 theorem. The routine is
+   wrong for non-monic p and for wrong-length vectors, but `fieldp` and `fep` exclude both. This corrects items 1–2
+   of `06-russinoff-fields-exp1.md`, which rated this **Moderate** before the lemmas and the independent test were
+   taken into account.
+2. **Low.** The solution doesn't prove that an extension contains f or a root of p. Neither the prompt nor this part
+   of the paper asks for it.
+3. **Low.** Non-vacuity was checked for one level of extension only.
+
+**Suggested follow-up.** Define `pmul` and a long-division `prem` in ACL2, and prove that `vapply` equals them for
+monic p and residue vectors. Most of the needed algebra is already proved. This would close item 1.
 
 ## How much the proofs rely on `:hints`
 
@@ -218,8 +266,9 @@ library, or different definitions. Each per-paper hints file explains this in de
 ## Things not checked
 
 - Topologies beyond two processes and concurrent snapshots for 04.
-- A two-level extension tower for 06.
-- That `vapply` is polynomial multiplication mod p for 06 (item 1 above).
+- A two-level extension tower for 06, including `vapply` tests with coefficients from an extension field; the
+  random tests used Q and prime fields only.
+- A mechanized proof that `vapply` is polynomial multiplication mod p for 06 (item 1 above).
 - Any experiment-2 solution beyond the subspace check for 05.
 
 ## Files in `reviews/`
@@ -237,4 +286,5 @@ library, or different definitions. Each per-paper hints file explains this in de
 | `06-russinoff-fields-exp1.md` | full 06 audit |
 | `06-russinoff-fields-exp1-nonvac.lisp` | non-vacuity book |
 | `06-russinoff-fields-exp1-hints.md`, `-solution-no-hints.lisp` | hints analysis |
+| `06-russinoff-fields-exp1-vapply-check/` | `vapply`/`pmod` tests against an independent implementation, and the off-domain examples |
 | `hint-reduction-tools/` | scripts used for the hints analyses |

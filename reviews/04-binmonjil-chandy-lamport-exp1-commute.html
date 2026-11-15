@@ -161,8 +161,9 @@
     <tr><td><code>(app-receive p j m ls)</code></td><td>effect of receiving <i>m</i> from <i>j</i></td><td><code>(:rcv p j m ls)</code></td></tr>
     <tr><td><code>(app-send-p p k ls)</code></td><td>send to neighbour <i>k</i>?</td><td>true when <code>ls</code> is <code>a1</code> or <code>a2</code></td></tr>
     <tr><td><code>(app-make-msg p k ls)</code></td><td>the message (never a marker: <code>app-make-msg-not-marker</code>)</td><td><code>m1</code> from process 1, <code>m2</code> from process 2</td></tr>
-    <tr><td><code>(in-nbrs p)</code>, <code>(out-nbrs p)</code></td><td>topology</td><td>1 ⇄ 2</td></tr>
-    <tr><td><code>(init-local p)</code>, <code>(sys-procs)</code></td><td>initial states, processes</td><td><code>l1</code>, <code>l2</code>; <code>(1 2)</code></td></tr>
+    <tr><td><code>(in-nbrs p)</code>, <code>(out-nbrs p)</code></td><td>topology (unconstrained)</td><td>depends on the topology chosen in section 2; 1 ⇄ 2 in the consistent one</td></tr>
+    <tr><td><code>(init-local p)</code></td><td>initial local states</td><td><code>l1</code>, <code>l2</code></td></tr>
+    <tr><td><code>(sys-procs)</code></td><td>process identifiers (unconstrained)</td><td><code>(1 2)</code>, or <code>(1 2 1)</code> in the duplicate-ids topology</td></tr>
   </table>
 </div>
 
@@ -175,6 +176,11 @@
   how <code>pre-inputs</code>/<code>post-inputs</code> classify it. A red <span class="pill" style="background:#c0392b;color:#fff;border-color:#c0392b">r<sub>p</sub></span>
   tag marks the input at which process <i>p</i> records its state for the target snapshot.
 </p>
+<div class="card" style="margin:10px 0">
+  <div class="toolbar" style="margin-top:0"><b style="font-size:14px">Topology:</b><span id="topoBtns" class="toolbar" style="margin:0"></span></div>
+  <div id="topoDesc" style="font-size:14px"></div>
+  <div class="note" style="margin-top:4px">The solution places no constraint on <code>in-nbrs</code>, <code>out-nbrs</code> or <code>sys-procs</code>, so all four are legal choices for the abstract topology. Section 5 explains why <code>MAIN</code> holds in each.</div>
+</div>
 <div class="legend">
   <span><span class="swatch" style="background:var(--prefix-bg);border:1.5px solid var(--prefix)"></span>prefix</span>
   <span><span class="swatch" style="background:var(--pre-bg);border:1.5px solid var(--pre)"></span>prerecording: <code>(recorded-p sid p s)</code> false before the input</span>
@@ -241,6 +247,63 @@
 </div>
 <div class="card" style="margin-top:16px" id="finalcmp"></div>
 
+<!-- ============================================================ -->
+<h2>5. The topology is unconstrained: why the theorem still holds</h2>
+<p>
+  The topology functions <code>in-nbrs</code>, <code>out-nbrs</code> and <code>sys-procs</code> are declared in the
+  solution's <code>encapsulate</code> with no constraints at all. The only constraint there is
+  <code>app-make-msg-not-marker</code>. The authors' model is stricter: its <code>good-state-p</code> requires unique
+  process ids (<code>uniquep</code>) and incoming/outgoing lists that agree (<code>nbrs-from-to-consistent-p</code>,
+  <code>nbrs-to-from-consistent-p</code>).
+</p>
+<p>
+  Because <code>MAIN</code> is proved about the unconstrained functions, it holds for <i>every</i> topology,
+  including ones the authors would reject. The proof doesn't need consistency because:
+</p>
+<ul>
+  <li><b>Swaps need only different processes and FIFO channels.</b> The commuting argument in section 4 looks at the
+    two processes of the swapped inputs and at the channel between them. It never uses <code>:in</code> lists
+    matching <code>:out</code> lists, or ids being unique. A channel that nobody can receive from is only ever
+    appended to, and appends at the tail commute with everything.</li>
+  <li><b>The marker invariant <code>cl-inv</code> only talks about <code>:out</code>.</b> It says: if q has recorded
+    sid, p has not, and p is in <code>(outs-of q s)</code>, then sid's marker is on channel <code>(q . p)</code>.
+    Every step preserves this in any topology, because recording always sends the marker on every outgoing
+    channel.</li>
+  <li><b>Inconsistency can only make segments fail to complete.</b> If a process waits for a marker that can never
+    arrive (from a non-process, or on a channel it cannot receive from), its snapshot entry stays
+    <code>:checkpointing</code>, <code>complete-segment-p</code> is never true, and <code>MAIN</code> holds
+    vacuously for that topology.</li>
+</ul>
+<div class="toolbar"><b style="font-size:14px">Switch topology:</b><span id="topoBtns2" class="toolbar" style="margin:0"></span></div>
+<div class="card">
+  <h3 style="margin-top:0">Exhaustive check: every legal segment of up to 7 inputs from <code>st</code></h3>
+  <table>
+    <tr><th>Topology</th><th>Segments enumerated</th><th>Complete segments</th><th><code>MAIN</code>'s conclusion holds</th><th>Final states equal</th><th>Reordered run legal</th><th>Swaps checked</th><th>Swaps that don't commute</th></tr>
+    <tr><td>Consistent (original)</td><td>92,920</td><td>772</td><td>772</td><td>772</td><td>772</td><td>307,296</td><td>0</td></tr>
+    <tr><td>Duplicate ids and neighbours</td><td>101,543</td><td>175</td><td>175</td><td>175</td><td>175</td><td>345,099</td><td>0</td></tr>
+    <tr><td>Sends without a matching receive</td><td>31,777</td><td>1,593</td><td>1,593</td><td>1,593</td><td>1,593</td><td>108,140</td><td>0</td></tr>
+    <tr><td>Neighbours that are not processes</td><td>93,394</td><td><b>0</b></td><td>(vacuous)</td><td>—</td><td>—</td><td>307,998</td><td>0</td></tr>
+  </table>
+  <p class="note">
+    Computed by <code>exhaustive.js</code> with the same model code as this page, from the same prefix. Each
+    enumerated segment starts with a <code>:checkpoint</code> input and is extended only while the target snapshot is
+    incomplete, so every segment that reaches completion is complete in the sense of <code>complete-segment-p</code>
+    (checked for each one). The model code was checked against ACL2 on 30 random executions per topology.
+  </p>
+</div>
+<p>
+  The <b>first three topologies</b> have complete segments, and in every one of them the reordered run reaches the same
+  final state. This is so even though the snapshot can be misleading there. In "sends without a matching receive",
+  message <code>m1</code> sits on <code>(1 . 2)</code> forever and is in no recorded channel state. In "duplicate ids",
+  2 receives every message from 1 twice. <code>MAIN</code> is a statement about reordering inputs, not about the
+  recorded snapshot being a meaningful global state, so these don't contradict it.
+</p>
+<p>
+  In the <b>fourth topology</b> there are no complete segments: <code>MAIN</code> is true, but says nothing. The
+  stronger lemma it is proved from, <code>reorder-from-state</code>, still applies to every legal execution, and the
+  swaps above still commute.
+</p>
+
 <details style="margin-top:28px">
   <summary>About this page</summary>
   <p class="note">
@@ -249,9 +312,10 @@
     <code>cl-step</code>, <code>legal-input</code>, <code>recorded-p</code>, <code>segment-target</code>,
     <code>checkpoint-complete</code>, <code>complete-segment-p</code>, <code>pre-inputs</code>, <code>post-inputs</code>,
     <code>state-equiv</code>). It was checked against ACL2 8.7 running the certified solution, with the same concrete
-    functions attached via <code>defattach</code>: on 41 executions (the example and 40 random legal ones), the final
-    state, <code>pre-inputs</code>, <code>post-inputs</code>, <code>complete-segment-p</code> and <code>state-equiv</code> of
-    the reordering all matched. The commuting checks on this page are computed, not assumed. The general proof is
+    functions attached via <code>defattach</code>. On 41 executions in the consistent topology (the example and 40 random
+    legal ones), and on 30 random executions in each of the four topologies (with matching <code>in-nbrs</code>,
+    <code>out-nbrs</code> and <code>sys-procs</code> attached), the final state, <code>pre-inputs</code>,
+    <code>post-inputs</code>, <code>complete-segment-p</code> and <code>state-equiv</code> of the reordering all matched. The commuting checks on this page are computed, not assumed. The general proof is
     <code>reorder-from-state</code> and <code>MAIN</code> in the solution. The message arrows in section 3 are
     bookkeeping for the picture only and are not part of the model's state.
   </p>
@@ -259,7 +323,6 @@
 </main>
 
 <script>
-
 class Pair { constructor(car, cdr) { this.car = car; this.cdr = cdr; } }
 
 function cons(a, b) {
@@ -316,16 +379,26 @@ const markerp = (m) => consp(m) && car(m) === ':marker';
 const markerSid = (m) => cdr(m);
 
 // ---- concrete application/topology (the attachments of reviews/04-...-exp1-eval.lsp)
+// Topologies. The solution's encapsulate places no constraint on in-nbrs, out-nbrs or sys-procs,
+// so every one of these is a legal attachment. The authors' good-state-p would reject B, C and D.
+const CONFIGS = {
+  consistent: { procs: [1, 2], in: { 1: [2], 2: [1] }, out: { 1: [2], 2: [1] } },
+  duplicates: { procs: [1, 2, 1], in: { 1: [2], 2: [1, 1] }, out: { 1: [2, 2], 2: [1] } },
+  'out-not-in': { procs: [1, 2], in: { 1: [2], 2: [] }, out: { 1: [2], 2: [1] } },
+  outside: { procs: [1, 2], in: { 1: [2], 2: [1, 3] }, out: { 1: [2, 9], 2: [1] } },
+};
+let TOPO = CONFIGS.consistent;
 const APP = {
   'app-compute': (p, ls) => ({ l1: 'a1', l2: 'a2', a1: 'b1' }[ls] || ls),
   'app-receive': (p, j, m, ls) => [':rcv', p, j, m, ls],
   'app-send-p': (p, k, ls) => ls === 'a1' || ls === 'a2',
   'app-make-msg': (p, k, ls) => (p === 1 ? 'm1' : 'm2'),
-  'in-nbrs': (p) => (p === 1 ? [2] : [1]),
-  'out-nbrs': (p) => (p === 1 ? [2] : [1]),
+  'in-nbrs': (p) => TOPO.in[p] || [],
+  'out-nbrs': (p) => TOPO.out[p] || [],
   'init-local': (p) => (p === 1 ? 'l1' : 'l2'),
-  'sys-procs': () => [1, 2],
+  'sys-procs': () => TOPO.procs,
 };
+function setTopology(name) { TOPO = CONFIGS[name]; }
 
 // ---- accessors
 const psOf = (p, st) => g(p, g(':pstates', st));
@@ -472,20 +545,47 @@ function toAcl2(x) {
 }
 
 
-
 // =====================================================================
 // Page logic
 // =====================================================================
 const PREFIX = [[1, ':compute'], [2, ':compute']];
-const EXAMPLE = [[1, ':checkpoint'], [1, ':compute'], [1, ':receive', 2], [2, ':receive', 1], [2, ':receive', 1], [1, ':receive', 2]];
-const CANDIDATES = [[1, ':compute'], [2, ':compute'], [1, ':checkpoint'], [2, ':checkpoint'], [1, ':receive', 2], [2, ':receive', 1]];
-const ST0 = clRun(initState(), PREFIX);
-
-let seg = EXAMPLE.map((x) => x.slice());
+// Topologies (CONFIGS in the model code). Examples were chosen with exhaustive.js.
+const TOPOLOGIES = {
+  consistent: {
+    title: 'Consistent (original)',
+    example: [[1, ':checkpoint'], [1, ':compute'], [1, ':receive', 2], [2, ':receive', 1], [2, ':receive', 1], [1, ':receive', 2]],
+    desc: 'Processes 1 and 2, channels both ways, each listed as the other\'s incoming and outgoing neighbour. This is a topology the authors\' <code>good-state-p</code> accepts.' },
+  duplicates: {
+    title: 'Duplicate ids and neighbours',
+    example: [[1, ':checkpoint'], [1, ':compute'], [1, ':receive', 2], [2, ':receive', 1], [2, ':receive', 1], [2, ':receive', 1], [1, ':receive', 2]],
+    desc: '<code>(sys-procs)</code> = <code>(1 2 1)</code>: process 1 is listed twice. <code>(out-nbrs 1)</code> = <code>(2 2)</code> and <code>(in-nbrs 2)</code> = <code>(1 1)</code>. Every message and marker 1 sends goes onto channel <code>(1 . 2)</code> twice, because <code>deliver</code> sends once per entry of <code>:out</code>. The second copy of the marker is an extra "later marker" for 2, and <code>local-ps</code> handles it without effect. The authors require unique ids (<code>uniquep</code> in <code>good-state-p</code>).' },
+  'out-not-in': {
+    title: 'Sends without a matching receive',
+    example: [[2, ':checkpoint'], [2, ':compute'], [1, ':compute'], [2, ':compute'], [1, ':receive', 2], [1, ':receive', 2]],
+    desc: '<code>(out-nbrs 1)</code> = <code>(2)</code> but <code>(in-nbrs 2)</code> = <code>nil</code>: 1 sends to 2, but 2 does not list 1 as incoming, so <code>legal-input</code> never lets 2 receive from 1. Channel <code>(1 . 2)</code> only grows. A snapshot started by 2 still completes: 2 expects no markers, so its entry is <code>:done</code> at once, and 1 records on 2\'s marker. The message stuck on <code>(1 . 2)</code> is in no recorded channel state. The authors require in/out lists to agree (<code>nbrs-from-to-consistent-p</code>, <code>nbrs-to-from-consistent-p</code>).' },
+  outside: {
+    title: 'Neighbours that are not processes',
+    example: [[1, ':checkpoint'], [1, ':compute'], [1, ':receive', 2], [2, ':receive', 1], [2, ':receive', 1]],
+    desc: '<code>(out-nbrs 1)</code> = <code>(2 9)</code> and <code>(in-nbrs 2)</code> = <code>(1 3)</code>, but the processes are only 1 and 2. Process 1 sends to 9 on channel <code>(1 . 9)</code>, which nothing can receive. Process 2 waits for a marker from 3, which will never come, so a snapshot that reaches 2 never completes and <b>no complete segment exists</b>. <code>MAIN</code> then holds only vacuously. The swaps below still commute, because the key lemma <code>reorder-from-state</code> holds for any legal execution.' },
+};
+let topo, ST0, PROCS, CHANNELS, CANDIDATES, EXAMPLE, seg;
 let cursor = 0;            // number of inputs of e already run
 let view = 'orig';
 let swapIdx = 0;           // number of swaps applied in section 4
 let playTimer = null;
+const isProc = (p) => PROCS.includes(p);
+function loadTopology(name) {
+  topo = name; setTopology(name);
+  ST0 = clRun(initState(), PREFIX);
+  PROCS = [...new Set(listOf(g(':procs', ST0)))];
+  const seen = new Set(); CHANNELS = [];
+  const add = (a, b) => { const k = a + '>' + b; if (!seen.has(k)) { seen.add(k); CHANNELS.push([a, b]); } };
+  for (const p of PROCS) { for (const o of listOf(APP['out-nbrs'](p))) add(p, o); for (const i of listOf(APP['in-nbrs'](p))) add(i, p); }
+  CANDIDATES = [];
+  for (const p of PROCS) { CANDIDATES.push([p, ':compute'], [p, ':checkpoint']); for (const j of PROCS) if (j !== p) CANDIDATES.push([p, ':receive', j]); }
+  EXAMPLE = TOPOLOGIES[name].example;
+  seg = EXAMPLE.map((x) => x.slice()); cursor = 0; swapIdx = 0; view = 'orig';
+}
 
 const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -542,21 +642,33 @@ function procCard(p, st, prev, active) {
   } else h += '<div class="snap note mono">:snaps nil</div>';
   return h + '</div>';
 }
-function chanBox(a, b, st, prev, rtl) {
+function chanNote(a, b) {
+  if (!isProc(a)) return `${a} is not a process: nothing is ever sent on this channel`;
+  if (!isProc(b)) return `${b} is not in (g :procs s): nothing can ever receive from this channel`;
+  if (!listOf(APP['in-nbrs'](b)).includes(a)) return `${b} does not list ${a} in :in, so legal-input never lets ${b} receive from it`;
+  if (!listOf(APP['out-nbrs'](a)).includes(b)) return `${a} does not list ${b} in :out, so nothing is ever sent on it`;
+  return '';
+}
+function chanBox(a, b, st, prev) {
+  const rtl = b === PROCS[0];
+  const note = chanNote(a, b);
   const msgs = listOf(chanOf(a, b, st));
   let pipe = msgs.map((m, i) => `<span class="msg ${markerp(m) ? 'marker' : ''} ${i === 0 ? 'head' : ''}" title="${i === 0 ? 'head' : ''}">${esc(markerp(m) ? '⟨marker ' + show(markerSid(m)) + '⟩' : show(m))}</span>`).join('');
   if (!msgs.length) pipe = '<span class="empty">empty</span>';
   const changed = prev && !equal(chanOf(a, b, st), chanOf(a, b, prev));
   return `<div class="chan ${changed ? 'changed' : ''}"><div class="lbl"><span>(chan-of ${a} ${b} s) ${rtl ? '← ' + b + ' to ' + a : a + ' to ' + b + ' →'}</span><span>head nearest ${b}</span></div>` +
-    `<div class="pipe ${rtl ? 'rtl' : ''}"><span class="arrow">${rtl ? '◀' : '▶'}</span>${pipe}</div></div>`;
+    `<div class="pipe ${rtl ? 'rtl' : ''}"><span class="arrow">${rtl ? '◀' : '▶'}</span>${pipe}</div>` +
+    (note ? `<div class="note" style="color:#8d2318;margin-top:3px">⚠ ${esc(note)}</div>` : '') + '</div>';
 }
 function renderState(A) {
   const st = A.states[cursor], prev = cursor > 0 ? A.states[cursor - 1] : null;
   const act = cursor < seg.length ? inProc(seg[cursor]) : null;
-  $('stateview').innerHTML = procCard(1, st, prev, act === 1) +
-    `<div class="chans">${chanBox(1, 2, st, prev, false)}${chanBox(2, 1, st, prev, true)}` +
-    `<div class="note mono" style="text-align:center">state after ${cursor} input(s) of e${cursor === 0 ? ' (= st)' : ''}; highlighted = changed by the last step</div></div>` +
-    procCard(2, st, prev, act === 2);
+  const [L, R] = PROCS;
+  $('stateview').innerHTML = procCard(L, st, prev, act === L) +
+    `<div class="chans">${CHANNELS.map(([a, b]) => chanBox(a, b, st, prev)).join('')}` +
+    `<div class="note mono" style="text-align:center">state after ${cursor} input(s) of e${cursor === 0 ? ' (= st)' : ''}; highlighted = changed by the last step` +
+    `<br>(g :procs s) = ${esc(show(g(':procs', st)))}</div></div>` +
+    procCard(R, st, prev, act === R);
 }
 function explainStep(st, x, sid) {
   const p = inProc(x), j = inSender(x), pso = psOf(p, st), head = headOf(st, x), out = localOut(x, pso, head);
@@ -584,7 +696,15 @@ function explainStep(st, x, sid) {
 function renderDetail(A) {
   const d = $('detail');
   if (cursor >= seg.length) {
-    d.innerHTML = `<b>End of e.</b> ${A.ok ? `<code>(checkpoint-complete ${lisp(A.sid)} (cl-run st e))</code> = ${checkpointComplete(A.sid, A.states[seg.length]) ? '<span class="pill ok">t</span>: every process holds the sid with <code>:status :done</code>' : '<span class="pill bad">nil</span>'}` : ''}`;
+    const fin = A.states[seg.length];
+    const per = A.ok ? PROCS.map((p) => {
+      const e = g(A.sid, g(':snaps', psOf(p, fin)));
+      if (!recordedP(A.sid, p, fin)) return `<li>process ${p}: has not recorded ${lisp(A.sid)}</li>`;
+      const ex = listOf(g(':expect', e));
+      return `<li>process ${p}: <code>:status ${esc(fmt(g(':status', e)))}</code>` + (ex.length ? `, still expects markers from <code>${esc(show(ex))}</code>` +
+        (ex.some((j) => !isProc(j)) ? ' (not a process, so this marker can never arrive)' : '') : '') + '</li>';
+    }).join('') : '';
+    d.innerHTML = `<b>End of e.</b> ${A.ok ? `<code>(checkpoint-complete ${lisp(A.sid)} (cl-run st e))</code> = ${checkpointComplete(A.sid, fin) ? '<span class="pill ok">t</span>: every process in <code>(g :procs s)</code> holds the sid with <code>:status :done</code>' : '<span class="pill bad">nil</span>'}<ul style="margin:4px 0 0 18px;padding:0">${per}</ul>` : ''}`;
     return;
   }
   const x = seg[cursor];
@@ -599,7 +719,8 @@ function renderStatus(A) {
     `<span class="pill">(segment-target st e) = ${lisp(A.sid)}</span>` +
     pill(legal, 'legal-exec') + pill(inc, 'incomplete-before-each') + pill(fin, 'checkpoint-complete at end') +
     pill(completeSegmentP(ST0, seg), '<b>complete-segment-p</b>') +
-    (completeSegmentP(ST0, seg) ? '' : '<span class="note">MAIN only applies to complete segments, but the swaps below are still checked</span>');
+    (completeSegmentP(ST0, seg) ? '' : '<span class="note">MAIN only applies to complete segments, but the swaps below are still checked' +
+      (topo === 'outside' ? '. In this topology no segment can complete: see section 5' : '') + '</span>');
 }
 function renderAppend() {
   const end = clRun(ST0, seg);
@@ -613,11 +734,11 @@ function trace(st, events) {
   // events: [{x, kind}]; shadow channel queues of {from: event index} mirror pop-chans/deliver order
   const q = {}; const key = (a, b) => a + '>' + b; const arrows = [];
   // messages already in flight at st (sent during the prefix)
-  for (const a of [1, 2]) for (const b of [1, 2]) q[key(a, b)] = listOf(chanOf(a, b, st)).map((m) => ({ from: -1, m }));
+  for (const [a, b] of CHANNELS) q[key(a, b)] = listOf(chanOf(a, b, st)).map((m) => ({ from: -1, m }));
   events.forEach((ev, i) => {
     const x = ev.x, p = inProc(x), head = headOf(st, x), out = localOut(x, psOf(p, st), head);
     if (recvP(x)) { const k = key(inSender(x), p); const item = q[k].shift(); arrows.push({ from: item.from, to: i, a: inSender(x), b: p, m: item.m }); }
-    for (const o of listOf(out)) q[key(p, o.car)].push({ from: i, m: o.cdr });
+    for (const o of listOf(out)) (q[key(p, o.car)] = q[key(p, o.car)] || []).push({ from: i, m: o.cdr });
     st = clStep(st, x);
   });
   for (const k in q) for (const item of q[k]) { const [a, b] = k.split('>').map(Number); arrows.push({ from: item.from, to: null, a, b, m: item.m }); }
@@ -630,46 +751,60 @@ function renderSpaceTime(A) {
   const idxs = view === 'orig' ? seg.map((_, i) => i) : [...seg.keys()].filter((i) => A.labels[i] === 'pre').concat([...seg.keys()].filter((i) => A.labels[i] === 'post'));
   const events = idxs.map((i) => ({ x: seg[i], label: A.labels[i], rp: A.rp[i], orig: i }));
   const arrows = trace(ST0, events);
-  const X0 = 110, DX = Math.max(70, Math.min(110, 900 / Math.max(events.length, 1))), Y = { 1: 60, 2: 170 };
+  const X0 = 110, DX = Math.max(70, Math.min(110, 900 / Math.max(events.length, 1))), Y = Object.fromEntries(PROCS.map((p, i) => [p, 60 + 110 * i]));
+  // destinations that are not processes get a dashed lane of their own, below the processes
+  const GHOSTS = [...new Set(CHANNELS.map(([, b]) => b).filter((b) => !isProc(b)))];
+  GHOSTS.forEach((b, i) => { Y[b] = 60 + 110 * (PROCS.length + i); });
+  const H = 60 + 110 * (PROCS.length + GHOSTS.length - 1) + 60;
   const W = X0 + DX * (events.length + 1) + 40;
-  svg.setAttribute('width', W); svg.setAttribute('viewBox', `0 0 ${W} 230`);
+  svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   const ex = (i) => X0 + DX * (i + 0.5);
   let h = `<defs>
     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5d6677"/></marker>
     <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a46c9"/></marker></defs>`;
-  for (const p of [1, 2]) h += `<line x1="${X0 - 20}" y1="${Y[p]}" x2="${W - 20}" y2="${Y[p]}" stroke="#c9ced8" stroke-width="2"/><text x="10" y="${Y[p] + 4}" font-size="13" fill="#1d2433">process ${p}</text>`;
+  for (const p of PROCS) h += `<line x1="${X0 - 20}" y1="${Y[p]}" x2="${W - 20}" y2="${Y[p]}" stroke="#c9ced8" stroke-width="2"/><text x="10" y="${Y[p] + 4}" font-size="13" fill="#1d2433">process ${p}</text>`;
+  for (const b of GHOSTS) h += `<line x1="${X0 - 20}" y1="${Y[b]}" x2="${W - 20}" y2="${Y[b]}" stroke="#d9a3a0" stroke-width="2" stroke-dasharray="6 5"/><text x="10" y="${Y[b] - 4}" font-size="13" fill="#8d2318">${b}</text><text x="10" y="${Y[b] + 12}" font-size="10" fill="#8d2318">not a process</text>`;
   // prefix region label
   h += `<text x="${X0 - 14}" y="20" font-size="11" fill="#8a919e">st</text>`;
   // arrows
+  const stack = {};   // in-flight arrows ending on the same lane get stacked labels
   for (const a of arrows) {
     const x1 = a.from < 0 ? X0 - 10 : ex(a.from), x2 = a.to === null ? W - 24 : ex(a.to);
-    const y1 = Y[a.a], y2 = Y[a.b], mk = markerp(a.m);
+    const mk = markerp(a.m), y1 = Y[a.a], outside = !isProc(a.b), y2 = Y[a.b];
+    const why = outside ? ` (to ${a.b}, not a process)` : a.to === null && !listOf(APP['in-nbrs'](a.b)).includes(a.a) ? ' (can never be received)' : a.to === null ? ' (in flight)' : '';
     const lbl = mk ? '⟨M⟩' : show(a.m);
-    h += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2 + (y2 > y1 ? -9 : 9)}" stroke="${mk ? '#8a46c9' : '#5d6677'}" stroke-width="1.6" ${mk ? 'stroke-dasharray="5 4"' : ''} marker-end="url(#${mk ? 'am' : 'ah'})" opacity="0.85"/>`;
-    const t = a.to === null ? 0.5 : 0.8;   // label near the arrowhead, where arrows are apart
-    h += `<text x="${x1 + (x2 - x1) * t - 6}" y="${y1 + (y2 - y1) * t + (y2 > y1 ? -2 : 14)}" text-anchor="end" font-size="11" paint-order="stroke" stroke="#fff" stroke-width="4" fill="${mk ? '#8a46c9' : '#5d6677'}">${esc(lbl)}${a.to === null ? ' (in flight)' : ''}${a.from < 0 ? ' (from prefix)' : ''}</text>`;
+    h += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2 + (y2 > y1 ? -9 : y2 < y1 ? 9 : 0)}" stroke="${mk ? '#8a46c9' : '#5d6677'}" stroke-width="1.6" ${mk ? 'stroke-dasharray="5 4"' : ''} marker-end="url(#${mk ? 'am' : 'ah'})" opacity="0.85"/>`;
+    let lx, ly;
+    if (a.to === null) {   // label just left of the arrowhead, stacked per destination lane
+      const k = stack[a.b] = (stack[a.b] || 0) + 1;
+      lx = x2 - 14; ly = y2 + (y2 > y1 ? -14 : 18) + (y2 > y1 ? -14 : 14) * (k - 1);
+    } else { const t = 0.8; lx = x1 + (x2 - x1) * t - 6; ly = y1 + (y2 - y1) * t + (y2 > y1 ? -2 : 14); }
+    h += `<text x="${lx}" y="${ly}" text-anchor="end" font-size="11" paint-order="stroke" stroke="#fff" stroke-width="4" fill="${mk ? '#8a46c9' : '#5d6677'}">${esc(lbl)}${why}${a.from < 0 ? ' (from prefix)' : ''}</text>`;
   }
   // cut
   if (view === 'orig') {
     const pts = [];
-    for (const p of [1, 2]) {
+    for (const p of PROCS) {
       const k = events.findIndex((e) => e.rp && inProc(e.x) === p);
-      const xk = k < 0 ? null : ex(k) + DX * 0.45;
-      if (xk !== null) pts.push([xk, Y[p]]);
+      // a process that never records has all its inputs prerecording: the cut passes after its last input
+      const xk = k >= 0 ? ex(k) + DX * 0.45 : W - 30;
+      pts.push([xk, Y[p]]);
+      if (k < 0) h += `<text x="${W - 26}" y="${Y[p] - 8}" font-size="11" text-anchor="end" fill="#c0392b">${p} never records</text>`;
     }
-    if (pts.length === 2) h += `<polyline points="${pts[0][0]},${Y[1] - 40} ${pts[0][0]},${Y[1]} ${pts[1][0]},${Y[2]} ${pts[1][0]},${Y[2] + 40}" fill="none" stroke="#c0392b" stroke-width="2.5" opacity="0.8"/><text x="${pts[0][0] + 4}" y="${Y[1] - 30}" font-size="12" fill="#c0392b">cut</text>`;
+    const top = Y[PROCS[0]], bot = Y[PROCS[PROCS.length - 1]];
+    h += `<polyline points="${pts[0][0]},${top - 40} ${pts.map(([x, y]) => x + ',' + y).join(' ')} ${pts[pts.length - 1][0]},${bot + 40}" fill="none" stroke="#c0392b" stroke-width="2.5" opacity="0.8"/><text x="${pts[0][0] + 4}" y="${top - 30}" font-size="12" fill="#c0392b">cut</text>`;
   } else {
     const xb = X0 + DX * pre.length;
-    h += `<line x1="${xb}" y1="${Y[1] - 40}" x2="${xb}" y2="${Y[2] + 40}" stroke="#c0392b" stroke-width="2.5" opacity="0.8"/><text x="${xb + 4}" y="${Y[1] - 30}" font-size="12" fill="#c0392b">cut: pre | post</text>`;
+    h += `<line x1="${xb}" y1="${Y[PROCS[0]] - 40}" x2="${xb}" y2="${Y[PROCS[PROCS.length - 1]] + 40}" stroke="#c0392b" stroke-width="2.5" opacity="0.8"/><text x="${xb + 4}" y="${Y[PROCS[0]] - 30}" font-size="12" fill="#c0392b">cut: pre | post</text>`;
   }
   // events
   events.forEach((e, i) => {
     const p = inProc(e.x), col = e.label === 'pre' ? '#2f6fd6' : '#d9822b', bg = e.label === 'pre' ? '#e6efff' : '#fff0df';
     const short = { ':compute': 'comp', ':checkpoint': 'ckpt', ':receive': 'rcv←' + inSender(e.x) }[inType(e.x)];
     h += `<circle cx="${ex(i)}" cy="${Y[p]}" r="9" fill="${bg}" stroke="${col}" stroke-width="2.2"/>`;
-    h += `<text x="${ex(i)}" y="${Y[p] + (p === 1 ? -16 : 26)}" font-size="11" text-anchor="middle" fill="#1d2433">${esc(short)}</text>`;
+    h += `<text x="${ex(i)}" y="${Y[p] + (p === PROCS[0] ? -16 : 26)}" font-size="11" text-anchor="middle" fill="#1d2433">${esc(short)}</text>`;
     h += `<text x="${ex(i)}" y="${Y[p] + 4}" font-size="9" text-anchor="middle" fill="${col}">${e.orig}</text>`;
-    if (e.rp) h += `<text x="${ex(i)}" y="${Y[p] + (p === 1 ? -30 : 40)}" font-size="11" text-anchor="middle" fill="#c0392b">r${p}</text>`;
+    if (e.rp) h += `<text x="${ex(i)}" y="${Y[p] + (p === PROCS[0] ? -30 : 40)}" font-size="11" text-anchor="middle" fill="#c0392b">r${p}</text>`;
   });
   svg.innerHTML = h;
   // inversions
@@ -696,12 +831,11 @@ function swapPlan(A) {
   return { steps, final: items };
 }
 function mini(st, title, hl) {
-  const lines = [1, 2].map((p) => {
+  const lines = PROCS.map((p) => {
     const ps = psOf(p, st);
     return `<b>${p}</b> :app ${esc(fmt(g(':app', ps)))} · :counter ${esc(fmt(g(':counter', ps)))} · :sids ${esc(fmt(g(':sids', ps)))}`;
   });
-  lines.push(`(1 . 2) ${esc(listOf(chanOf(1, 2, st)).map(fmt).join(' ') || '—')}`);
-  lines.push(`(2 . 1) ${esc(listOf(chanOf(2, 1, st)).map(fmt).join(' ') || '—')}`);
+  for (const [a, b] of CHANNELS) lines.push(`(${a} . ${b}) ${esc(listOf(chanOf(a, b, st)).map(fmt).join(' ') || '—')}`);
   return `<div class="mini" style="${hl || ''}"><div class="note" style="margin-bottom:2px">${title}</div>${lines.join('<br>')}</div>`;
 }
 function whyText(s) {
@@ -762,7 +896,8 @@ function renderSwaps(A) {
   const pre = preInputs(A.sid, ST0, seg), post = postInputs(A.sid, ST0, seg);
   const F1 = clRun(ST0, [...pre, ...post]), F2 = clRun(ST0, seg);
   const sorted = plan.final.map((it) => it.x);
-  $('finalcmp').innerHTML = `<h3 style="margin-top:0">MAIN's conclusion for this e</h3>
+  $('finalcmp').innerHTML = `<h3 style="margin-top:0">${completeSegmentP(ST0, seg) ? "MAIN's conclusion for this e" : "Reordering result for this e"}</h3>
+    ${completeSegmentP(ST0, seg) ? '' : '<p class="note">This e is not a complete segment, so <code>MAIN</code> does not apply. The equality below comes from the lemma <code>MAIN</code> is proved from, <code>reorder-from-state</code>, which holds for any legal execution from a state satisfying the marker invariant.</p>'}
     <div class="toolbar"><span class="pill pre">pre-inputs: ${esc(pre.map(inputStr).join(' ') || 'nil')}</span><span class="pill post">post-inputs: ${esc(post.map(inputStr).join(' ') || 'nil')}</span></div>
     <div class="toolbar">
       <span class="pill ${stateEquiv(F1, F2) ? 'ok' : 'bad'}">(state-equiv (cl-run st (append pre post)) (cl-run st e)) = ${stateEquiv(F1, F2) ? 't' : 'nil'}</span>
@@ -776,6 +911,7 @@ function renderSwaps(A) {
 function stopPlay() { if (playTimer) { clearInterval(playTimer); playTimer = null; $('c-play').textContent = '▶ play all'; } }
 
 function render() {
+  renderTopo();
   const A = analyse();
   cursor = Math.max(0, Math.min(cursor, seg.length));
   renderTimeline(A); renderState(A); renderDetail(A); renderStatus(A); renderAppend(); renderSpaceTime(A); renderSwaps(A);
@@ -788,6 +924,17 @@ $('b-next').onclick = () => { cursor++; render(); };
 $('b-last').onclick = () => { cursor = seg.length; render(); };
 $('b-pop').onclick = () => { seg.pop(); swapIdx = 0; render(); };
 $('b-example').onclick = () => { seg = EXAMPLE.map((x) => x.slice()); cursor = 0; swapIdx = 0; render(); };
+function renderTopo() {
+  const btns = Object.entries(TOPOLOGIES).map(([k, t]) => `<button data-t="${k}" class="${k === topo ? 'primary' : ''}">${esc(t.title)}</button>`).join('');
+  for (const id of ['topoBtns', 'topoBtns2']) {
+    $(id).innerHTML = btns;
+    $(id).querySelectorAll('button').forEach((b) => b.onclick = () => { stopPlay(); loadTopology(b.dataset.t); render(); });
+  }
+  const T = TOPOLOGIES[topo];
+  $('topoDesc').innerHTML = `<b>${esc(T.title)}.</b> ${T.desc}<div class="mono note" style="margin-top:4px">` +
+    PROCS.map((p) => `(in-nbrs ${p}) = ${esc(show(listOf(APP['in-nbrs'](p))))} · (out-nbrs ${p}) = ${esc(show(listOf(APP['out-nbrs'](p))))}`).join('<br>') +
+    `<br>(sys-procs) = ${esc(show(APP['sys-procs']()))}</div>`;
+}
 $('v-orig').onclick = () => { view = 'orig'; render(); };
 $('v-reord').onclick = () => { view = 'reord'; render(); };
 $('c-prev').onclick = () => { stopPlay(); swapIdx--; renderSwaps(analyse()); };
@@ -797,7 +944,8 @@ $('c-play').onclick = () => {
   swapIdx = 0; renderSwaps(analyse()); $('c-play').textContent = '■ stop';
   playTimer = setInterval(() => { const n = swapPlan(analyse()).steps.length; if (swapIdx >= n) return stopPlay(); swapIdx++; renderSwaps(analyse()); }, 1400);
 };
-$('verified').innerHTML = 'The port was checked against ACL2 on 41 executions (see the note at the bottom).';
+$('verified').innerHTML = 'The port was checked against ACL2 on 161 executions over four topologies (see the note at the bottom).';
+loadTopology('consistent');
 render();
 </script>
 </body>

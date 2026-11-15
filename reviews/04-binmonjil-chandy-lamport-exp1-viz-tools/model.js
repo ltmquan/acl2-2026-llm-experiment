@@ -59,16 +59,26 @@ const markerp = (m) => consp(m) && car(m) === ':marker';
 const markerSid = (m) => cdr(m);
 
 // ---- concrete application/topology (the attachments of reviews/04-...-exp1-eval.lsp)
+// Topologies. The solution's encapsulate places no constraint on in-nbrs, out-nbrs or sys-procs,
+// so every one of these is a legal attachment. The authors' good-state-p would reject B, C and D.
+const CONFIGS = {
+  consistent: { procs: [1, 2], in: { 1: [2], 2: [1] }, out: { 1: [2], 2: [1] } },
+  duplicates: { procs: [1, 2, 1], in: { 1: [2], 2: [1, 1] }, out: { 1: [2, 2], 2: [1] } },
+  'out-not-in': { procs: [1, 2], in: { 1: [2], 2: [] }, out: { 1: [2], 2: [1] } },
+  outside: { procs: [1, 2], in: { 1: [2], 2: [1, 3] }, out: { 1: [2, 9], 2: [1] } },
+};
+let TOPO = CONFIGS.consistent;
 const APP = {
   'app-compute': (p, ls) => ({ l1: 'a1', l2: 'a2', a1: 'b1' }[ls] || ls),
   'app-receive': (p, j, m, ls) => [':rcv', p, j, m, ls],
   'app-send-p': (p, k, ls) => ls === 'a1' || ls === 'a2',
   'app-make-msg': (p, k, ls) => (p === 1 ? 'm1' : 'm2'),
-  'in-nbrs': (p) => (p === 1 ? [2] : [1]),
-  'out-nbrs': (p) => (p === 1 ? [2] : [1]),
+  'in-nbrs': (p) => TOPO.in[p] || [],
+  'out-nbrs': (p) => TOPO.out[p] || [],
   'init-local': (p) => (p === 1 ? 'l1' : 'l2'),
-  'sys-procs': () => [1, 2],
+  'sys-procs': () => TOPO.procs,
 };
+function setTopology(name) { TOPO = CONFIGS[name]; }
 
 // ---- accessors
 const psOf = (p, st) => g(p, g(':pstates', st));
@@ -214,7 +224,7 @@ function toAcl2(x) {
   }
 }
 
-const MODEL = { Pair, Rec, cons, car, cdr, consp, listOf, show, equal, g, s, marker, markerp, markerSid, APP,
+const MODEL = { Pair, Rec, cons, car, cdr, consp, listOf, show, equal, g, s, marker, markerp, markerSid, APP, CONFIGS, setTopology,
   psOf, sidsOf, outsOf, insOf, chanOf, inProc, inType, inSender, recvP, localPs, localOut, headOf, popChans,
   deliver, clStep, clRun, legalInput, legalExec, initState, recordedP, checkpointComplete, segmentTarget,
   completeSegmentP, classify, preInputs, postInputs, stateEquiv, recordMsg, toAcl2 };

@@ -66,6 +66,18 @@ the proof does not need.
    map only by functional instantiation. That is the paper's own method, and the non-vacuity book shows it works.
 5. **Note. "Basis is a list of dim V vectors"** is encoded as "basis is a true list of vectors" with dim V defined
    as its length. Same as the paper's `vlistnp-basis0`.
+6. **Note. No theory of subspaces.** The solution does not define subspaces, subspace dimension, kernels or images.
+   This is out of scope for experiment 1, not a gap in the solution:
+   - **The prompt doesn't ask for it.** `exp1/prompt.txt` defines only V, W, T, injective and surjective.
+   - **The paper doesn't use subspaces for this theorem.** In the authors' `vectors.lisp`, the two results the prompt
+     combines, `injection-dim-<=` (line 1135) and `injection-surjection-dim-=` (line 1152), come before the subspace
+     section (line 1245). Their proof sketches (lines 1129–1150) use only bases and linear dependence.
+   - **Experiment 2 covers the subspace results.** `MAIN-4` (`sdim-well-defined`, well-defined subspace dimension),
+     `MAIN-5` (basis of the kernel) and `MAIN-6` (basis of the image) are experiment-2 targets. The experiment-2
+     solution proves all six targets, also on ACL2 master (`harness/master-recheck.txt:9`).
+
+   If the subspace results should also have been tested in experiment 1, that is a point about how the prompt was
+   chosen, not about this solution.
 
 ## Suggested follow-up
 

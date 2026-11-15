@@ -1,0 +1,23 @@
+; Concrete evaluation of 04-binmonjil-chandy-lamport/exp1/solution.lisp (reviewer addition, not part of the run).
+; Not a book: attaches concrete functions with defattach so the model can be run. Use: acl2 < this-file
+
+(include-book "solution")
+(defun c-compute (p ls) (declare (xargs :guard t)) (declare (ignore p)) (case ls (l1 (quote a1)) (l2 (quote a2)) (a1 (quote b1)) (t ls)))
+(defun c-receive (p j m ls) (declare (xargs :guard t)) (list :rcv p j m ls))
+(defun c-send-p (p k ls) (declare (xargs :guard t)) (declare (ignore p k)) (member-equal ls (quote (a1 a2))))
+(defun c-make-msg (p k ls) (declare (xargs :guard t)) (declare (ignore k ls)) (if (equal p 1) (quote m1) (quote m2)))
+(defun c-in (p) (declare (xargs :guard t)) (if (equal p 1) (quote (2)) (quote (1))))
+(defun c-init (p) (declare (xargs :guard t)) (if (equal p 1) (quote l1) (quote l2)))
+(defun c-procs () (declare (xargs :guard t)) (quote (1 2)))
+(defattach (app-compute c-compute) (app-receive c-receive) (app-send-p c-send-p)
+  (app-make-msg c-make-msg) (in-nbrs c-in) (out-nbrs c-in) (init-local c-init) (sys-procs c-procs))
+(defmacro st0 () (quote (cl-run (init-state) (quote ((1 :compute) (2 :compute))))))
+(defconst *seg* (quote ((1 :checkpoint) (1 :compute) (1 :receive 2) (2 :receive 1) (2 :receive 1) (1 :receive 2))))
+(st0)
+(complete-segment-p (st0) *seg*)
+(pre-inputs (segment-target (st0) *seg*) (st0) *seg*)
+(post-inputs (segment-target (st0) *seg*) (st0) *seg*)
+(cl-run (st0) *seg*)
+(equal (cl-run (st0) *seg*) (cl-run (st0) (append (pre-inputs (segment-target (st0) *seg*) (st0) *seg*) (post-inputs (segment-target (st0) *seg*) (st0) *seg*))))
+(complete-segment-p (st0) (append *seg* (quote ((2 :compute)))))
+(complete-segment-p (st0) (butlast *seg* 1))

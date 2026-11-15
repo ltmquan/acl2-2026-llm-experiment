@@ -1,0 +1,51 @@
+FROM debian:bookworm-slim AS sbcl
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG SBCL_TAG=sbcl-2.6.1
+
+RUN apt-get update && \
+    apt-get install -y git build-essential sbcl
+
+WORKDIR /root
+RUN git clone https://git.code.sf.net/p/sbcl/sbcl --depth 1 -b ${SBCL_TAG} sbcl
+
+ENV INSTALL_ROOT=/opt/sbcl
+RUN cd sbcl && sh make.sh && sh install.sh
+
+ENV SBCL_HOME=/opt/sbcl/lib/sbcl
+
+
+FROM debian:bookworm-slim AS acl2
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y git build-essential perl
+
+ENV SBCL_HOME=/opt/sbcl/lib/sbcl
+COPY --from=sbcl /opt/sbcl /opt/sbcl
+
+ENV ACL2_LISP=/opt/sbcl/bin/sbcl
+
+# ACL2 8.7 (tag 8.7). Full SHA is needed to fetch a single commit shallowly.
+ARG ACL2_COMMIT=bc6f4f49e81a0711214a8d91f0d06e0e084d2204
+
+WORKDIR /root/acl2
+RUN git init -q && \
+    git remote add origin https://github.com/acl2/acl2.git && \
+    git fetch -q --depth 1 origin ${ACL2_COMMIT} && \
+    git checkout -q FETCH_HEAD
+
+ENV ACL2_REPO_PATH=/root/acl2
+ENV ACL2_SYSTEM_BOOKS=${ACL2_REPO_PATH}/books
+
+RUN make LISP=${ACL2_LISP}
+
+RUN mkdir -p /usr/local/bin && \
+    ln -s ${ACL2_REPO_PATH}/saved_acl2 /usr/local/bin/acl2 && \
+    ln -s ${ACL2_REPO_PATH}/books/build/cert.pl /usr/local/bin/cert.pl
+
+ENV PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+WORKDIR /root

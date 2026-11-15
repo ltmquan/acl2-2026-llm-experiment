@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chandy–Lamport in ACL2: the exp1 model, and why pre/post steps commute</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --ink: #1d2433; --muted: #5d6677; --line: #d9dce3; --card: #ffffff;
+    --pre: #2f6fd6; --pre-bg: #e6efff; --post: #d9822b; --post-bg: #fff0df;
+    --marker: #8a46c9; --marker-bg: #f3e9ff; --prefix: #8a919e; --prefix-bg: #eef0f3;
+    --ok: #1e8449; --ok-bg: #e3f4e8; --bad: #c0392b; --bad-bg: #fde2e1; --hl: #fff6bf;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 28px 24px 80px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  h2 { font-size: 20px; margin: 44px 0 6px; padding-top: 8px; border-top: 1px solid var(--line); }
+  h3 { font-size: 15px; margin: 18px 0 6px; }
+  p { margin: 6px 0 10px; max-width: 900px; }
+  .lede { color: var(--muted); max-width: 900px; }
+  code, .mono { font-family: var(--mono); font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .note { font-size: 13px; color: var(--muted); }
+  button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: #fff; border-radius: 7px;
+           padding: 5px 10px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: #9aa3b5; }
+  button:disabled { opacity: .45; cursor: default; }
+  button.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 8px 0; }
+  .pill { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 2px 8px; border-radius: 999px;
+          border: 1px solid var(--line); background: #fff; white-space: nowrap; }
+  .pill.pre { background: var(--pre-bg); border-color: var(--pre); color: #183f80; }
+  .pill.post { background: var(--post-bg); border-color: var(--post); color: #7a4210; }
+  .pill.prefix { background: var(--prefix-bg); border-color: var(--prefix); color: #4b5160; }
+  .pill.ok { background: var(--ok-bg); border-color: var(--ok); color: #145c32; }
+  .pill.bad { background: var(--bad-bg); border-color: var(--bad); color: #8d2318; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); align-items: center; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
+
+  /* timeline */
+  .timeline { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+  .chip { font-family: var(--mono); font-size: 12px; padding: 4px 8px; border-radius: 7px; border: 1.5px solid; cursor: pointer;
+          position: relative; background: #fff; }
+  .chip.pre { border-color: var(--pre); background: var(--pre-bg); }
+  .chip.post { border-color: var(--post); background: var(--post-bg); }
+  .chip.prefix { border-color: var(--prefix); background: var(--prefix-bg); color: #4b5160; cursor: default; }
+  .chip.done { opacity: .55; }
+  .chip.current { outline: 3px solid var(--ink); outline-offset: 1px; opacity: 1; }
+  .chip .idx { font-size: 10px; color: var(--muted); margin-right: 4px; }
+  .chip .rp { position: absolute; top: -9px; right: -6px; font-size: 10px; background: #c0392b; color: #fff;
+              border-radius: 6px; padding: 0 4px; font-family: var(--mono); }
+  .sep { color: var(--muted); font-size: 12px; margin: 0 4px; }
+
+  /* state view */
+  .stateview { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 12px; align-items: stretch; }
+  .proc { background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+  .proc.active { border-color: var(--ink); box-shadow: 0 0 0 3px #1d24331a; }
+  .proc h4 { margin: 0 0 6px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .kv { display: grid; grid-template-columns: 74px 1fr; gap: 2px 8px; font-family: var(--mono); font-size: 12px; }
+  .kv .k { color: var(--muted); }
+  .kv .v { word-break: break-word; }
+  .snap { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 6px; }
+  .snap .title { font-family: var(--mono); font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .changed { background: var(--hl); border-radius: 3px; }
+  .chans { display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+  .chan { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+  .chan .lbl { font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+  .pipe { display: flex; align-items: center; gap: 5px; min-height: 30px; margin-top: 4px; padding: 3px 6px; border-radius: 6px;
+          background: repeating-linear-gradient(90deg, #f3f4f7 0 8px, #fafbfc 8px 16px); }
+  .pipe.rtl { flex-direction: row-reverse; }
+  .msg { font-family: var(--mono); font-size: 12px; padding: 2px 7px; border-radius: 5px; border: 1px solid #b8c0cc; background: #fff; }
+  .msg.marker { border-color: var(--marker); background: var(--marker-bg); color: #4d1f80; }
+  .msg.head { box-shadow: 0 0 0 2px #1d243333; }
+  .arrow { color: var(--muted); font-size: 18px; }
+  .empty { color: var(--muted); font-size: 12px; font-style: italic; }
+
+  /* step detail */
+  .detail { margin-top: 12px; }
+  .detail ol { margin: 4px 0 0 18px; padding: 0; }
+  .detail li { margin: 3px 0; }
+
+  /* space-time */
+  svg text { font-family: var(--mono); }
+  .st-wrap { overflow-x: auto; }
+
+  /* commute */
+  .swaplist { font-family: var(--mono); font-size: 12px; }
+  .swaprow { padding: 6px 8px; border-radius: 7px; cursor: pointer; display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+  .swaprow:hover { background: #f1f2f5; }
+  .swaprow.sel { background: #eceef3; outline: 1px solid var(--line); }
+  .swaprow .n { color: var(--muted); width: 26px; }
+  .mini { font-family: var(--mono); font-size: 11.5px; line-height: 1.45; background: #fff; border: 1px solid var(--line);
+          border-radius: 8px; padding: 6px 8px; }
+  .mini b { font-weight: 600; }
+  .diamond { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto auto; gap: 8px 14px; align-items: center; }
+  .diamond .lab { font-size: 12px; color: var(--muted); text-align: center; }
+  .eqbox { text-align: center; font-weight: 600; padding: 6px; border-radius: 8px; }
+  .why { font-size: 14px; }
+  .why li { margin: 4px 0; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Chandy–Lamport in ACL2: the computational setting, and why pre/post steps commute</h1>
+<p class="lede">
+  This page runs a JavaScript port of the model in <code>04-binmonjil-chandy-lamport/exp1/solution.lisp</code> (the
+  experiment-1 solution). Functions and fields use the ACL2 names. The abstract application and topology (the
+  <code>encapsulate</code>) are given the same concrete functions as the reviewer's evaluation script
+  <code>reviews/04-binmonjil-chandy-lamport-exp1-eval.lsp</code>. <span id="verified"></span>
+</p>
+
+<!-- ============================================================ -->
+<h2>1. Vocabulary: what the ACL2 names stand for</h2>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">Global state <code>s</code> (a <code>misc/records</code> record)</h3>
+    <table>
+      <tr><th>Concept</th><th>ACL2</th></tr>
+      <tr><td>process identifiers</td><td><code>(g :procs s)</code></td></tr>
+      <tr><td>process state of <i>p</i></td><td><code>(ps-of p s)</code> = <code>(g p (g :pstates s))</code></td></tr>
+      <tr><td>FIFO channel <i>a → b</i></td><td><code>(chan-of a b s)</code> = <code>(g (cons a b) (g :chans s))</code>, head first</td></tr>
+      <tr><td>application local state</td><td><code>:app</code></td></tr>
+      <tr><td>incoming / outgoing neighbours</td><td><code>:in</code> (<code>ins-of</code>) / <code>:out</code> (<code>outs-of</code>)</td></tr>
+      <tr><td>snapshot ids held</td><td><code>:sids</code> (<code>sids-of</code>)</td></tr>
+      <tr><td>checkpoint counter</td><td><code>:counter</code></td></tr>
+      <tr><td>snapshot entries</td><td><code>:snaps</code>: sid → <code>new-entry</code> with <code>:state :chans :expect :status</code></td></tr>
+      <tr><td>snapshot id</td><td><code>(cons i counter)</code>, e.g. <code>(1 . 0)</code></td></tr>
+      <tr><td>marker message</td><td><code>(marker sid)</code> = <code>(:marker . sid)</code>, tested by <code>markerp</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Inputs, steps, executions</h3>
+    <table>
+      <tr><th>Concept</th><th>ACL2</th></tr>
+      <tr><td>input</td><td><code>(proc type sender)</code>: <code>in-proc in-type in-sender</code>; types <code>:compute :checkpoint :receive</code></td></tr>
+      <tr><td>one step</td><td><code>(cl-step s x)</code> = update <code>(ps-of p)</code> by <code>local-ps</code>, then <code>pop-chans</code> and <code>deliver</code> the outbox from <code>local-out</code></td></tr>
+      <tr><td>message received</td><td><code>(head-of s x)</code></td></tr>
+      <tr><td>run an execution</td><td><code>(cl-run s e)</code></td></tr>
+      <tr><td>legal input / execution</td><td><code>legal-input</code> / <code>legal-exec</code></td></tr>
+      <tr><td>initial state</td><td><code>(init-state)</code></td></tr>
+      <tr><td>target snapshot</td><td><code>(segment-target st e)</code>: first input's process and its counter in <code>st</code></td></tr>
+      <tr><td>p has taken its cut</td><td><code>(recorded-p sid p s)</code>: sid ∈ <code>(sids-of p s)</code></td></tr>
+      <tr><td>pre/postrecording inputs</td><td><code>pre-inputs</code> / <code>post-inputs</code>, classified <i>before</i> each input runs</td></tr>
+      <tr><td>complete segment</td><td><code>complete-segment-p</code></td></tr>
+      <tr><td>state equivalence</td><td><code>state-equiv</code></td></tr>
+    </table>
+  </div>
+</div>
+<div class="card" style="margin-top:16px">
+  <h3 style="margin-top:0">The abstract application (<code>encapsulate</code>) and the concrete functions used here</h3>
+  <table>
+    <tr><th>Constrained function</th><th>Meaning</th><th>Concrete function on this page</th></tr>
+    <tr><td><code>(app-compute p ls)</code></td><td>internal step</td><td><code>l1→a1, l2→a2, a1→b1</code>, otherwise unchanged</td></tr>
+    <tr><td><code>(app-receive p j m ls)</code></td><td>effect of receiving <i>m</i> from <i>j</i></td><td><code>(:rcv p j m ls)</code></td></tr>
+    <tr><td><code>(app-send-p p k ls)</code></td><td>send to neighbour <i>k</i>?</td><td>true when <code>ls</code> is <code>a1</code> or <code>a2</code></td></tr>
+    <tr><td><code>(app-make-msg p k ls)</code></td><td>the message (never a marker: <code>app-make-msg-not-marker</code>)</td><td><code>m1</code> from process 1, <code>m2</code> from process 2</td></tr>
+    <tr><td><code>(in-nbrs p)</code>, <code>(out-nbrs p)</code></td><td>topology</td><td>1 ⇄ 2</td></tr>
+    <tr><td><code>(init-local p)</code>, <code>(sys-procs)</code></td><td>initial states, processes</td><td><code>l1</code>, <code>l2</code>; <code>(1 2)</code></td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ -->
+<h2>2. Step through an execution</h2>
+<p>
+  <code>MAIN</code>'s hypotheses: <code>prefix</code> is legal from <code>(init-state)</code>, <code>st</code> is the state it
+  reaches, and <code>e</code> is a complete segment from <code>st</code>. Here <code>prefix</code> is fixed. You can step
+  through <code>e</code>, or build your own <code>e</code> with the buttons below. Each input of <code>e</code> is coloured by
+  how <code>pre-inputs</code>/<code>post-inputs</code> classify it. A red <span class="pill" style="background:#c0392b;color:#fff;border-color:#c0392b">r<sub>p</sub></span>
+  tag marks the input at which process <i>p</i> records its state for the target snapshot.
+</p>
+<div class="legend">
+  <span><span class="swatch" style="background:var(--prefix-bg);border:1.5px solid var(--prefix)"></span>prefix</span>
+  <span><span class="swatch" style="background:var(--pre-bg);border:1.5px solid var(--pre)"></span>prerecording: <code>(recorded-p sid p s)</code> false before the input</span>
+  <span><span class="swatch" style="background:var(--post-bg);border:1.5px solid var(--post)"></span>postrecording: true before the input</span>
+  <span><span class="swatch" style="background:var(--marker-bg);border:1px solid var(--marker)"></span>marker message</span>
+</div>
+<div class="timeline" id="timeline"></div>
+<div class="toolbar">
+  <button id="b-first">⏮ start of e</button>
+  <button id="b-prev">◀ back</button>
+  <button id="b-next" class="primary">step ▶</button>
+  <button id="b-last">end ⏭</button>
+  <span class="sep">|</span>
+  <span class="note">build e:</span>
+  <span id="appendBtns" class="toolbar" style="margin:0"></span>
+  <button id="b-pop">remove last</button>
+  <button id="b-example">load example</button>
+</div>
+<div id="segstatus" class="toolbar"></div>
+<div class="stateview" id="stateview"></div>
+<div class="card detail" id="detail"></div>
+
+<!-- ============================================================ -->
+<h2>3. Space–time diagram and the recording cut</h2>
+<p>
+  One lane per process. Each dot is an input, in execution order. Arrows are messages from the input that sent them
+  to the input that received them; dashed purple arrows are markers. The red line is the cut: on each lane it passes
+  just after r<sub>p</sub>. In <code>e</code> the cut zig-zags, and postrecording inputs (orange) can come before
+  prerecording ones (blue). In <code>(append pre post)</code> the same inputs are re-ordered so the cut is one vertical
+  line.
+</p>
+<div class="toolbar">
+  <button id="v-orig" class="primary">e (original)</button>
+  <button id="v-reord">(append (pre-inputs …) (post-inputs …))</button>
+  <span id="invcount" class="note"></span>
+</div>
+<div class="card st-wrap"><svg id="spacetime" height="230"></svg></div>
+
+<!-- ============================================================ -->
+<h2>4. Why pre and post steps commute</h2>
+<p>
+  Sort <code>e</code> by repeatedly swapping an adjacent pair <i>x; y</i> where <i>x</i> is postrecording and <i>y</i>
+  is prerecording (an "inversion"). Each swap is checked by actually running both orders: from the state <i>S</i>
+  before the pair, <code>(cl-run S (list x y))</code> and <code>(cl-run S (list y x))</code> must be equal. If they are,
+  the rest of the run is unchanged, so the final state is unchanged. When no inversions remain, the sequence is
+  <code>(append pre post)</code>.
+</p>
+<div class="toolbar">
+  <button id="c-prev">◀ previous swap</button>
+  <button id="c-next" class="primary">next swap ▶</button>
+  <button id="c-play">▶ play all</button>
+  <span id="c-status" class="note"></span>
+</div>
+<div style="display:grid;grid-template-columns:1fr;gap:16px">
+  <div class="card">
+    <h3 style="margin-top:0">Swaps (bubble sort on the pre/post label)</h3>
+    <div class="swaplist" id="swaplist"></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0" id="dia-title">The commuting square</h3>
+    <div id="diamond"></div>
+    <div id="why" class="why"></div>
+  </div>
+</div>
+<div class="card" style="margin-top:16px" id="finalcmp"></div>
+
+<details style="margin-top:28px">
+  <summary>About this page</summary>
+  <p class="note">
+    The model code is a direct port of <code>exp1/solution.lisp</code> (records <code>g</code>/<code>s</code>,
+    <code>local-ps</code>, <code>local-out</code>, <code>head-of</code>, <code>pop-chans</code>, <code>deliver</code>,
+    <code>cl-step</code>, <code>legal-input</code>, <code>recorded-p</code>, <code>segment-target</code>,
+    <code>checkpoint-complete</code>, <code>complete-segment-p</code>, <code>pre-inputs</code>, <code>post-inputs</code>,
+    <code>state-equiv</code>). It was checked against ACL2 8.7 running the certified solution, with the same concrete
+    functions attached via <code>defattach</code>: on 41 executions (the example and 40 random legal ones), the final
+    state, <code>pre-inputs</code>, <code>post-inputs</code>, <code>complete-segment-p</code> and <code>state-equiv</code> of
+    the reordering all matched. The commuting checks on this page are computed, not assumed. The general proof is
+    <code>reorder-from-state</code> and <code>MAIN</code> in the solution. The message arrows in section 3 are
+    bookkeeping for the picture only and are not part of the model's state.
+  </p>
+</details>
+</main>
+
+<script>
+/*MODEL*/
+
+// =====================================================================
+// Page logic
+// =====================================================================
+const PREFIX = [[1, ':compute'], [2, ':compute']];
+const EXAMPLE = [[1, ':checkpoint'], [1, ':compute'], [1, ':receive', 2], [2, ':receive', 1], [2, ':receive', 1], [1, ':receive', 2]];
+const CANDIDATES = [[1, ':compute'], [2, ':compute'], [1, ':checkpoint'], [2, ':checkpoint'], [1, ':receive', 2], [2, ':receive', 1]];
+const ST0 = clRun(initState(), PREFIX);
+
+let seg = EXAMPLE.map((x) => x.slice());
+let cursor = 0;            // number of inputs of e already run
+let view = 'orig';
+let swapIdx = 0;           // number of swaps applied in section 4
+let playTimer = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const lisp = (x) => esc(show(x));
+const inputStr = (x) => '(' + x.join(' ') + ')';
+function fmt(x) {
+  if (x === null) return 'nil';
+  if (markerp(x)) return '(:marker . ' + show(markerSid(x)) + ')';
+  return show(x);
+}
+
+// --- derived data for the current e
+function analyse() {
+  const ok = seg.length > 0 && inType(seg[0]) === ':checkpoint';
+  const sid = ok ? segmentTarget(ST0, seg) : null;
+  const labels = ok ? classify(sid, ST0, seg) : seg.map(() => 'pre');
+  const states = [ST0];
+  for (const x of seg) states.push(clStep(states[states.length - 1], x));
+  // r_p: the input after which p first holds sid
+  const rp = seg.map((x, i) => sid !== null && !recordedP(sid, inProc(x), states[i]) && recordedP(sid, inProc(x), states[i + 1]));
+  return { ok, sid, labels, states, rp };
+}
+
+// --- section 2: timeline + state + detail
+function renderTimeline(A) {
+  const tl = $('timeline');
+  let h = '<span class="note mono">prefix</span>';
+  PREFIX.forEach((x) => { h += `<span class="chip prefix">${esc(inputStr(x))}</span>`; });
+  h += '<span class="sep">→ st →</span><span class="note mono">e</span>';
+  seg.forEach((x, i) => {
+    const cls = [A.labels[i], i < cursor ? 'done' : '', i === cursor ? 'current' : ''].join(' ');
+    h += `<span class="chip ${cls}" data-i="${i}" title="${A.labels[i]}recording"><span class="idx">${i}</span>${esc(inputStr(x))}` +
+      (A.rp[i] ? `<span class="rp">r<sub>${inProc(x)}</sub></span>` : '') + '</span>';
+  });
+  if (!seg.length) h += '<span class="empty">empty: start with a :checkpoint input</span>';
+  tl.innerHTML = h;
+  tl.querySelectorAll('.chip[data-i]').forEach((c) => c.onclick = () => { cursor = +c.dataset.i; render(); });
+}
+
+function procCard(p, st, prev, active) {
+  const ps = psOf(p, st), pp = prev ? psOf(p, prev) : ps;
+  const row = (k, v, pv) => `<span class="k">${k}</span><span class="v ${!equal(v, pv) ? 'changed' : ''}">${esc(fmt(v))}</span>`;
+  let h = `<div class="proc ${active ? 'active' : ''}"><h4><span>process ${p}</span><span class="mono note">(ps-of ${p} s)</span></h4><div class="kv">`;
+  for (const f of [':app', ':counter', ':in', ':out', ':sids']) h += row(f, g(f, ps), g(f, pp));
+  h += '</div>';
+  const snaps = g(':snaps', ps);
+  if (snaps) for (const sid of snaps.keys()) {
+    const e = g(sid, snaps), pe = g(sid, g(':snaps', pp));
+    h += `<div class="snap ${!equal(e, pe) ? 'changed' : ''}"><div class="title">:snaps ${esc(show(sid))}</div><div class="kv">`;
+    for (const f of [':status', ':state', ':expect']) h += row(f, g(f, e), g(f, pe));
+    const ch = g(':chans', e);
+    h += row(':chans', ch ? new Rec(ch.m) : null, g(':chans', pe));
+    h += '</div></div>';
+  } else h += '<div class="snap note mono">:snaps nil</div>';
+  return h + '</div>';
+}
+function chanBox(a, b, st, prev, rtl) {
+  const msgs = listOf(chanOf(a, b, st));
+  let pipe = msgs.map((m, i) => `<span class="msg ${markerp(m) ? 'marker' : ''} ${i === 0 ? 'head' : ''}" title="${i === 0 ? 'head' : ''}">${esc(markerp(m) ? '⟨marker ' + show(markerSid(m)) + '⟩' : show(m))}</span>`).join('');
+  if (!msgs.length) pipe = '<span class="empty">empty</span>';
+  const changed = prev && !equal(chanOf(a, b, st), chanOf(a, b, prev));
+  return `<div class="chan ${changed ? 'changed' : ''}"><div class="lbl"><span>(chan-of ${a} ${b} s) ${rtl ? '← ' + b + ' to ' + a : a + ' to ' + b + ' →'}</span><span>head nearest ${b}</span></div>` +
+    `<div class="pipe ${rtl ? 'rtl' : ''}"><span class="arrow">${rtl ? '◀' : '▶'}</span>${pipe}</div></div>`;
+}
+function renderState(A) {
+  const st = A.states[cursor], prev = cursor > 0 ? A.states[cursor - 1] : null;
+  const act = cursor < seg.length ? inProc(seg[cursor]) : null;
+  $('stateview').innerHTML = procCard(1, st, prev, act === 1) +
+    `<div class="chans">${chanBox(1, 2, st, prev, false)}${chanBox(2, 1, st, prev, true)}` +
+    `<div class="note mono" style="text-align:center">state after ${cursor} input(s) of e${cursor === 0 ? ' (= st)' : ''}; highlighted = changed by the last step</div></div>` +
+    procCard(2, st, prev, act === 2);
+}
+function explainStep(st, x, sid) {
+  const p = inProc(x), j = inSender(x), pso = psOf(p, st), head = headOf(st, x), out = localOut(x, pso, head);
+  const items = [];
+  items.push(`<code>(legal-input s '${esc(inputStr(x))})</code> = ${legalInput(st, x) ? '<span class="pill ok">t</span>' : '<span class="pill bad">nil</span>'}` +
+    (recvP(x) ? ` (sender ${j} is in <code>(ins-of ${p} s)</code> and <code>(chan-of ${j} ${p} s)</code> is non-empty)` : ` (process ${p} is in <code>(g :procs s)</code>)`));
+  if (sid !== null) items.push(`<code>(recorded-p ${lisp(sid)} ${p} s)</code> = ${recordedP(sid, p, st) ? 't, so <b>postrecording</b>' : 'nil, so <b>prerecording</b>'}`);
+  if (inType(x) === ':compute')
+    items.push(`<code>local-ps</code> :compute: <code>:app</code> ← <code>(app-compute ${p} ${lisp(g(':app', pso))})</code> = <code>${lisp(APP['app-compute'](p, g(':app', pso)))}</code>`);
+  else if (inType(x) === ':checkpoint') {
+    const nsid = new Pair(p, nfix(g(':counter', pso)));
+    items.push(`<code>local-ps</code> :checkpoint: new sid <code>${lisp(nsid)}</code> (process and <code>:counter</code>), added to <code>:sids</code>; ` +
+      `<code>:snaps</code> gets <code>(new-entry ${lisp(g(':app', pso))} ${lisp(g(':in', pso))} nil)</code>, expecting markers from all of <code>:in</code>; <code>:counter</code> +1`);
+  } else {
+    items.push(`<code>(head-of s x)</code> = head of <code>(chan-of ${j} ${p} s)</code> = <code>${esc(fmt(head))}</code>; <code>pop-chans</code> removes it`);
+    if (markerp(head)) {
+      const msid = markerSid(head);
+      if (memberEqual(msid, g(':sids', pso))) items.push(`marker for <code>${lisp(msid)}</code>, already in <code>:sids</code> → <b>later marker</b>: remove ${j} from <code>:expect</code>; <code>:status</code> becomes <code>:done</code> when <code>:expect</code> is empty`);
+      else items.push(`marker for <code>${lisp(msid)}</code>, not in <code>:sids</code> → <b>first marker</b>: record <code>:app</code> as <code>:state</code>, record channel ${j} as empty, expect markers from the other incoming neighbours, forward the marker`);
+    } else items.push(`ordinary message → <code>:app</code> ← <code>(app-receive ${p} ${j} ${lisp(head)} …)</code>; <code>record-msg</code> appends it to every snapshot that is <code>:checkpointing</code> and still expects ${j}`);
+  }
+  items.push(`<code>(local-out x …)</code> = <code>${esc(show(out))}</code>` + (out ? `; <code>deliver</code> appends each <code>(to . msg)</code> to the tail of <code>(chan-of ${p} to s)</code>` : ' (nothing sent)'));
+  return items;
+}
+function renderDetail(A) {
+  const d = $('detail');
+  if (cursor >= seg.length) {
+    d.innerHTML = `<b>End of e.</b> ${A.ok ? `<code>(checkpoint-complete ${lisp(A.sid)} (cl-run st e))</code> = ${checkpointComplete(A.sid, A.states[seg.length]) ? '<span class="pill ok">t</span>: every process holds the sid with <code>:status :done</code>' : '<span class="pill bad">nil</span>'}` : ''}`;
+    return;
+  }
+  const x = seg[cursor];
+  d.innerHTML = `<b>Next input ${cursor}: <code>${esc(inputStr(x))}</code></b>, i.e. <code>(cl-step s '${esc(inputStr(x))})</code>:<ol>` +
+    explainStep(A.states[cursor], x, A.sid).map((t) => `<li>${t}</li>`).join('') + '</ol>';
+}
+function renderStatus(A) {
+  if (!A.ok) { $('segstatus').innerHTML = '<span class="pill bad">complete-segment-p: nil</span> <span class="note">e must start with a :checkpoint input</span>'; return; }
+  const legal = legalExec(ST0, seg), inc = incompleteBeforeEach(A.sid, ST0, seg), fin = checkpointComplete(A.sid, A.states[seg.length]);
+  const pill = (b, t) => `<span class="pill ${b ? 'ok' : 'bad'}">${t}: ${b ? 't' : 'nil'}</span>`;
+  $('segstatus').innerHTML = `<span class="pill">st = (cl-run (init-state) '${esc('(' + PREFIX.map(inputStr).join(' ') + ')')})</span>` +
+    `<span class="pill">(segment-target st e) = ${lisp(A.sid)}</span>` +
+    pill(legal, 'legal-exec') + pill(inc, 'incomplete-before-each') + pill(fin, 'checkpoint-complete at end') +
+    pill(completeSegmentP(ST0, seg), '<b>complete-segment-p</b>') +
+    (completeSegmentP(ST0, seg) ? '' : '<span class="note">MAIN only applies to complete segments, but the swaps below are still checked</span>');
+}
+function renderAppend() {
+  const end = clRun(ST0, seg);
+  const opts = seg.length ? CANDIDATES.filter((x) => legalInput(end, x)) : CANDIDATES.filter((x) => inType(x) === ':checkpoint');
+  $('appendBtns').innerHTML = opts.map((x, i) => `<button data-k="${i}" class="mono">+ ${esc(inputStr(x))}</button>`).join('');
+  $('appendBtns').querySelectorAll('button').forEach((b) => b.onclick = () => { seg.push(opts[+b.dataset.k].slice()); cursor = seg.length; swapIdx = 0; render(); });
+}
+
+// --- section 3: space-time diagram with message provenance (picture-only bookkeeping)
+function trace(st, events) {
+  // events: [{x, kind}]; shadow channel queues of {from: event index} mirror pop-chans/deliver order
+  const q = {}; const key = (a, b) => a + '>' + b; const arrows = [];
+  // messages already in flight at st (sent during the prefix)
+  for (const a of [1, 2]) for (const b of [1, 2]) q[key(a, b)] = listOf(chanOf(a, b, st)).map((m) => ({ from: -1, m }));
+  events.forEach((ev, i) => {
+    const x = ev.x, p = inProc(x), head = headOf(st, x), out = localOut(x, psOf(p, st), head);
+    if (recvP(x)) { const k = key(inSender(x), p); const item = q[k].shift(); arrows.push({ from: item.from, to: i, a: inSender(x), b: p, m: item.m }); }
+    for (const o of listOf(out)) q[key(p, o.car)].push({ from: i, m: o.cdr });
+    st = clStep(st, x);
+  });
+  for (const k in q) for (const item of q[k]) { const [a, b] = k.split('>').map(Number); arrows.push({ from: item.from, to: null, a, b, m: item.m }); }
+  return arrows;
+}
+function renderSpaceTime(A) {
+  const svg = $('spacetime');
+  if (!A.ok) { svg.innerHTML = ''; return; }
+  const pre = seg.filter((_, i) => A.labels[i] === 'pre'), post = seg.filter((_, i) => A.labels[i] === 'post');
+  const idxs = view === 'orig' ? seg.map((_, i) => i) : [...seg.keys()].filter((i) => A.labels[i] === 'pre').concat([...seg.keys()].filter((i) => A.labels[i] === 'post'));
+  const events = idxs.map((i) => ({ x: seg[i], label: A.labels[i], rp: A.rp[i], orig: i }));
+  const arrows = trace(ST0, events);
+  const X0 = 110, DX = Math.max(70, Math.min(110, 900 / Math.max(events.length, 1))), Y = { 1: 60, 2: 170 };
+  const W = X0 + DX * (events.length + 1) + 40;
+  svg.setAttribute('width', W); svg.setAttribute('viewBox', `0 0 ${W} 230`);
+  const ex = (i) => X0 + DX * (i + 0.5);
+  let h = `<defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5d6677"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a46c9"/></marker></defs>`;
+  for (const p of [1, 2]) h += `<line x1="${X0 - 20}" y1="${Y[p]}" x2="${W - 20}" y2="${Y[p]}" stroke="#c9ced8" stroke-width="2"/><text x="10" y="${Y[p] + 4}" font-size="13" fill="#1d2433">process ${p}</text>`;
+  // prefix region label
+  h += `<text x="${X0 - 14}" y="20" font-size="11" fill="#8a919e">st</text>`;
+  // arrows
+  for (const a of arrows) {
+    const x1 = a.from < 0 ? X0 - 10 : ex(a.from), x2 = a.to === null ? W - 24 : ex(a.to);
+    const y1 = Y[a.a], y2 = Y[a.b], mk = markerp(a.m);
+    const lbl = mk ? '⟨M⟩' : show(a.m);
+    h += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2 + (y2 > y1 ? -9 : 9)}" stroke="${mk ? '#8a46c9' : '#5d6677'}" stroke-width="1.6" ${mk ? 'stroke-dasharray="5 4"' : ''} marker-end="url(#${mk ? 'am' : 'ah'})" opacity="0.85"/>`;
+    const t = a.to === null ? 0.5 : 0.8;   // label near the arrowhead, where arrows are apart
+    h += `<text x="${x1 + (x2 - x1) * t - 6}" y="${y1 + (y2 - y1) * t + (y2 > y1 ? -2 : 14)}" text-anchor="end" font-size="11" paint-order="stroke" stroke="#fff" stroke-width="4" fill="${mk ? '#8a46c9' : '#5d6677'}">${esc(lbl)}${a.to === null ? ' (in flight)' : ''}${a.from < 0 ? ' (from prefix)' : ''}</text>`;
+  }
+  // cut
+  if (view === 'orig') {
+    const pts = [];
+    for (const p of [1, 2]) {
+      const k = events.findIndex((e) => e.rp && inProc(e.x) === p);
+      const xk = k < 0 ? null : ex(k) + DX * 0.45;
+      if (xk !== null) pts.push([xk, Y[p]]);
+    }
+    if (pts.length === 2) h += `<polyline points="${pts[0][0]},${Y[1] - 40} ${pts[0][0]},${Y[1]} ${pts[1][0]},${Y[2]} ${pts[1][0]},${Y[2] + 40}" fill="none" stroke="#c0392b" stroke-width="2.5" opacity="0.8"/><text x="${pts[0][0] + 4}" y="${Y[1] - 30}" font-size="12" fill="#c0392b">cut</text>`;
+  } else {
+    const xb = X0 + DX * pre.length;
+    h += `<line x1="${xb}" y1="${Y[1] - 40}" x2="${xb}" y2="${Y[2] + 40}" stroke="#c0392b" stroke-width="2.5" opacity="0.8"/><text x="${xb + 4}" y="${Y[1] - 30}" font-size="12" fill="#c0392b">cut: pre | post</text>`;
+  }
+  // events
+  events.forEach((e, i) => {
+    const p = inProc(e.x), col = e.label === 'pre' ? '#2f6fd6' : '#d9822b', bg = e.label === 'pre' ? '#e6efff' : '#fff0df';
+    const short = { ':compute': 'comp', ':checkpoint': 'ckpt', ':receive': 'rcv←' + inSender(e.x) }[inType(e.x)];
+    h += `<circle cx="${ex(i)}" cy="${Y[p]}" r="9" fill="${bg}" stroke="${col}" stroke-width="2.2"/>`;
+    h += `<text x="${ex(i)}" y="${Y[p] + (p === 1 ? -16 : 26)}" font-size="11" text-anchor="middle" fill="#1d2433">${esc(short)}</text>`;
+    h += `<text x="${ex(i)}" y="${Y[p] + 4}" font-size="9" text-anchor="middle" fill="${col}">${e.orig}</text>`;
+    if (e.rp) h += `<text x="${ex(i)}" y="${Y[p] + (p === 1 ? -30 : 40)}" font-size="11" text-anchor="middle" fill="#c0392b">r${p}</text>`;
+  });
+  svg.innerHTML = h;
+  // inversions
+  const lab = idxs.map((i) => A.labels[i]);
+  let inv = 0; lab.forEach((l, i) => { if (l === 'post') inv += lab.slice(i + 1).filter((m) => m === 'pre').length; });
+  $('invcount').textContent = `inversions (a postrecording input before a prerecording one): ${inv}. Numbers inside dots are positions in the original e.`;
+  $('v-orig').className = view === 'orig' ? 'primary' : '';
+  $('v-reord').className = view === 'reord' ? 'primary' : '';
+}
+
+// --- section 4: swaps
+function swapPlan(A) {
+  let items = seg.map((x, i) => ({ x, label: A.labels[i], orig: i }));
+  const steps = [];
+  for (;;) {
+    const k = items.findIndex((it, i) => it.label === 'post' && items[i + 1] && items[i + 1].label === 'pre');
+    if (k < 0) break;
+    const S = clRun(ST0, items.slice(0, k).map((it) => it.x)), x = items[k].x, y = items[k + 1].x;
+    const Sx = clStep(S, x), Sy = clStep(S, y), Sxy = clStep(Sx, y), Syx = clStep(Sy, x);
+    steps.push({ before: items, k, S, x, y, Sx, Sy, Sxy, Syx,
+      legalSwapped: legalInput(S, y) && legalInput(Sy, x), commutes: equal(Sxy, Syx) });
+    items = items.slice(); [items[k], items[k + 1]] = [items[k + 1], items[k]];
+  }
+  return { steps, final: items };
+}
+function mini(st, title, hl) {
+  const lines = [1, 2].map((p) => {
+    const ps = psOf(p, st);
+    return `<b>${p}</b> :app ${esc(fmt(g(':app', ps)))} · :counter ${esc(fmt(g(':counter', ps)))} · :sids ${esc(fmt(g(':sids', ps)))}`;
+  });
+  lines.push(`(1 . 2) ${esc(listOf(chanOf(1, 2, st)).map(fmt).join(' ') || '—')}`);
+  lines.push(`(2 . 1) ${esc(listOf(chanOf(2, 1, st)).map(fmt).join(' ') || '—')}`);
+  return `<div class="mini" style="${hl || ''}"><div class="note" style="margin-bottom:2px">${title}</div>${lines.join('<br>')}</div>`;
+}
+function whyText(s) {
+  const p = inProc(s.x), q = inProc(s.y);
+  const out = [];
+  out.push(`<i>x</i> = <code>${esc(inputStr(s.x))}</code> is <b>postrecording</b> for process ${p}; <i>y</i> = <code>${esc(inputStr(s.y))}</code> is <b>prerecording</b> for process ${q}. ` +
+    (p !== q ? `They belong to different processes (${p} ≠ ${q}): within one process, every prerecording input comes before every postrecording one.` : '<b>Same process?</b> This should not happen.'));
+  out.push(`<code>cl-step</code> on <i>x</i> changes only <code>(ps-of ${p} s)</code>; on <i>y</i> only <code>(ps-of ${q} s)</code>. So the process-state updates don't interfere.`);
+  const outX = localOut(s.x, psOf(p, s.S), headOf(s.S, s.x));
+  const sendsTo = listOf(outX).map((o) => o.car);
+  if (recvP(s.y) && inSender(s.y) === p) {
+    const hS = headOf(s.S, s.y), hSx = headOf(s.Sx, s.y);
+    out.push(`Channels: <i>y</i> receives on <code>(chan-of ${p} ${q} s)</code>, which <i>x</i> ${sendsTo.includes(q) ? 'appends to' : 'does not touch'}. ` +
+      `The head <i>y</i> pops is <code>${esc(fmt(hS))}</code> either way (${equal(hS, hSx) ? 'same before and after <i>x</i>' : '<b>different!</b>'}). ` +
+      `This is the Chandy–Lamport FIFO argument: ${p} has recorded, so it sent its marker on this channel before anything sent now; ${q} has not recorded, so it has not yet received that marker. The message ${q} pops is therefore older than anything <i>x</i> appends.`);
+  } else if (recvP(s.x) && inSender(s.x) === q) {
+    out.push(`Channels: <i>x</i> receives on <code>(chan-of ${q} ${p} s)</code>, and <i>y</i> ${listOf(localOut(s.y, psOf(q, s.S), headOf(s.S, s.y))).some((o) => o.car === p) ? 'appends to its tail' : 'does not touch it'}. Popping the head and appending at the tail commute when the channel is non-empty, as it is here.`);
+  } else {
+    out.push('Channels: the two inputs pop and append on different ends or different channels, so the channel updates commute.');
+  }
+  return '<ul>' + out.map((t) => `<li>${t}</li>`).join('') + '</ul>';
+}
+function renderSwaps(A) {
+  if (!A.ok) { $('swaplist').innerHTML = ''; $('diamond').innerHTML = ''; $('why').innerHTML = ''; $('finalcmp').innerHTML = ''; return; }
+  const plan = swapPlan(A), n = plan.steps.length;
+  swapIdx = Math.min(swapIdx, n);
+  const rowOf = (items, k, extra) => items.map((it, i) => `<span class="pill ${it.label}" style="${k !== null && (i === k || i === k + 1) ? 'outline:2px solid #1d2433' : ''}">${esc(inputStr(it.x))}</span>`).join('') + (extra || '');
+  let h = '';
+  plan.steps.forEach((s, i) => {
+    h += `<div class="swaprow ${i === swapIdx ? 'sel' : ''}" data-i="${i}"><span class="n">${i + 1}.</span>${rowOf(s.before, s.k)} <span class="pill ${s.commutes ? 'ok' : 'bad'}">${s.commutes ? 'commutes' : 'differs'}</span></div>`;
+  });
+  h += `<div class="swaprow ${swapIdx === n ? 'sel' : ''}" data-i="${n}"><span class="n">✓</span>${rowOf(plan.final, null, ' <span class="note">= (append pre post)</span>')}</div>`;
+  if (!n) h = '<div class="note" style="padding:6px">No inversions: e is already pre-then-post.</div>' + h;
+  $('swaplist').innerHTML = h;
+  $('swaplist').querySelectorAll('.swaprow').forEach((r) => r.onclick = () => { swapIdx = +r.dataset.i; stopPlay(); renderSwaps(analyse()); });
+  $('c-status').textContent = `swap ${Math.min(swapIdx + 1, n)} of ${n}`;
+  $('c-prev').disabled = swapIdx === 0; $('c-next').disabled = swapIdx >= n;
+  if (swapIdx < n) {
+    const s = plan.steps[swapIdx];
+    $('dia-title').innerHTML = `Swap ${swapIdx + 1}: <code>${esc(inputStr(s.x))}</code> ⇄ <code>${esc(inputStr(s.y))}</code> at positions ${s.k}, ${s.k + 1}`;
+    const ok = s.commutes ? 'background:var(--ok-bg);color:#145c32' : 'background:var(--bad-bg);color:#8d2318';
+    $('diamond').innerHTML = `<div class="diamond">
+      <div></div>${mini(s.S, '<i>S</i> = state before the pair')}<div></div>
+      <div class="lab">x = ${esc(inputStr(s.x))} ↙</div><div></div><div class="lab">↘ y = ${esc(inputStr(s.y))}</div>
+      ${mini(s.Sx, '<i>S</i> after <i>x</i>')}<div class="lab">different intermediate states</div>${mini(s.Sy, '<i>S</i> after <i>y</i>')}
+      <div class="lab">then y ↘</div><div></div><div class="lab">↙ then x</div>
+      ${mini(s.Sxy, '(cl-run S (list x y))', s.commutes ? 'border-color:var(--ok)' : 'border-color:var(--bad)')}
+      <div class="eqbox" style="${ok}">${s.commutes ? '= (equal)' : '≠'}<div class="note" style="font-weight:400">swapped order legal: ${s.legalSwapped ? 't' : 'nil'}</div></div>
+      ${mini(s.Syx, '(cl-run S (list y x))', s.commutes ? 'border-color:var(--ok)' : 'border-color:var(--bad)')}
+    </div>`;
+    $('why').innerHTML = '<h3>Why it commutes</h3>' + whyText(s);
+  } else {
+    $('dia-title').textContent = 'Sorted';
+    $('diamond').innerHTML = '<p>No postrecording input precedes a prerecording one. Every swap left the final state unchanged, so running this sequence gives the same state as running <code>e</code>.</p>';
+    $('why').innerHTML = '';
+  }
+  // final comparison
+  const pre = preInputs(A.sid, ST0, seg), post = postInputs(A.sid, ST0, seg);
+  const F1 = clRun(ST0, [...pre, ...post]), F2 = clRun(ST0, seg);
+  const sorted = plan.final.map((it) => it.x);
+  $('finalcmp').innerHTML = `<h3 style="margin-top:0">MAIN's conclusion for this e</h3>
+    <div class="toolbar"><span class="pill pre">pre-inputs: ${esc(pre.map(inputStr).join(' ') || 'nil')}</span><span class="pill post">post-inputs: ${esc(post.map(inputStr).join(' ') || 'nil')}</span></div>
+    <div class="toolbar">
+      <span class="pill ${stateEquiv(F1, F2) ? 'ok' : 'bad'}">(state-equiv (cl-run st (append pre post)) (cl-run st e)) = ${stateEquiv(F1, F2) ? 't' : 'nil'}</span>
+      <span class="pill ${equal(F1, F2) ? 'ok' : 'bad'}">equal (stronger, as proved by reorder-from-state) = ${equal(F1, F2) ? 't' : 'nil'}</span>
+      <span class="pill ${equal(sorted, [...pre, ...post]) ? 'ok' : 'bad'}">bubble-sorted e = (append pre post): ${equal(sorted, [...pre, ...post]) ? 't' : 'nil'}</span>
+      <span class="pill ${legalExec(ST0, [...pre, ...post]) ? 'ok' : 'bad'}">(legal-exec st (append pre post)) = ${legalExec(ST0, [...pre, ...post]) ? 't' : 'nil'}</span>
+    </div>
+    <div class="grid2">${mini(F2, '(cl-run st e)')}${mini(F1, '(cl-run st (append pre post))')}</div>
+    <p class="note">The snapshot entries (<code>:snaps</code>) are equal too, though <code>state-equiv</code> doesn't require it. <code>MAIN</code> doesn't state that the reordered execution is legal; it is here.</p>`;
+}
+function stopPlay() { if (playTimer) { clearInterval(playTimer); playTimer = null; $('c-play').textContent = '▶ play all'; } }
+
+function render() {
+  const A = analyse();
+  cursor = Math.max(0, Math.min(cursor, seg.length));
+  renderTimeline(A); renderState(A); renderDetail(A); renderStatus(A); renderAppend(); renderSpaceTime(A); renderSwaps(A);
+  $('b-prev').disabled = $('b-first').disabled = cursor === 0;
+  $('b-next').disabled = $('b-last').disabled = cursor >= seg.length;
+}
+$('b-first').onclick = () => { cursor = 0; render(); };
+$('b-prev').onclick = () => { cursor--; render(); };
+$('b-next').onclick = () => { cursor++; render(); };
+$('b-last').onclick = () => { cursor = seg.length; render(); };
+$('b-pop').onclick = () => { seg.pop(); swapIdx = 0; render(); };
+$('b-example').onclick = () => { seg = EXAMPLE.map((x) => x.slice()); cursor = 0; swapIdx = 0; render(); };
+$('v-orig').onclick = () => { view = 'orig'; render(); };
+$('v-reord').onclick = () => { view = 'reord'; render(); };
+$('c-prev').onclick = () => { stopPlay(); swapIdx--; renderSwaps(analyse()); };
+$('c-next').onclick = () => { stopPlay(); swapIdx++; renderSwaps(analyse()); };
+$('c-play').onclick = () => {
+  if (playTimer) return stopPlay();
+  swapIdx = 0; renderSwaps(analyse()); $('c-play').textContent = '■ stop';
+  playTimer = setInterval(() => { const n = swapPlan(analyse()).steps.length; if (swapIdx >= n) return stopPlay(); swapIdx++; renderSwaps(analyse()); }, 1400);
+};
+$('verified').innerHTML = 'The port was checked against ACL2 on 41 executions (see the note at the bottom).';
+render();
+</script>
+</body>
+</html>

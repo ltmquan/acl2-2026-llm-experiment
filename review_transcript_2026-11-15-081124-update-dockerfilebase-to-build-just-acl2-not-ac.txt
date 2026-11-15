@@ -1,0 +1,1382 @@
+▗ ▗   ▖ ▖  Claude Code v2.1.325
+           Opus 5.5 · API Usage Billing
+ ▘▘   ▝▝   ~/code/acl2-2026-llm-experiment
+
+
+❯ Update Dockerfile.base to build just ACL2, not ACL2s, and build the specific  
+  commit bc6f4f49e8 of ACL2.                                                    
+
+  Searched for 1 pattern, read 1 file, listed 1 directory, ran 2 shell commands (ctrl+o to expand)
+
+⏺ Tag 8.7 resolves to the full SHA bc6f4f49e81a0711214a8d91f0d06e0e084d2204.
+  Next I'll rewrite the Dockerfile.
+
+⏺ Write(Dockerfile.base)
+  ⎿  Added 20 lines, removed 93 lines
+       4  
+       5  ARG SBCL_TAG=sbcl-2.6.1
+       6  
+       7 -RUN apt-get update && \                                        
+       7 +RUN apt-get update && \                                        
+       8      apt-get install -y git build-essential sbcl
+       9  
+      10  WORKDIR /root
+     ...
+       13  ENV INSTALL_ROOT=/opt/sbcl
+       14  RUN cd sbcl && sh make.sh && sh install.sh
+       15  
+       16 -ENV SBCL_HOME=/opt/sbcl/lib/sbcl                              
+       16 +ENV SBCL_HOME=/opt/sbcl/lib/sbcl                              
+       17  
+       18  
+       19 -FROM debian:bookworm-slim AS acl2s                            
+       19 +FROM debian:bookworm-slim AS acl2                             
+       20  
+       21  ENV DEBIAN_FRONTEND=noninteractive
+       22  
+       23 -RUN apt-get update && \                                       
+       24 -    apt-get install -y git build-essential                    
+       23 +RUN apt-get update && \                                       
+       24 +    apt-get install -y git build-essential perl               
+       25  
+       26 -ENV SBCL_HOME=/opt/sbcl/lib/sbcl                              
+       26 +ENV SBCL_HOME=/opt/sbcl/lib/sbcl                              
+       27  COPY --from=sbcl /opt/sbcl /opt/sbcl
+       28  
+       29  ENV ACL2_LISP=/opt/sbcl/bin/sbcl
+       30  
+       31 -WORKDIR /root                                                 
+       32 -RUN git clone https://gitlab.com/sam-xif/acl-2-s-scripts.git s
+          -cripts                                                        
+       33 -RUN git clone https://github.com/acl2/acl2.git --depth 1 -b ma
+          -ster acl2                                                     
+       31 +# ACL2 8.7 (tag 8.7). Full SHA is needed to fetch a single com
+          +mit shallowly.                                                
+       32 +ARG ACL2_COMMIT=bc6f4f49e81a0711214a8d91f0d06e0e084d2204      
+       33  
+       34 +WORKDIR /root/acl2                                            
+       35 +RUN git init -q && \                                          
+       36 +    git remote add origin https://github.com/acl2/acl2.git && 
+          +\                                                             
+       37 +    git fetch -q --depth 1 origin ${ACL2_COMMIT} && \         
+       38 +    git checkout -q FETCH_HEAD                                
+       39 +                                                              
+       40  ENV ACL2_REPO_PATH=/root/acl2
+       36 -ENV ACL2_SYSTEM_BOOKS=${ACL2_REPO_PATH}/books                 
+       37 -ENV ACL2S_SCRIPTS=/root/scripts                               
+       38 -ENV ACL2S_NUM_JOBS=2                                          
+       41 +ENV ACL2_SYSTEM_BOOKS=${ACL2_REPO_PATH}/books                 
+       42  
+       40 -RUN mkdir -p /usr/local/bin                                   
+       43 +RUN make LISP=${ACL2_LISP}                                    
+       44  
+       42 -ENV PATH=/bin:/sbin:/usr/sbin:/usr/bin:/usr/local/bin         
+       45 +RUN mkdir -p /usr/local/bin && \                              
+       46 +    ln -s ${ACL2_REPO_PATH}/saved_acl2 /usr/local/bin/acl2 && 
+          +\                                                             
+       47 +    ln -s ${ACL2_REPO_PATH}/books/build/cert.pl /usr/local/bin
+          +/cert.pl                                                      
+       48  
+       44 -WORKDIR /root/scripts                                         
+       45 -RUN bash ./clean-gen-acl2.sh                                  
+       46 -RUN ln -s ${ACL2_REPO_PATH}/saved_acl2 /usr/local/bin/acl2    
+       47 -RUN ./gen-acl2s.sh                                            
+       48 -RUN ln -s ${ACL2S_SCRIPTS}/acl2s /usr/local/bin/acl2s         
+       49 +ENV PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin         
+       50  
+       50 -                                                              
+       51 -FROM debian:bookworm-slim AS llvm                             
+       52 -                                                              
+       53 -ARG NUM_JOBS=6                                                
+       54 -                                                              
+       55 -RUN apt-get update && \                                       
+       56 -    apt-get install -y git build-essential cmake python3      
+       57 -                                                              
+       51  WORKDIR /root
+       59 -RUN git clone https://github.com/sam-xif/llvm-project.git --de
+          -pth 1 -b terminator llvm-project                              
+       60 -                                                              
+       61 -WORKDIR /root/llvm-project                                    
+       62 -RUN mkdir build                                               
+       63 -                                                              
+       64 -WORKDIR /root/llvm-project/build                              
+       65 -RUN cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='c
+          -lang;compiler-rt' -G "Unix Makefiles" ../llvm                 
+       66 -RUN make -j ${NUM_JOBS}                                       
+       67 -RUN mkdir -p /opt/llvm && \                                   
+       68 -    cp -R ./* /opt/llvm                                       
+       69 -                                                              
+       70 -                                                              
+       71 -FROM acl2s AS deps-base                                       
+       72 -WORKDIR /root                                                 
+       73 -                                                              
+       74 -ARG CLANG_MAJOR_VERSION=23                                    
+       75 -                                                              
+       76 -RUN apt-get update && \                                       
+       77 -    apt-get install -y curl                                   
+       78 -                                                              
+       79 -ARG ARCH=aarch64                                              
+       80 -                                                              
+       81 -# Copy required files from the llvm build:                    
+       82 -COPY --from=llvm /opt/llvm/bin/clang /opt/llvm/bin/clang      
+       83 -                                                              
+       84 -COPY --from=llvm /opt/llvm/lib/clang/${CLANG_MAJOR_VERSION}/li
+          -b/${ARCH}-unknown-linux-gnu /opt/llvm/lib/clang/${CLANG_MAJOR_
+          -VERSION}/lib/${ARCH}-unknown-linux-gnu                        
+       85 -                                                              
+       86 -RUN curl -O https://beta.quicklisp.org/quicklisp.lisp && \    
+       87 -    echo "(quicklisp-quickstart:install)" > quicklisp-install.
+          -lisp && \                                                     
+       88 -    ${ACL2_LISP} --load quicklisp.lisp --script quicklisp-inst
+          -all.lisp                                                      
+       89 -RUN echo '(load "~/quicklisp/setup.lisp")\n(ql:quickload "bord
+          -eaux-threads")\n(ql:quickload "usocket")\n(ql:quickload "flexi
+          --streams")' > bordeaux-threads-install.lisp && ${ACL2_LISP} --
+          -script bordeaux-threads-install.lisp                          
+       90 -                                                              
+       91 -                                                              
+       92 -# Final image                                                 
+       93 -FROM deps-base                                                
+       94 -WORKDIR /root                                                 
+       95 -                                                              
+       96 -RUN apt-get update && \                                       
+       97 -    apt-get install -y --no-install-recommends build-essential
+          - python3 python3.11-dev python3-pip python3.11-venv git libssl
+          -3 libssl-dev                                                  
+       98 -                                                              
+       99 -RUN mkdir -p /usr/local/python-fuzzing                        
+      100 -WORKDIR /usr/local/python-fuzzing                             
+      101 -                                                              
+      102 -ENV FUZZDIR=/usr/local/python-fuzzing                         
+      103 -                                                              
+      104 -ENV CLANG_BIN="/opt/llvm/clang"                               
+      105 -RUN python3 -m venv fuzzer-venv                               
+      106 -                                                              
+      107 -COPY ./python/requirements.txt ./exploration/python/requiremen
+          -ts.txt                                                        
+      108 -RUN /bin/bash -c "source ./fuzzer-venv/bin/activate && LIBFUZZ
+          -ER_LIB=/opt/llvm/lib/clang/${CLANG_MAJOR_VERSION}/lib/${ARCH}-
+          -unknown-linux-gnu/libclang_rt.fuzzer.a pip3 install -vvv --no-
+          -cache-dir -r ./exploration/python/requirements.txt"           
+      109 -RUN rm -rf /opt/llvm                                          
+      110 -                                                              
+      111 -COPY ./backend ./exploration/backend                          
+      112 -COPY ./python/fuzzer ./exploration/python/fuzzer              
+      113 -RUN ln -s /usr/local/python-fuzzing/exploration/backend /usr/l
+          -ocal/python-fuzzing/exploration/python/typeserver             
+      114 -RUN cd ./exploration/python/typeserver && make clean          
+      115 -RUN ln -s /usr/local/python-fuzzing/exploration/backend/acl2s-
+          -tcp-worker/python-interface /usr/local/python-fuzzing/explorat
+          -ion/python/acl2s_python_interface                             
+      116 -COPY ./python/extractor_plugin ./exploration/python/extractor_
+          -plugin                                                        
+      117 -COPY ./python/repo_setup ./exploration/python/repo_setup      
+      118 -                                                              
+      119 -COPY acl2s-tcp-worker.patch ./exploration/acl2s-tcp-worker.pat
+          -ch                                                            
+      120 -RUN cd ./exploration/backend/acl2s-tcp-worker && (patch -p1 < 
+          -../../acl2s-tcp-worker.patch || :)                            
+      121 -                                                              
+      122 -ENV TMPDIR=/tmp                                               
+      123 -                                                              
+      124 -RUN mkdir repos packages                                      
+
+❯ And make it not build any other dependencies: just SBCL and ACL2, and         
+  anything else that's needed                                                   
+
+⏺ I've rewritten Dockerfile.base, and it now builds only SBCL and ACL2, which
+  also covers your follow-up about dropping other dependencies. I haven't run
+  the build yet.
+
+  - SBCL stage: unchanged. It still builds SBCL 2.6.1 from source.
+  - ACL2 stage: fetches only commit bc6f4f49e81a0711214a8d91f0d06e0e084d2204,
+    runs make LISP=/opt/sbcl/bin/sbcl, and puts acl2 and cert.pl on the PATH. A
+    shallow fetch of a single commit needs the full commit ID, so I looked it up
+    from your short one; it's the commit behind the 8.7 tag. I added perl
+    because cert.pl needs it.
+  - Removed: the ACL2s scripts and build, plus the LLVM/clang, Quicklisp and
+    Python-fuzzer stages. Those all depended on ACL2s or on folders this repo
+    doesn't have (./python, ./backend, the tcp-worker patch). The file wasn't
+    committed, so the old version can't be restored from git.
+
+  One mismatch: the README says the experiments used SBCL 2.2.9, but this file
+  builds SBCL 2.6.1. If the image should match the paper exactly, change
+  SBCL_TAG to sbcl-2.2.9.
+
+  To build it: docker build -f Dockerfile.base -t acl2-8.7 .
+
+✻ Cooked for 33s · done Saturday 7:22 PM
+
+※ recap: Dockerfile.base now builds only SBCL and ACL2 at commit bc6f4f49e8, but I haven't run the build. Next, run `docker build -f Dockerfile.base .`, and decide whether to set SBCL_TAG to sbcl-2.2.9 to match the README. (disable recaps in /config)
+
+❯ I built the image at acl2:latest. Now, please start up a container with this  
+  image, and attempt to reproduce the solution for 06-russinoff-fields          
+  experiment 1. I have been instructed to review the solution and ensure it     
+  matches what is given in the paper. Here are the instructions for context:    
+  Hi all,                                                                       
+                                                                                
+  I’ve set up a private GitHub repo with the results of our experiment, ready   
+  for review. I've added Zeke and Pete as collaborators. Sam, what's your       
+  GitHub account?                                                               
+                                                                                
+  https://github.com/ltmquan/acl2-2026-llm-experiment                           
+                                                                                
+  The overall structure is:                                                     
+  - each paper has a folder, eg 01-gamboa-basel, that contains 3 subfolders:    
+    - source: contains the paper PDF and its supporting materials               
+    - exp1: the initial experiment (one main theorem + english version)         
+    - exp2: the second experiment (one or more main theorems + acl2 version)    
+  - a tools folder containing all the scripts used (the setup script, audit     
+  script)                                                                       
+  - a harness folder containing all the notes the orchestrator LLM session had  
+  for each paper's verification process                                         
+  - documents on the overall experiment setup and each each experiment          
+                                                                                
+  Let me know if anything is confusing or missing; parts (or all) of this repo  
+  was AI-generated by Claude. I also ran a credible pseudorandom generator as   
+  we discussed, the results are:                                                
+  - Zeke: 01-gamboa-basel, 02-gamboa-stirling, and 07-cayuela-ac-machine (All   
+  need ACL2(r))                                                                 
+  - Sam: 04-binmonjil-chandy-lamport, 05-russinoff-linear3, and                 
+  06-russinoff-fields (All use ACL2 only)                                       
+                                                                                
+  Note that I am running this session within the repo mentioned in the email.   
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ I'll start a container with the repo mounted read-only, then certify the
+  prime-fields dependency books and run the checker.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ The books need their build-feature files generated first; running that setup
+  step.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Dependency books certified. Now running the repo's exp1 checker (banned-event
+  scan, MAIN check, certify) against the solution, with paths adjusted to this
+  image.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ It certified. Next I'll check the certificate for anything untrusted and print
+  the MAIN theorem so we can compare it with the paper.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Two hits for "ttag" in the certificate. Checking what they are:
+
+  Ran 4 shell commands (ctrl+o to expand)
+
+⏺ The reproduction works. I'm checking that pmod and pdivides compute real
+  polynomial remainders, since the irreducibility result depends on it. 
+  · summary
+
+  Ran 3 shell commands (ctrl+o to expand)
+
+⏺ I reproduced it: the experiment-1 solution for 06-russinoff-fields certifies
+  on ACL2 8.7 (commit bc6f4f49e8) in your acl2:latest image. This matches the
+  repo's recorded result.
+
+  How I ran it
+  - I started a container named acl2-review with the repo mounted read-only at
+    /repo. It's still running.
+  - I certified the two community books the solution includes
+    (kestrel/prime-fields/prime-fields and prime-fields-rules). The first
+    attempt failed because the books' build-config files hadn't been generated
+    in the image; running make build/Makefile-features in books/ fixed it. If
+    you want later runs to skip this, add that step to the Dockerfile.
+  - I ran the repo's own checker, tools/check-exp1.sh, changing only its
+    hardcoded ACL2 path from /opt/acl2 to /root/acl2. It found no banned events,
+    the last event is (defthm MAIN …), and the result was CERTIFIED with 
+    saved_acl2. Proofs took 1.2 s; the repo reported 2.6 s on different
+    hardware.
+  - The two "ttag" hits in solution.cert are just the certificate's built-in
+    field names (TTAGS, SKIPPED-PROOFSP), not trust tags. The certification log
+    has none.
+
+  Checking that the definitions compute the right things
+  Irreducibility here depends on the model's own remainder function (pmod). If
+  that were wrong, every extension field could pass vacuously, so I ran some
+  concrete cases. All eight gave the right answer:
+
+  ┌────────────────────────────────┬──────────┬────────┐
+  │           Expression           │ Expected │  Got   │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ x²+1 mod x+1 over F₂           │ 0        │ (0)    │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ x+1 divides x²+1 over F₂       │ yes      │ T      │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ x+1 divides x²+x+1 over F₂     │ no       │ NIL    │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ x divides x²+x+1 over F₂       │ no       │ NIL    │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ x³+5 mod x²−2 over Q           │ 5+2x     │ (5 2)  │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ √2·√2 in Q(√2)                 │ 2        │ (2 0)  │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ 1/(1+√2) in Q(√2)              │ −1+√2    │ (-1 1) │
+  ├────────────────────────────────┼──────────┼────────┤
+  │ a·(1+a) in F₄ = F₂[x]/(x²+x+1) │ 1        │ (1 0)  │
+  └────────────────────────────────┴──────────┴────────┘
+
+  Points for your review against the paper
+  - MAIN (06-russinoff-fields/exp1/solution.lisp:1515): for any f with (fieldp 
+    f), it states all 16 constraints placed on the generic field F0 (lines
+    41–60). These are closure, commutativity, associativity, distributivity, the
+    two identities, both inverses, and 0 ≠ 1, including x·x⁻¹ = 1 for nonzero
+    x.
+  - Field representation: the model uses its own tagged lists, (:q), (:fp p),
+    (:f0) and (:ext f p). The paper uses a pair (p . f) for an extension.
+  - Element representation: an extension element is a coefficient list of length
+    exactly deg p, so each element has exactly one representation. The paper's
+    is likely different.
+  - Definition of fieldp (line 1492): Q, F0, F_p with p prime, or an extension
+    of a field by a monic polynomial of degree ≥ 2 that is irreducible.
+  - Reducibility (line 348): reducible says there exists a monic divisor q with
+    0 < deg q < deg p. This follows the prompt's wording closely.
+  - Multiplication: extension multiplication (vapply) works coefficient by
+    coefficient, reducing modulo p as it goes, rather than multiplying fully and
+    then reducing. The file never proves this equals ordinary polynomial
+    multiplication modulo p; the test results above support it.
+  - Inverse: finv finds the inverse with a search procedure (inv-search) rather
+    than by stating it as a definition. That's acceptable, since MAIN proves it
+    is a true inverse.
+
+  The paper's own books are in 06-russinoff-fields/source/authors-books/ if you
+  want to compare definitions side by side. Run docker rm -f acl2-review when
+  you're done with the container.
+
+✻ Baked for 2m 39s · done Saturday 7:34 PM
+
+※ recap: You're reviewing the 06-russinoff-fields experiment-1 solution against the paper, and I reproduced it: it certifies on ACL2 8.7 and concrete tests computed correctly. Next, compare its definitions and MAIN with the paper's own books in source/authors-books. (disable recaps in /config)
+
+❯ The paper says: A simple extension of a field f is constructed by the usual   
+  process of adjoining a root of an irreducible monic polynomial p over f. Can  
+  you explain this sentence, step by step, with visuals and examples? I am      
+  pretty new to abstract algebra.                                               
+
+⏺ Adjoining a root of an irreducible monic polynomial
+
+  This is an explanation only; I didn't run anything new. I'll break the
+  sentence into its parts, then put it back together. The examples are the same
+  ones I tested against the solution earlier.
+
+  ---
+
+  Step 0: What is a field?
+
+  A field is a set of "numbers" where you can add, subtract, multiply, and
+  divide by anything except 0, and the usual algebra rules hold (commutativity,
+  distributivity, and so on). Those rules are the "field axioms" in the theorem.
+
+  ┌─────────────────────────────┬────────┬──────────────────────────────────┐
+  │             Set             │ Field? │               Why                │
+  ├─────────────────────────────┼────────┼──────────────────────────────────┤
+  │ Q (fractions)               │ ✅     │ 3/4 ÷ 2/5 is still a fraction    │
+  ├─────────────────────────────┼────────┼──────────────────────────────────┤
+  │ Integers Z                  │ ❌     │ 1 ÷ 2 is not an integer          │
+  ├─────────────────────────────┼────────┼──────────────────────────────────┤
+  │ F₂ = {0, 1}, arithmetic mod │ ✅     │ 1 + 1 = 0, and 1⁻¹ = 1           │
+  │  2                          │        │                                  │
+  ├─────────────────────────────┼────────┼──────────────────────────────────┤
+  │ F₅ = {0,1,2,3,4}, mod 5     │ ✅     │ for example 2·3 = 6 ≡ 1, so 2⁻¹  │
+  │                             │        │ = 3                              │
+  ├─────────────────────────────┼────────┼──────────────────────────────────┤
+  │ Z₆ = {0,…,5}, mod 6         │ ❌     │ 2·3 = 0, so 2 has no inverse     │
+  └─────────────────────────────┴────────┴──────────────────────────────────┘
+
+  Integers mod n form a field exactly when n is prime. That's why the paper says
+  "the integers modulo a prime."
+
+  ---
+
+  Step 1: A polynomial over f
+
+  A polynomial over f is an expression like
+
+  p(x) = c₀ + c₁x + c₂x² + … + cₙxⁿ      where every cᵢ comes from f
+
+  Here x is just a symbol, not a number. The degree is the highest power with a
+  nonzero coefficient.
+
+  The solution stores a polynomial as a list of coefficients, constant term
+  first:
+
+  x² − 2      →  (-2 0 1)
+  x² + x + 1  →  (1 1 1)
+
+  ---
+
+  Step 2: Monic
+
+  Monic means the leading coefficient is 1:
+
+  x² − 2      monic ✅
+  3x² − 6     not monic ❌   (divide by 3 to get x² − 2)
+
+  Requiring monic polynomials is a convenience. Over a field you can always
+  divide by the leading coefficient, so every polynomial has a monic version
+  with the same roots.
+
+  ---
+
+  Step 3: Root, and why we might need to adjoin one
+
+  A root of p is a value r with p(r) = 0.
+
+  The key observation is that a polynomial over f may have no root inside f:
+
+  x² − 2  over Q:   the root would be √2, but √2 is not a fraction
+  x² + 1  over R:   the root would be i, but no real number squares to −1
+  x² + x + 1  over F₂:  try both elements
+                        x=0:  0+0+1 = 1 ≠ 0
+                        x=1:  1+1+1 = 3 ≡ 1 ≠ 0     → no root in F₂
+
+  Adjoining a root means building a bigger field that contains f plus a new
+  element (call it α) with p(α) = 0.
+
+     ┌─────────────────────────────┐
+     │  bigger field  f(α)         │
+     │    ┌───────────┐            │
+     │    │  f        │   α  ←── new element with p(α) = 0
+     │    └───────────┘            │
+     │   plus everything you can   │
+     │   build from f and α with   │
+     │   +, −, ×, ÷                │
+     └─────────────────────────────┘
+
+  You've already seen this once: the complex numbers are the reals with a root
+  of x² + 1 adjoined. That root is called i.
+
+  ---
+
+  Step 4: What do the elements look like?
+
+  Take Q with a root α of x² − 2 adjoined, so α is √2. Expressions in α can
+  collapse, because α² − 2 = 0 lets you rewrite α² as 2:
+
+  α³ = α · α² = α · 2 = 2α
+  α⁴ = (α²)² = 4
+
+  Any power of α of degree 2 or higher shrinks back down. So every element can
+  be written as
+
+  a + bα        with a, b in Q
+
+  In general, if p has degree n, every element is a polynomial in α of degree 
+  less than n. This is exactly the paper's wording: "the elements of such an
+  extension are the polynomials over f of degree less than that of p."
+
+  Q(√2):  elements a + b·√2      (degree < 2)   solution stores  (a b)
+
+  ---
+
+  Step 5: Arithmetic means polynomial arithmetic, reduced mod p
+
+  - Addition combines like terms, and nothing overflows: (1 + 2α) + (3 − α) = 4
+    + α.
+  - Multiplication multiplies as polynomials, then reduces mod p. You divide by
+    p and keep the remainder, which is the same as repeatedly replacing α² with
+    2:
+
+  (1 + α)(3 + α) = 3 + 4α + α²
+                 = 3 + 4α + 2        ← replace α² by 2
+                 = 5 + 4α
+
+  This is what "polynomial addition and multiplication modulo p" means. It's
+  just like clock arithmetic (mod 12), but with polynomials instead of numbers.
+
+  The earlier tests checked exactly this:
+
+  √2 · √2 = α² → 2                     solution gave (2 0)   ✅
+  x³ + 5 mod (x² − 2) = 2x + 5         solution gave (5 2)   ✅
+
+  ---
+
+  Step 6: Why must p be irreducible?
+
+  Irreducible means p can't be factored into smaller pieces over f. The paper's
+  precise version: p has no non-constant monic divisor of lower degree.
+
+  Here's what goes wrong with a reducible p. Take x² − 1 = (x − 1)(x + 1) over
+  Q. Mod this p,
+
+  (α − 1)(α + 1) = α² − 1 = 0
+
+  Two nonzero things multiply to 0. Then α − 1 can't have an inverse: if it had
+  one, multiplying both sides by it would force α + 1 = 0, which is false.
+  Division fails, so the result is not a field. It's the same problem Z₆ had in
+  Step 0, where 2·3 = 0.
+
+  reducible p   →  zero divisors  →  some elements have no inverse  →  not a 
+  field ❌
+  irreducible p →  every nonzero element has an inverse              →  field ✅
+
+  This is the polynomial version of "n must be prime." It's also why the
+  theorem's highlighted claim (x · x⁻¹ = 1) is the hard part. Irreducibility is
+  exactly what makes inverses exist.
+
+  Inverse example in Q(√2):
+
+  1/(1 + √2) = (−1 + √2)
+  check: (1 + √2)(−1 + √2) = −1 + √2 − √2 + 2 = 1  ✅
+  solution gave (-1 1)  ✅
+
+  ---
+
+  Step 7: Why "degree at least 2"?
+
+  A degree-1 monic polynomial looks like x − c, whose root c is already in f.
+  Adjoining it adds nothing new, so the paper excludes it.
+
+  ---
+
+  Worked example with a finite field: F₂ to F₄
+
+  Use base field F₂ = {0, 1} and p = x² + x + 1. Step 3 showed it has no root in
+  F₂. It's also irreducible: a factorization would need a degree-1 factor,
+  which would give a root.
+
+  Adjoin α with α² + α + 1 = 0. In F₂, minus equals plus, so the rewrite rule is
+  α² = α + 1.
+
+  The elements are all polynomials of degree < 2 with coefficients 0 or 1.
+  That's 2 × 2 = 4 elements:
+
+  0,   1,   α,   1+α           ← a brand-new field with 4 elements: F₄
+
+  Here is the multiplication table, using α² = α + 1:
+
+     ×   │  0     1     α     1+α
+    ─────┼─────────────────────────
+     0   │  0     0     0     0
+     1   │  0     1     α     1+α
+     α   │  0     α    1+α    1        ← α·(1+α) = α + α² = α + α + 1 = 1
+    1+α  │  0    1+α    1     α
+
+  Every nonzero row contains a 1, so every nonzero element has an inverse. It's
+  a field. (The solution computed α·(1+α) → (1 0), meaning 1.)
+
+  ---
+
+  Putting the sentence back together
+
+  ▎ "A simple extension of a field f is constructed by the usual process of 
+  ▎ adjoining a root of an irreducible monic polynomial p over f [of degree ≥ 
+  ▎ 2]."
+
+   start with field f
+          │
+          ▼
+   pick p: coefficients in f, leading coeff 1, degree ≥ 2, can't be factored
+          │
+          ▼
+   invent α with p(α) = 0      (α is not in f)
+          │
+          ▼
+   new field = { polynomials in α of degree < deg p }
+               add normally, multiply then reduce mod p
+          │
+          ▼
+   irreducibility ⇒ every nonzero element has an inverse ⇒ it's a field
+
+  "Simple" means you adjoin one root. "Recursively" (from the next sentence in
+  the paper) means you can repeat the process on the result. For example, Q →
+  Q(√2) → Q(√2)(√3). That's why fieldp in the solution is recursive: an (:ext f 
+  p) is a field when f is a field and p is monic, irreducible over f, and of
+  degree ≥ 2.
+
+✻ Churned for 32s · done Saturday 8:16 PM
+
+❯ Can you help me build an intuition around polynomial division? How does it    
+  work?                                                                         
+
+⏺ Polynomial division
+
+  Short version: polynomial division works like the long division you learned in
+  school. Each step asks "how many times does the divisor go in?" and
+  subtracts, until what's left is too small to divide.
+
+  ---
+
+  Step 1: Start with integers
+
+  Divide 137 by 12:
+
+  137 = 12 × 11 + 5
+            ↑      ↑
+       quotient  remainder (smaller than 12, so we stop)
+
+  The rule is:
+
+  dividend = divisor × quotient + remainder,    with remainder < divisor
+
+  Polynomial division keeps the same rule, but measures "size" by degree:
+
+  a(x) = q(x) × Q(x) + r(x),    with deg r < deg q
+
+  ---
+
+  Step 2: The core move is to kill the leading term
+
+  Each step does one thing: match the leading term of what's left, subtract, and
+  repeat.
+
+  Divide a = x³ + 2x² + 5 by q = x² − 2 over Q.
+
+  Round 1. What times x² gives x³? Answer: x.
+
+    x³ + 2x² + 0x + 5
+  − x · (x² − 2)   =   x³ − 2x
+    ─────────────────────────
+           2x² + 2x + 5          ← the x³ term is gone
+
+  Round 2. What times x² gives 2x²? Answer: 2.
+
+    2x² + 2x + 5
+  − 2 · (x² − 2)   =   2x² − 4
+    ─────────────────────────
+           2x + 9                ← degree 1 < degree 2, so stop
+
+  Result:
+
+  x³ + 2x² + 5  =  (x² − 2)(x + 2)  +  (2x + 9)
+                             ↑           ↑
+                         quotient    remainder
+
+  Check by expanding: (x² − 2)(x + 2) = x³ + 2x² − 2x − 4. Adding 2x + 9 gives
+  x³ + 2x² + 5. ✅
+
+  Each round lowers the degree by at least one, so the process always finishes.
+
+  ---
+
+  Step 3: The same thing in a picture
+
+  Think of the coefficients as a row of columns. Each round removes the leftmost
+  one:
+
+  degree:     3    2    1    0
+  a:        [ 1    2    0    5 ]
+  −x·q:     [ 1    0   −2    0 ]      q = x²−2 shifted up one place
+            ────────────────────
+                 [ 2    2    5 ]
+  −2·q:          [ 2    0   −4 ]
+                 ───────────────
+                      [ 2    9 ]      ← remainder 2x + 9
+
+  It's just subtracting shifted copies of the divisor.
+
+  ---
+
+  Step 4: Why "monic" makes this easy
+
+  At each step you divide the leading coefficient of what's left by the leading
+  coefficient of q. If q is monic (leading coefficient 1), that division is
+  trivial: the multiplier is just the leading coefficient itself.
+
+  If q is not monic, say 3x² − 6, you need to divide by 3. That requires a 
+  field, where every nonzero number has an inverse. Over the integers, x² ÷ 2x
+  would need 1/2, which doesn't exist, so the division gets stuck. That's one
+  more reason the whole theory is set "over a field."
+
+  ---
+
+  Step 5: "Mod p" means the remainder
+
+  "Reduce mod p" just means divide by p and keep the remainder, the same way 137
+  mod 12 = 5.
+
+  From the example above:
+
+  x³ + 2x² + 5   mod (x² − 2)   =   2x + 9
+
+  This connects to the shortcut from last time. Each subtraction of a multiple
+  of (x² − 2) is the same as replacing x² with 2:
+
+  x³ + 2x² + 5
+  = x·x² + 2·x² + 5
+  = x·2  + 2·2  + 5      ← x² → 2
+  = 2x + 9               ✅ same answer
+
+  So "adjoin α with α² = 2" and "do arithmetic mod x² − 2" are the same 
+  operation, described two ways.
+
+  ┌───────────────────────────┬──────────────────────────────┐
+  │         Integers          │         Polynomials          │
+  ├───────────────────────────┼──────────────────────────────┤
+  │ 137 mod 12 = 5            │ (x³+2x²+5) mod (x²−2) = 2x+9 │
+  ├───────────────────────────┼──────────────────────────────┤
+  │ Remainder < 12            │ Remainder has degree < 2     │
+  ├───────────────────────────┼──────────────────────────────┤
+  │ Possible remainders: 0…11 │ Possible remainders: a + bx  │
+  ├───────────────────────────┼──────────────────────────────┤
+  │ Z mod prime → field       │ f[x] mod irreducible → field │
+  └───────────────────────────┴──────────────────────────────┘
+
+  That last row is the core idea behind the construction in the paper.
+
+  ---
+
+  Step 6: Divisibility
+
+  q divides a means the remainder is zero, exactly as with integers (12 divides
+  144 because 144 mod 12 = 0).
+
+  Over F₂ (where 1 + 1 = 0, so subtracting equals adding), divide x² + 1 by x + 
+  1:
+
+    x² + 0x + 1
+  − x·(x + 1)  =  x² + x
+    ──────────
+         x + 1             (in F₂, 0 − x = x)
+  − 1·(x + 1)
+    ──────────
+           0               ← remainder 0, so x+1 divides x²+1
+
+  Indeed (x + 1)² = x² + 2x + 1 = x² + 1 in F₂.
+
+  Now try x² + x + 1:
+
+    x² + x + 1
+  − x·(x + 1)  =  x² + x
+    ──────────
+             1             ← remainder 1 ≠ 0, so it doesn't divide
+
+  These are the tests I ran on the solution earlier: pdivides returned T for the
+  first and NIL for the second.
+
+  This is what "reducible" means in the definition: some smaller monic q leaves
+  remainder 0.
+
+  ---
+
+  Step 7: Remainders and roots
+
+  Dividing by a degree-1 polynomial (x − c) gives a useful fact:
+
+  a(x) = (x − c)·Q(x) + r      (r is a constant, since its degree is < 1)
+
+  Plug in x = c and the first term vanishes, so r = a(c).
+
+  Consequences:
+  - Dividing by x − c is the same as evaluating at c.
+  - c is a root ⟺ (x − c) divides a.
+
+  That's why, for degree 2 or 3, "no roots in f" means "irreducible": any
+  factorization would need a degree-1 factor, which would give a root. (From
+  degree 4 up this breaks down. A polynomial can have no roots and still split
+  into two quadratics.)
+
+  ---
+
+  Step 8: How the solution computes it
+
+  The solution's pmod doesn't do textbook long division. It uses Horner's 
+  scheme, which builds the polynomial from the top coefficient down and reduces
+  as it goes:
+
+  x³ + 2x² + 0x + 5  =  ((1·x + 2)·x + 0)·x + 5
+
+  Start with 1. Then, repeatedly, multiply by x, reduce mod p right away
+  (vtimesx), and add the next coefficient. Since the running value is reduced at
+  every step, it never grows past degree < deg p. The final result is the same
+  remainder.
+
+  It's like computing 137 mod 12 digit by digit: 1 → 13 mod 12 = 1 → 17 mod 12 =
+  5. That's a different route to the same answer, and the concrete tests agreed
+  with hand calculation.
+
+  ---
+
+  Step 9: Where division leads (inverses)
+
+  Here's why irreducibility gives inverses. Repeated division (the Euclidean 
+  algorithm) finds the greatest common divisor of two polynomials. If p is
+  irreducible and u is nonzero mod p, their only common divisors are constants.
+  The algorithm then produces s and t with
+
+  s·u + t·p = 1
+
+  Reduce that mod p and the t·p term disappears, leaving s·u ≡ 1. So s is the
+  inverse of u.
+
+  The solution's inv-search is a version of this. It keeps dividing p by smaller
+  remainders until it reaches a nonzero constant, and keeps track of the
+  multiplier as it goes. The comment at solution.lisp:384 describes this
+  invariant.
+
+  ---
+
+  Summary
+
+  division  = repeatedly subtract shifted copies of the divisor
+              until the degree is too small
+  mod p     = the leftover part, also "replace α^n using p(α)=0"
+  divides   = leftover is zero
+  root at c = (x − c) divides
+  inverse   = run division repeatedly (Euclid) to reach 1
+
+  If it helps, I can work a short Euclidean-algorithm example step by step, for
+  example the inverse of 1 + √2 in Q(√2) from last time.
+
+✻ Sautéed for 29s · done Saturday 8:31 PM
+
+❯ Is a polynomial quotient unique? Are there certain conditions that need to be 
+  met such that the polynomial and remained produced by division are unique?    
+
+⏺ Is the quotient unique?
+
+  Yes, if you require the remainder to have smaller degree than the divisor, and
+  the divisor's leading coefficient can be divided by. Over a field, the second
+  condition holds for any nonzero divisor. If either condition is dropped,
+  uniqueness or existence can fail.
+
+  ---
+
+  The theorem
+
+  ▎ Let f be a field, and let a and q be polynomials over f with q ≠ 0. Then 
+  ▎ there is exactly one pair (Q, r) with
+  ▎ a = q·Q + r     and     r = 0 or deg r < deg q
+
+  Everything in the statement matters:
+
+  ┌──────────────────────────────────┬──────────────────────────────────────┐
+  │            Condition             │        What breaks without it        │
+  ├──────────────────────────────────┼──────────────────────────────────────┤
+  │ q ≠ 0                            │ You can't divide by zero, just as    │
+  │                                  │ with integers.                       │
+  ├──────────────────────────────────┼──────────────────────────────────────┤
+  │ deg r < deg q                    │ Uniqueness fails (see Condition 1).  │
+  ├──────────────────────────────────┼──────────────────────────────────────┤
+  │ Coefficients from a field, or at │ Existence can fail, and with "zero   │
+  │  least q's leading coefficient   │ divisors" uniqueness fails too       │
+  │ invertible                       │ (Conditions 2 and 3).                │
+  └──────────────────────────────────┴──────────────────────────────────────┘
+
+  ---
+
+  Why it's unique: the proof
+
+  Suppose there were two answers:
+
+  a = q·Q₁ + r₁
+  a = q·Q₂ + r₂
+
+  Subtract one from the other:
+
+  q·(Q₁ − Q₂)  =  r₂ − r₁
+
+  Compare degrees:
+
+  Right side:  r₁ and r₂ both have degree < deg q
+               so  deg(r₂ − r₁) < deg q
+
+  Left side:   if Q₁ ≠ Q₂, then Q₁ − Q₂ is a nonzero polynomial, and
+               deg(q·(Q₁ − Q₂)) = deg q + deg(Q₁ − Q₂)  ≥  deg q
+
+  A polynomial can't have degree both below deg q and at least deg q. So Q₁ = 
+  Q₂, and then r₁ = r₂ as well.
+
+                    degree
+       ≥ deg q ┃ ████ q·(Q₁−Q₂)   ← must live up here if Q₁ ≠ Q₂
+      ─────────╂──────────────── deg q
+       < deg q ┃ ████ r₂ − r₁     ← must live down here
+
+  The key step is "deg(q · something nonzero) ≥ deg q." It says multiplying by q
+  can't make the degree drop. All the conditions above exist to keep that step
+  valid.
+
+  ---
+
+  Condition 1: Without "deg r < deg q", it's not unique
+
+  If any remainder is allowed, you can always move a piece of the quotient into
+  the remainder:
+
+  x² + 1  =  x · x       + 1           (Q = x,     r = 1)
+  x² + 1  =  (x − 1) · x + (x + 1)     (Q = x − 1, r = x + 1)
+  x² + 1  =  0 · x       + (x² + 1)    (Q = 0,     r = x² + 1)
+
+  All three equations are true. The degree rule is what makes the remainder the
+  remainder, the same way 137 = 12·11 + 5 = 12·10 + 17 for integers, where only
+  5 counts because 5 < 12.
+
+  ---
+
+  Condition 2: Without a field, existence can fail
+
+  Over the integers Z, divide x by 2x:
+
+  x = 2x · Q + r      with deg r < 1, so r is a constant
+
+  The x-coefficients force 2·(coefficient of Q) = 1, so Q would need to be 1/2,
+  which isn't an integer. No valid answer exists.
+
+  The fix: if q's leading coefficient is invertible (1 always is, so monic q
+  works), division works over any commutative ring. That's another reason the
+  paper's polynomials are monic. Over a field, every nonzero leading coefficient
+  is invertible, so any nonzero q works.
+
+  ---
+
+  Condition 3: With "zero divisors", uniqueness can fail
+
+  The proof used deg(q·S) = deg q + deg S. That depends on (nonzero) × (nonzero)
+  ≠ 0 for the leading coefficients. Some number systems don't have this
+  property.
+
+  Take integers mod 4, where 2·2 = 4 ≡ 0. Let q = 2x + 1, whose leading
+  coefficient is 2 (not invertible mod 4):
+
+  (2x + 1)·(2x + 1) = 4x² + 4x + 1 ≡ 1   (mod 4)
+
+  Multiplying q by a degree-1 polynomial gave degree 0, so the degree went down.
+  Now divide a = 1 by q:
+
+  1 = (2x + 1)·0        + 1      Q = 0,      r = 1   (deg 0 < 1 ✓)
+  1 = (2x + 1)·(2x + 1) + 0      Q = 2x + 1, r = 0   ✓
+
+  There are two valid answers, so uniqueness fails.
+
+  Fields have no zero divisors, and a monic q has leading coefficient 1, so the
+  paper's setting has neither problem.
+
+  ---
+
+  Summary of conditions
+
+                           existence    uniqueness
+   over a field, q ≠ 0         ✅           ✅
+   any ring, q monic           ✅           ✅      ← leading coeff 1 is 
+  invertible
+   over Z, q = 2x              ❌ (x ÷ 2x)   ✅      ← no zero divisors
+   over Z/4, q = 2x + 1        —            ❌      ← 2·2 = 0
+   no degree rule on r         ✅           ❌
+
+  ---
+
+  Why this matters for the field construction
+
+  Uniqueness is what makes "a mod p" a well-defined thing. Each polynomial has
+  exactly one remainder of degree < deg p. That's why the extension field can
+  say "the elements are the polynomials of degree less than deg p":
+
+  - every polynomial reduces to one representative, and
+  - two representatives are equal as field elements only if they're the same
+    polynomial.
+
+  Without uniqueness, a single field element could have two "names," and
+  checking equality would be ambiguous.
+
+  The solution reflects this in solution.lisp. Each extension element is a
+  coefficient list of length exactly deg p (vecp), so there's exactly one
+  representation per remainder. pmod and pquot compute this unique remainder and
+  quotient.
+
+  ---
+
+  A caveat: formal polynomials vs functions
+
+  Uniqueness is about polynomials as formal expressions (lists of coefficients),
+  not as functions. Over F₂, x² and x give the same output for both inputs (0²
+  = 0, 1² = 1), but they're different polynomials. Dividing either one by (x² +
+  x + 1) gives a different remainder. The paper and the solution both treat
+  polynomials as formal coefficient lists, which is the right choice here.
+
+✻ Sautéed for 30s · done Saturday 8:40 PM
+
+※ recap: You're reviewing whether the 06-russinoff-fields experiment-1 solution matches the paper; it certifies on ACL2 8.7, and we've been covering polynomial division and field extensions. Next, compare the solution's definitions with the authors' books in source/authors-books. (disable recaps in /config)
+
+❯ Now, going back to the review task. Audit the theorems closely and point out  
+  potential problems. Be very thorough. Point out even things that might be     
+  problems, but qualify them as such.                                           
+
+  Read 1 file (ctrl+o to expand)
+⏺ I'll read the rest of the file, compare it with the authors' books, and scan
+  for events that could weaken the result.
+
+  Searched for 3 patterns, ran 3 shell commands (ctrl+o to expand)
+
+⏺ I'm comparing the solution's axiom list with the paper's own field-axioms-p
+  and the F0 constraints in projects/linear/field.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ The 16 constraints in MAIN match the paper's F0 set and its field-axioms-p
+  one-to-one. Next I'll check in ACL2 that a real extension satisfies fieldp and
+  a reducible one doesn't, to rule out a vacuous extension case. · summary
+
+  Ran 3 shell commands (ctrl+o to expand)
+
+⏺ The reducible example and the degree-1 lemma pass. (dm::primep 2) just needs
+  its executable counterpart enabled:
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+⏺ I found no problems that would make MAIN wrong or vacuous. There are a few
+  gaps worth noting, mostly where the solution's definitions are correct on
+  tests but not proved to match the paper's construction.
+
+  What I checked
+
+  1. Soundness. The file has no skip-proofs, defaxiom, trust tags, defattach,
+     :program mode or redefinition. The only local events are the F0 witness
+     functions and one included book. Certification with ACL2 8.7 succeeded, as
+     reported earlier.
+  2. The axiom list. I compared MAIN with the paper's F0 constraints
+     (projects/linear/field.lisp) and with its field-axioms-p
+     (authors-books/extensions.lisp:831). Both have the same 16 axioms,
+     one-to-one, and MAIN states all 16.
+  3. Definitions against the paper. I compared fieldp, reducible, monicp and the
+     element representation with the authors' versions
+     (extensions.lisp:493–527).
+  4. Non-vacuity. I wrote a small extra book on top of solution.lisp and
+     certified it. It proves:
+     - x²+1 over F₂ is reducible, so that extension is not a field: (not (fieldp
+       '(:ext (:fp 2) (1 0 1)))).
+     - x²+x+1 over F₂ gives a real field, F₄: (fieldp '(:ext (:fp 2) (1 1 1))).
+     - In F₄, α·α⁻¹ = 1.
+
+     So the extension case of fieldp contains real fields and excludes at least
+     one non-field. MAIN is not vacuous there.
+
+  Things that match the paper
+
+  - Base fields. The solution uses (:q), (:fp p) and (:f0); the paper uses 0, p
+    and 'f0. Both use the same primality test, dm::primep. The F_p elements are
+    the same set: pfield::fep (a natural number below p) versus (member x (ninit
+    p)).
+  - Extensions. Both require that the base is a field, p is a polynomial over
+    it, p is monic and irreducible, and deg p ≥ 2.
+  - Reducible. Both say "there is a monic q with 0 < deg q < deg p that divides
+    p." The paper uses defchoose with a hand-written check; the solution uses
+    defun-sk. These are logically the same.
+  - The theorem. The paper proves (implies (fieldp f) (field-axioms-p f)), and
+    MAIN has the same shape.
+
+  Potential problems, most important first
+
+  1. Field multiplication is never proved to be "multiply as polynomials, then 
+  take the remainder mod p." (Moderate; this is the main faithfulness gap.)
+  - The paper defines extension multiplication as prem(pmul x y, p). The
+    solution's vapply instead multiplies by X and reduces after each step
+    (solution.lisp:177–195).
+  - MAIN proves that the result is a field. The file never proves that its
+    multiplication equals ordinary polynomial multiplication followed by
+    reduction mod p.
+  - In principle, a set with some other multiplication could satisfy all 16
+    axioms and not be F[X]/p.
+  - Mitigating: my concrete tests agreed with hand calculation (√2·√2 = 2,
+    a·(1+a) = 1 in F₄), and the algorithm is a standard one. I think it is
+    correct; it just isn't stated as a theorem.
+  - Addition, the element set, zero, one, negation and inverse don't have this
+    gap. Addition and the element set are clearly correct by inspection. Given
+    those and multiplication, the axioms force the identities and inverses to be
+    the right ones.
+
+  2. Divisibility uses the same multiplication code. (Moderate, related to #1.)
+  - pmod is defined as vapply(a, 1) (solution.lisp:309). So pdivides, which
+    defines reducible and therefore fieldp, rests on the same unproved routine
+    as #1.
+  - A bug there would change which polynomials count as irreducible, not just
+    the arithmetic.
+  - The paper's prem is independent long division. Here, any error in vapply
+    would affect both fieldp and fmul, so they could not catch each other.
+  - My tests and the two fieldp proofs above show pdivides behaves correctly on
+    cases that matter. It is still not proved to be "the remainder is zero" in
+    the usual sense.
+
+  3. The polynomial representation differs from the paper's. (Low; very likely 
+  harmless.)
+  - The paper lists coefficients highest degree first, requires a nonzero
+    leading coefficient, and stores an element as a polynomial of degree < deg
+    p.
+  - The solution lists coefficients constant term first. It stores an element as
+    a list of exactly deg p coefficients, padded with zeros, and its polyp
+    allows trailing zeros.
+  - The solution's form is still one-to-one with the paper's. Where leading
+    coefficients matter (monicp), it requires the last coefficient to be 1,
+    which rules out trailing zeros. I found no case where this changes meaning.
+
+  4. Extension coefficients are not guaranteed to be ACL2 rationals in the Q 
+  case. (Very low.)
+  - Q addition and multiplication apply rfix to their inputs (treat
+    non-rationals as 0), while the paper uses raw + and *.
+  - This only affects non-elements, and MAIN only talks about elements, so
+    there's no effect on the theorem.
+
+  5. Nothing proves that the extension contains f or a root of p. (Low; it 
+  matches both the prompt and the paper.)
+  - "Adjoining a root" suggests two properties: f sits inside the new field, and
+    p has a root there.
+  - The solution proves neither.
+  - The prompt doesn't ask for them, and the paper defers them too (its flift
+    and roots come in later books). So this is consistent, but it means the
+    formalization only checks the field axioms, not the "extension" part.
+
+  6. My checks cover only a single level of extension. (Low.)
+  - I proved one degree-2 extension of F₂ is a field. I did not prove a
+    two-level example, such as an extension of an extension, is a field.
+  - The recursive definition looks right on inspection, but no two-level example
+    was certified.
+
+  7. Small notes, no action needed.
+  - In MAIN, the identity and distributive axioms are stated one-sided (x+0,
+    x·1, x·(y+z)). That's equivalent given commutativity, and identical to the
+    paper's F0 constraints.
+  - fieldp requires exact list shapes, so (:q extra) is not a field. That's
+    harmless.
+  - The F0 witness model is the rationals, which only shows the constraints are
+    consistent.
+  - The two "ttag" matches in the certificate are just field names.
+
+  Suggested verdict
+
+  The statement is faithful to the prompt and to the paper's notion of field.
+  The axiom list is exactly right, and the extension case is not vacuous. The
+  main caveat is #1 and #2: the solution's own multiplication routine is
+  trusted, on inspection and testing, to be multiplication mod p rather than
+  proved to be. If you want to close that gap, the next step is a lemma in ACL2
+  that vapply equals multiplying the polynomials and then taking the remainder
+  mod p. That's a real but bounded proof effort.
+
+  The extra book is at /tmp/tmp.jbu4edHsK5/nonvac.lisp inside the acl2-review
+  container. It will be deleted when the container is removed, so I can copy it
+  into the repo (for example under harness/06-russinoff-fields/) if you want to
+  keep it.
+
+✻ Brewed for 2m 33s · done Saturday 8:56 PM
+
+❯ Save these findings, then do the same for 05-russinoff-linear3 and            
+  04-binmonjil-chandy-lamport                                                   
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I'll save the review in a new top-level reviews/ folder, separate from
+  harness/ (which holds the orchestrator's notes), and copy the extra book out
+  of the container.
+
+⏺ Bash(mkdir -p reviews && docker cp acl2-review:/tmp/tmp.jbu4edHsK5/nonvac.lisp
+      reviews/06-russinoff-fields-exp1-nonvac.lisp && cat
+      reviews/06-russinoff-fields-exp1-n…)
+  ⎿  (in-package "ACL2")
+     (include-book "solution")
+     … +26 lines (ctrl+o to expand)
+  ⎿  Created reviews/06-russinoff-fields-exp1-nonvac.lisp (+29 -0)
+       1 +(in-package "ACL2")                                            
+       2 +(include-book "solution")                                      
+       3 +                                                               
+       4 +; x^2+1 = (x+1)^2 over F_2 is reducible, so the extension is NO
+         +T a field                                                      
+       5 +(defthm not-fieldp-reducible-example                           
+       6 +  (not (fieldp (quote (:ext (:fp 2) (1 0 1)))))                
+       7 +  :hints (("Goal" :use ((:instance reducible-suff (b (quote (:f
+         +p 2))) (p (quote (1 0 1))) (q (quote (1 1)))))                 
+       8 +           :in-theory (e/d (irreducible) ((:e fieldp) (:e irred
+         +ucible))))))                                                   
+       9 +                                                               
+      10 +; x^2+x+1 over F_2 is irreducible, so F_4 IS a field           
+      11 +(defthm monic-deg1-over-f2                                     
+      12 +  (implies (and (monicp (quote (:fp 2)) q) (equal (len q) 2))  
+      13 +           (or (equal q (quote (0 1))) (equal q (quote (1 1))))
+         +)                                                              
+      14 +  :hints (("Goal" :in-theory (enable fep fone pfield::fep)     
+      15 +           :expand ((polyp (quote (:fp 2)) q) (polyp (quote (:f
+         +p 2)) (cdr q))                                                 
+      16 +                    (polyp (quote (:fp 2)) (cddr q)))))        
+      17 +  :rule-classes nil)                                           
+      18 +                                                               
+      19 +(defthm fieldp-f4                                              
+      20 +  (fieldp (quote (:ext (:fp 2) (1 1 1))))                      
+      21 +  :hints (("Goal" :in-theory (e/d (irreducible reducible (:e dm
+         +::primep)) (reducible-suff (:e fieldp) (:e irreducible)))      
+      22 +           :use ((:instance monic-deg1-over-f2                 
+      23 +                  (q (reducible-witness (quote (:fp 2)) (quote 
+         +(1 1 1)))))))))                                                
+      24 +                                                               
+      25 +; tower: Q(sqrt2) then a degree-2 extension over it is at least
+         + well-formed to state                                          
+      26 +(defthm main-instance-f4                                       
+      27 +  (let ((f (quote (:ext (:fp 2) (1 1 1)))))                    
+      28 +    (equal (fmul f (quote (0 1)) (finv f (quote (0 1)))) (fone 
+         +f)))                                                           
+      29 +  :hints (("Goal" :in-theory (enable fmul finv fone))))        
+
+⏺ Bash(sed -i '' 's|^; tower: Q(sqrt2) then a degree-2 extension over it is at
+      least well-formed to state|; in F_4 = F_2[x]/(x^2+x+1), the root alpha
+      times its inverse…)
+  ⎿  ; Non-vacuity checks for 06-russinoff-fields/exp1/solution.lisp (revie
+     wer addition, not part of the run).
+     ; Certify next to a copy of solution.lisp: cert.pl --acl2 <ACL2 8.7 im
+     … +4 lines (ctrl+o to expand)
+  ⎿  Updated reviews/06-russinoff-fields-exp1-nonvac.lisp (+4 -1)
+      1 +; Non-vacuity checks for 06-russinoff-fields/exp1/solution.lisp 
+        +(reviewer addition, not part of the run).                       
+      2 +; Certify next to a copy of solution.lisp: cert.pl --acl2 <ACL2 
+        +8.7 image> 06-russinoff-fields-exp1-nonvac.lisp                 
+      3 +                                                                
+      4  (in-package "ACL2")
+      5  (include-book "solution")
+      6  
+     ...
+      25             :use ((:instance monic-deg1-over-f2
+      26                    (q (reducible-witness (quote (:fp 2)) (quote 
+          (1 1 1)))))))))
+      27  
+      25 -; tower: Q(sqrt2) then a degree-2 extension over it is at least
+         - well-formed to state                                          
+      28 +; in F_4 = F_2[x]/(x^2+x+1), the root alpha times its inverse i
+         +s 1                                                            
+      29  (defthm main-instance-f4
+      30    (let ((f (quote (:ext (:fp 2) (1 1 1)))))
+      31      (equal (fmul f (quote (0 1)) (finv f (quote (0 1)))) (fone 
+          f)))
+
+❯ Goal set: don't stop until the 05 and 04 papers are done                      
+
+⏺ Write(reviews/06-russinoff-fields-exp1.md)
+  ⎿  Wrote 67 lines to reviews/06-russinoff-fields-exp1.md
+       1 # Review: 06-russinoff-fields, experiment 1
+       2 
+       3 Reviewer audit of `06-russinoff-fields/exp1/solution.lisp` again
+         st the prompt (`exp1/prompt.txt`) and the
+       4 paper's own books (`source/authors-books/extensions.lisp`, and `
+         projects/linear/field.lisp` in the community books).
+       5 
+       6 **Verdict:** no problem found that makes `MAIN` wrong or vacuous
+         . The statement matches the prompt and the
+       7 paper's notion of field. Main caveat: extension multiplication (
+     … +61 lines (~4 KB) (ctrl+o to expand)
+
+⏺ Saved the 06 review. Now running the 05 and 04 audits in parallel, one fork
+  each, following the same method.
+
+⏺ 2 background agents launched (↓ to manage)
+   ├ Audit 05 Linear III exp1
+   └ Audit 04 Chandy-Lamport exp1
+
+⏺ The 06 review is saved:
+  - reviews/06-russinoff-fields-exp1.md: verdict, how I reproduced it, what I
+    checked, and the ranked list of potential problems.
+  - reviews/06-russinoff-fields-exp1-nonvac.lisp: the extra book from the
+    non-vacuity checks, with a header saying how to certify it.
+
+  I put these in a new top-level reviews/ folder rather than harness/, because
+  harness/ holds the orchestrator's notes from the runs. They aren't committed.
+
+  The 05 (Linear III) and 04 (Chandy–Lamport) audits are running in parallel,
+  one background agent each. They follow the same steps as 06:
+  - Reproduce the certification in the acl2-review container.
+  - Scan for anything unsound.
+  - Compare MAIN and its definitions with the prompt and the paper's own books.
+  - Test the key functions on concrete examples.
+  - Certify a non-vacuity book.
+
+  Each will write its own review file and non-vacuity book to reviews/. I'll
+  check their results when they finish and report back; I'm not stopping until
+  both are done.
+
+✻ Baked for 56s · done Saturday 9:12 PM
+
+⏺ Agent "Audit 05 Linear III exp1" finished · 10m 10s
+
+⏺ The goal is to finish the 05 and 04 audits. 05 is done; 04 is still running.
+  I'll spot-check the 05 output while I wait.
+
+⏺ Bash(ls -la reviews/; grep -n "(defthm main" -A12
+      05-russinoff-linear3/exp1/solution.lisp | head -16; docker exec
+      acl2-review bash -c 'ls /tmp/rev05 /tmp/rev05b 2>/d…)
+  ⎿  total 56
+     drwxr-xr-x@  6 samxifaras  staff   192 Nov 14 21:22 .
+     drwxr-xr-x  18 samxifaras  staff   576 Nov 14 21:11 ..
+     … +18 lines (ctrl+o to expand)
+  ⎿  (another command ran in this repository at the same time; a change 
+     made by either may show under either result)
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ 05 checks out. Its non-vacuity book has a certificate in the container, and
+  MAIN uses dimension = length of the constrained basis, as the agent described.
+  04 is still running; I'll wait for it to finish.
+
+✻ Cogitated for 9s · done Saturday 9:22 PM
+
+⏺ Agent "Audit 04 Chandy-Lamport exp1" finished · 14m 2s
+
+⏺ 04 is done. I'll quickly confirm its files exist and that its non-vacuity book
+  certified.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I finished the audits of 05 and 04. Neither one has a problem that makes MAIN
+  wrong, weaker than the prompt, or vacuous. Both certify on ACL2 8.7 in your
+  image. 05 and 04 were each done by a background agent; I spot-checked their
+  output files, MAIN statements and non-vacuity certificates, not every line of
+  their audits.
+
+  05 Linear III
+  - Certification: it certifies in 0.5 s with no community books needed. The
+    scan found no banned events.
+  - Theorem: MAIN says that if T is injective, then dim V ≤ dim W, and T is
+    surjective exactly when dim V = dim W. This is the prompt's theorem, and it
+    combines two of the authors' theorems with the same hypothesis.
+  - Axioms: the field, vector-space, basis and T constraints match the paper's
+    books one-to-one.
+  - Non-vacuity: a certified book applies MAIN to two concrete examples. One is
+    T(x) = (x, 0) from F into F×F, which is injective but not surjective. The
+    other is the identity on F. Together they exercise both directions of the
+    "exactly when."
+  - Potential problems:
+    - Low: the model added "returns true or false" constraints to four
+      recognizers (fp, vp, wp, gp), which aren't in the paper. Removing them
+      still certifies, so the proof doesn't rely on them.
+    - Very low: two other small differences from the paper don't change the
+      meaning.
+  - Not tested: every function is abstract here, so nothing can be run on
+    numbers the way 06 was. The two examples stand in for those tests.
+
+  04 Chandy–Lamport
+  - Certification: it certifies in 0.24 s, after certifying misc/records and
+    misc/equal-by-g. The scan found no banned events.
+  - Theorem: MAIN matches the prompt and is stronger in one respect. The two
+    final states are proved actually equal, not just "equivalent."
+  - Concrete run: a two-process system with one message in flight each way
+    records the right snapshot. Its pre- and post-recording steps really change
+    order, and both orders reach the same state.
+  - Non-vacuity: a certified book shows all of MAIN's hypotheses can hold at
+    once in that run. It also shows that three malformed segments are rejected.
+  - Potential problems:
+    - Low to moderate: the proof only uses the "this run is legal" part of the
+      segment definition. Mistakes in the other parts would go unnoticed by the
+      proof, and I only tested them on one system.
+    - Low: a compute step builds its outgoing messages from the new state, while
+      the authors use the old one. The prompt doesn't say which.
+    - Low: the network topology has no constraints. The authors require
+      consistent in/out lists and unique ids; leaving them out makes the theorem
+      more general, not weaker.
+    - Low: MAIN doesn't state that the reordered run is legal. Neither does the
+      prompt or the authors' theorem.
+  - Not tested: larger topologies, or two snapshots running at the same time.
+
+  Each review lists its potential problems in full. None of the files are
+  committed, and the acl2-review container is still running.
+
+  Files are in reviews/:
+  - 06-russinoff-fields-exp1.md
+  - 06-russinoff-fields-exp1-nonvac.lisp
+  - 05-russinoff-linear3-exp1.md
+  - 05-russinoff-linear3-exp1-nonvac.lisp
+  - 04-binmonjil-chandy-lamport-exp1.md
+  - 04-binmonjil-chandy-lamport-exp1-nonvac.lisp
+  - 04-binmonjil-chandy-lamport-exp1-eval.lsp (the concrete-run script, run with
+    acl2 < file)
+
+✔ Goal achieved (15m · 1 turn · 71k tokens) (ctrl+o to expand)
+
+✻ Sautéed for 15m 15s · done Saturday 9:27 PM
+
+※ recap: You're reviewing your three assigned experiment-1 solutions (04, 05, 06); all three certify and none has a problem that makes `MAIN` wrong or vacuous. Next: read the three reviews in `reviews/`, which aren't committed yet.

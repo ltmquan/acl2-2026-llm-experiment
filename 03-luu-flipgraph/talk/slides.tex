@@ -169,15 +169,17 @@
 
 \begin{frame}{Schemes, flips and pluses}
   \begin{itemize}
-    \item The \textbf{matrix multiplication tensor} $\M$ for $n\times n$:
-      the tensor such that, for all $n\times n$ matrices $D$, $F$ and all
-      $k,\ell$,
+    \item A \textbf{rank-one tensor}: $A\otimes B\otimes C$, with $A$, $B$,
+      $C$ $n\times n$ matrices over $\F$.
+    \item The \textbf{matrix multiplication tensor} for $n\times n$, with
+      $E_{ij}$ the unit matrix (a single 1 at row $i$, column $j$):
       \[
-        (DF)_{k,\ell} = \sum_{g,h,i,j=1}^{n} \M_{g,h,i,j,k,\ell}\, D_{g,h}\, F_{i,j}.
+        \M = \sum_{i,j,k=1}^{n} E_{ij}\otimes E_{jk}\otimes E_{ik}
       \]
-    \item A \textbf{scheme}: a multiset of nonzero \textit{rank-one tensors}
-      $A\otimes B\otimes C$ ($n\times n$ matrices over $\F$) whose sum is the
-      matrix multiplication tensor $\M$.
+      The term for $i,j,k$ says: $D_{ij}\cdot F_{jk}$ is added into entry
+      $(i,k)$ of the product $DF$.
+    \item A \textbf{scheme}: a multiset of nonzero rank-one tensors whose
+      sum is $\M$.
     \item Size of a scheme = number of scalar multiplication
   \end{itemize}
   Two kinds of edges, shown at position $A$ ($B$ and $C$ are analogous):
@@ -194,14 +196,15 @@
     with itself deletes both.
   \end{block}
   \note{
-    \textbf{[2:45]} A bit more precisely. For $n\times n$ matrix multiplication, the matrix multiplication tensor is the unique tensor
-    that satisfies this equation for every pair of matrices $D$ and $F$.
-    It has six indices, and it records which products of an entry of $D$
-    with an entry of $F$ contribute to each entry of the product $DF$.
+    \textbf{[2:45]} A bit more precisely. A rank-one tensor is
+    $A \otimes B \otimes C$ for three $n \times n$ matrices over $\F$.
+    The matrix multiplication tensor is this sum of $n^3$ rank-one
+    tensors, built from unit matrices: one term for each $i$, $j$, $k$.
+    Each term is one line of the textbook algorithm: multiply entry
+    $(i,j)$ of $D$ by entry $(j,k)$ of $F$ and add it into entry $(i,k)$ of
+    the product. We'll use this form again later.
 
-    A scheme is a multiset of
-    rank-one tensors $A \otimes B \otimes C$, three $n \times n$ matrices over
-    $\F$. It is a correct scheme when its rank-one tensors add up to the matrix multiplication tensor. Throughout, we'll refer to the rank-one tensors of a scheme $S$ as the summands of $S$.
+    A scheme is a multiset of rank-one tensors. It is a correct scheme when its rank-one tensors add up to the matrix multiplication tensor. Throughout, we'll refer to the rank-one tensors of a scheme $S$ as the summands of $S$.
     The size of $S$, or the number of its summands, corresponds to the number of scalar multiplications of $S$.
 
     A flip takes two summands that agree in one position and shuffles the

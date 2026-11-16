@@ -176,8 +176,6 @@
       \[
         \M = \sum_{i,j,k=1}^{n} E_{ij}\otimes E_{jk}\otimes E_{ik}
       \]
-      The term for $i,j,k$ says: $D_{ij}\cdot F_{jk}$ is added into entry
-      $(i,k)$ of the product $DF$.
     \item A \textbf{scheme}: a multiset of nonzero rank-one tensors whose
       sum is $\M$.
     \item Size of a scheme = number of scalar multiplication
@@ -619,7 +617,6 @@
   \begin{itemize}
     \item ``There is a path'' becomes a \textbf{function} that returns the
       path. No existential quantifier.
-    \item The theorem says the path is valid and where it lands.
   \end{itemize}
   \note{
     \textbf{[13:00]} And this is the main theorem. For two correct schemes
@@ -650,27 +647,24 @@
 \begin{lstlisting}
 (:mul (:add (:var 0 0) (:var 1 1)) (:add (:var 0 0) (:var 1 1)))   ; (D00+D11)(F00+F11)
 \end{lstlisting}
+  \textbf{Soundness}, \textbf{completeness}, and \textbf{existence} (so
+  the main theorem is not vacuous):
 \begin{lstlisting}
-(defun-sk algo-correctp (alg n)
-  (forall (d f) (implies (and (bit-matp d n n) (bit-matp f n n))
-                         (equal (eval-algo alg d f n) (bit-mat-mul d f n)))))
-\end{lstlisting}
-  \begin{description}[Completeness]
-    \item[Soundness] a correct scheme converts to a correct algorithm
-    \item[Completeness] a correct algorithm translates to a correct scheme
-      (rank $\le$ number of products)
-    \item[Existence] the textbook algorithm gives a correct scheme for every
-      $n$: \textbf{not vacuous}
-  \end{description}
-\begin{lstlisting}
-(defrule correct-schemep-of-naive-algo-scheme
+(defrule scheme-algo-correct             ; correct scheme -> correct algorithm
+  (implies (and (correct-schemep sch n) (natp n) (< 0 n))
+           (algo-correctp (scheme-algo sch n) n)))
+
+(defrule algo-to-correct-scheme          ; correct algorithm -> correct scheme
+  (implies (and (algop alg n) (natp n) (< 0 n) (algo-correctp alg n))
+           (correct-schemep (algo-scheme alg n) n)))
+
+(defrule correct-schemep-of-naive-algo-scheme       ; the textbook algorithm
   (implies (natp n) (correct-schemep (algo-scheme (naive-algo n) n) n)))
 \end{lstlisting}
   \note{
     \textbf{[13:45]} One addition that the connectivity proof doesn't
     need. The theorem is about bags of matrix triples. Everyone says those
-    are matrix multiplication algorithms, and the theorem is only
-    interesting because of that. So we proved it.
+    are matrix multiplication algorithms. We proved it.
 
     We defined a small language of bilinear algorithms. A linear form is
     built from entries of one matrix with addition and scaling by a bit.
@@ -681,15 +675,15 @@
     bilinear algorithms can be written this way, which is why the number
     of products is the right measure.
 
-    An algorithm is correct if it returns the matrix product on all
-    inputs.
+    An algorithm is correct, \code{algo-correctp}, if it returns the
+    matrix product on all inputs. Two functions go between the two worlds:
+    \code{scheme-algo} converts a scheme to an algorithm, and
+    \code{algo-scheme} translates an algorithm to a scheme.
 
-    Then, in both directions. A correct scheme converts to a correct
-    algorithm. A correct algorithm translates to a correct scheme, whose
-    rank is at most the number of products. And the textbook algorithm,
-    written in this language, translates to a correct scheme for every
-    $n$; that's the theorem at the bottom. So correct schemes always
-    exist, and the main theorem is never vacuous.
+    Then the three theorems. Soundness: a correct scheme converts to a
+    correct algorithm. Completeness: a correct algorithm translates to a
+    correct scheme. Existence: the textbook algorithm translates to a
+    correct scheme for every $n$, so the main theorem is never vacuous.
   }
 \end{frame}
 

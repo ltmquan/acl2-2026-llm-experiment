@@ -89,10 +89,10 @@
       $n\times n$ matrices?
       \begin{itemize}
         \item Textbook: $n^3$. Strassen (1969): 7 instead of 8 for
-          $2\times 2$. Studied ever since.
+          $2\times 2$.
       \end{itemize}
-    \item A \alert{scheme} is a way to compute the product; its
-      \alert{rank} is its number of multiplications.
+    \item A \textbf{scheme} is a way to compute the product; its
+      \textbf{rank} is its number of multiplications.
     \item Recent records for small formats over $\F$:
       \begin{center}
         \begin{tabular}{lcccc}
@@ -104,14 +104,14 @@
           \bottomrule
         \end{tabular}
       \end{center}
-    \item Most of these were found by searching the \alert{flip graph}
+    \item Most of these were found by searching the \textbf{flip graph}
       (Kauers \& Moosbauer, 2023).
   \end{itemize}
   \note{
     \textbf{[0:30]} Fast matrix multiplication is an old problem. The
     textbook method uses $n^3$ scalar multiplications. In 1969 Strassen
     showed that two by two matrices need only 7, not 8, and people have
-    been looking for better schemes ever since.
+    been looking for ways to use less scalar multiplications ever since.
 
     A scheme is a way to compute the product, and its rank is how many
     multiplications it uses. In the last few years there has been a run of
@@ -119,50 +119,48 @@
     47 for four by four, 93, 153, and 245 for seven by seven, which is from
     our companion paper.
 
-    Most of these were found the same way: by searching something called
+    Most of these were found the same way: by searching over a structure called
     the flip graph.
   }
 \end{frame}
 
 \begin{frame}{The flip graph, and why connectivity matters}
   \begin{itemize}
-    \item \alert{Vertices}: schemes. \alert{Edges}: local rewrites that
+    \item \textbf{Vertices}: schemes.
+    \item \textbf{Edges}: local rewrites that
       change a scheme but not what it computes.
-    \item Search: start from a known scheme, take a \alert{random walk},
-      look for lower rank.
-    \item We want the graph to be \alert{connected}:
+    \item \textbf{Search}: start from a known scheme, random walk
+    \item \textbf{Key property}: connectivity
       \begin{itemize}
-        \item we can start from \alert{any} scheme, e.g.\ the textbook one;
-        \item no scheme, including the unknown better ones, is out of reach.
+        \item theoretically, can start from any known schemes, e.g. the textbook one, and
+        \item can reach any schemes, even unknown ones.
       \end{itemize}
   \end{itemize}
   \vspace{1ex}
   \begin{tabular}{@{}lll@{}}
     Kauers \& Moosbauer (2023) & flip + reduction & weakly connected \\
     Arai et al.\ (2024) & flip + plus + reduction & strongly connected; proof has a gap \\
-    Medley et al.\ (2027) & \alert{flip + plus} & \alert{strongly connected} \\
+    Medley et al.\ (2027) & \textbf{flip + plus} & \textbf{strongly connected} \\
   \end{tabular}
   \vfill
-  \begin{block}{This work}
+  \begin{block}{This paper}
     A complete ACL2 proof of the last result: 29 books, 215 definitions,
     791 theorems.
   \end{block}
   \note{
     \textbf{[1:30]} The vertices of the flip graph are schemes, and the
-    edges are small rewrites that change the scheme without changing what
-    it computes. A search starts at a known scheme and does a random walk,
-    hoping to land on one with lower rank.
+    edges are local rewrites that change the scheme without changing what
+    it computes. A search starts at a known scheme and does a random walk.
 
     For that to make sense you want the graph to be connected. Then you can
     start anywhere, for example from the textbook scheme, and you know that
-    no scheme is unreachable, including the better ones nobody has found.
+    any scheme would be reachable, including the optimal ones that we are after.
 
     The original graph was shown weakly connected. Arai et al.\ added a
-    second move, plus, and proved strong connectivity, but their proof
-    still needs reduction edges, which searches usually skip, and its main
-    procedure depends on an invariant that is never established. Our
-    companion paper shows flip and plus alone are enough over $\F$. Given
-    that history, we wanted the proof machine-checked. That's this work.
+    second edge type, plus, and proved strong connectivity, but their proof
+    still needed reduction edges, which practical searches usually skip. We also found that the proof's main
+    procedure depends on an invariant that isn't maintained throughout. Our
+    companion paper shows flip and plus alone are enough over $\F$. We also wanted the proof machine-checked to make sure there's no gap in our construction. Hence, this work.
   }
 \end{frame}
 
@@ -171,43 +169,48 @@
 
 \begin{frame}{Schemes, flips and pluses}
   \begin{itemize}
-    \item A \alert{scheme}: a multiset of nonzero summands
-      $A\otimes B\otimes C$ ($A,B,C\in\F^{n\times n}$) whose sum is the
+    \item The \textbf{matrix multiplication tensor} $\M$ for $n\times n$:
+      the tensor such that, for all $n\times n$ matrices $D$, $F$ and all
+      $k,\ell$,
+      \[
+        (DF)_{k,\ell} = \sum_{g,h,i,j=1}^{n} \M_{g,h,i,j,k,\ell}\, D_{g,h}\, F_{i,j}.
+      \]
+    \item A \textbf{scheme}: a multiset of nonzero \textit{rank-one tensors}
+      $A\otimes B\otimes C$ ($n\times n$ matrices over $\F$) whose sum is the
       matrix multiplication tensor $\M$.
-    \item One summand = one multiplication:
-      (a sum of entries of $D$ chosen by $A$) $\times$ (a sum of entries
-      of $F$ chosen by $B$), added into the entries of $DF$ chosen by $C$.
+    \item Size of a scheme = number of scalar multiplication
   \end{itemize}
-  \vspace{1ex}
   Two kinds of edges, shown at position $A$ ($B$ and $C$ are analogous):
   \begin{align*}
     \textbf{flip:}\quad & A\otimes B\otimes C,\ A\otimes B'\otimes C'
-      \;\to\; A\otimes B\otimes (C+C'),\ A\otimes (B'+B)\otimes C' \\
+      \;\to\; A\otimes B\otimes (C-C'),\ A\otimes (B'+B)\otimes C' \\
     \textbf{plus:}\quad & A\otimes B\otimes C,\ A'\otimes B'\otimes C'
-      \;\to\; A\otimes B\otimes C,\ (A'+A)\otimes B'\otimes C',\ A\otimes B'\otimes C'
+      \;\to\; A\otimes B\otimes C,\ (A'-A)\otimes B'\otimes C',\ A\otimes B'\otimes C'
   \end{align*}
   Zero summands are deleted. Both moves keep the sum.
   \vfill
-  \begin{block}{The one fact about $\F$ the proof uses}
-    $X + X = 0$: two identical summands cancel, and a flip of a summand
-    \alert{with itself} deletes both.
+  \begin{block}{Property of $\F$}
+    $X + X = 0$ $\Rightarrow$ a flip of a summand
+    with itself deletes both.
   \end{block}
   \note{
-    \textbf{[2:45]} A bit more precisely. A scheme is a multiset of
-    summands $A \otimes B \otimes C$, three $n \times n$ matrices over
-    $\F$, that add up to a fixed tensor, the matrix multiplication tensor.
-    Each summand is one multiplication: $A$ picks entries of the first
-    matrix, $B$ picks entries of the second, and $C$ says where the product
-    goes.
+    \textbf{[2:45]} A bit more precisely. For $n\times n$ matrix multiplication, the matrix multiplication tensor is the unique tensor
+    that satisfies this equation for every pair of matrices $D$ and $F$.
+    It has six indices, and it records which products of an entry of $D$
+    with an entry of $F$ contribute to each entry of the product $DF$.
+
+    A scheme is a multiset of
+    rank-one tensors $A \otimes B \otimes C$, three $n \times n$ matrices over
+    $\F$. It is a correct scheme when its rank-one tensors add up to the matrix multiplication tensor. Throughout, we'll refer to the rank-one tensors of a scheme $S$ as the summands of $S$.
+    The size of $S$, or the number of its summands, corresponds to the number of scalar multiplications of $S$.
 
     A flip takes two summands that agree in one position and shuffles the
-    other two. A plus splits one summand in two using another. Both keep
-    the sum the same, so you stay on a scheme.
+    other two. A plus splits one summand in two using another. Both types of edges preserve the sum of the original scheme, thus a correct scheme can only reach other correct schemes.
 
-    Everything in the proof comes down to one fact about $\F$: anything
-    plus itself is zero. So two identical summands cancel, and if you flip
+    The proof rests on one fact about $\F$: anything
+    plus itself is zero, or that pluses and minuses are the same. So if you flip
     a summand with itself, both outputs are zero and the pair disappears.
-    That is the only way to remove anything.
+    This is the primary way we'll use to remove summands.
   }
 \end{frame}
 
@@ -220,11 +223,11 @@
   \vspace{1ex}
   \textbf{What it means for us.}
   \begin{itemize}
-    \item \alert{Any} matrix $X$ is a sum of $A$-components that are
-      \alert{already in the scheme}:
+    \item \textbf{Any} matrix $X$ is a sum of $A$-components that are
+      \textbf{already in the scheme}:
       \[ X = A(u_1) + A(u_2) + \dots + A(u_k),\qquad u_i \in S. \]
     \item So whatever $A$-component we want to build, the raw material is
-      there. The lemma tells us \alert{which summands to combine}.
+      there.
   \end{itemize}
   \vspace{1ex}
   \textbf{Why it holds.}
@@ -232,65 +235,36 @@
   unit matrix $E_{ij}$ in the $A$ position; a scheme that sums to $\M$
   must be able to produce each of them.
   \note{
-    \textbf{[4:00]} There are four lemmas. I'll say what each one means and
-    how we use it, not how it's proved.
+    \textbf{[4:00]} There are four lemmas. I'll explain
+    how we use each at a high-level.
 
     First, spanning. As stated, it's a general linear algebra fact: the
-    A-components of any scheme span all matrices. What matters is how we
-    use it. It says any matrix $X$ you might want can be written as a sum
-    of A-components of summands that are already in the scheme. So when we
-    want to build a summand with a particular A-component, the raw material
-    is always there, and the lemma tells us which summands to combine.
+    A-components of any scheme span all matrices. For us, this means that any matrix $X$ we might want can be written as a sum
+    of A-components of summands that are already in the scheme. Along the proof, we will
+    want to build a summand with a particular A-component; this lemma says the raw material
+    is always there, and tells us which summands to combine.
 
-    The reason it's true is that the matrix multiplication tensor contains
+    An intuition on why it's true is that the matrix multiplication tensor contains
     every unit matrix in each position, so anything that sums to it has to
     be able to produce every unit matrix.
   }
 \end{frame}
 
-\begin{frame}{Lemma: adding a duplicate sum}
-  \begin{block}{Lemma (Adding a duplicate sum)}
+\begin{frame}{Lemma: add duplicate \& add arbitrary}
+  \begin{block}{Lemma (Add duplicate)}
     If $A\otimes B\otimes C$ and $A'\otimes B'\otimes C'$ are in $S$, and
-    $X = A + A'$, there is a path from $S$ to
-    $S \uplus \{X\otimes B\otimes C,\ X\otimes B\otimes C\}$.
+    $X = A + A'$, there is a path from
+    \[S\rightarrow
+    S \uplus \{X\otimes B\otimes C,\ X\otimes B\otimes C\}.\]
   \end{block}
-  \vspace{1ex}
-  \textbf{What it means.}
-  \begin{itemize}
-    \item This is the \alert{only} tool that creates new summands.
-    \item The new summand's $A$-component is the \alert{sum of two
-      $A$-components we already have}. $B$ and $C$ are copied from the first.
-    \item It arrives as a \alert{pair}: two copies cancel, so the scheme
-      still sums to $\M$.
-  \end{itemize}
-  \vspace{1ex}
-  \textbf{How.} An explicit sequence of four moves: three pluses and one
-  flip.
-  \note{
-    \textbf{[5:00]} Second lemma. Given two summands in the scheme, you can
-    add two copies of a new summand whose A-component is the sum of their
-    A-components.
 
-    This is the only tool in the whole proof that creates new summands.
-    Two things to notice. The new A-component is a sum of two we already
-    have, which is exactly the kind of step spanning talks about. And the
-    new summand comes as a pair, two identical copies. Over $\F$ a pair
-    contributes zero, so the scheme stays correct.
-
-    The proof is just an explicit path: three pluses and a flip.
-  }
-\end{frame}
-
-\begin{frame}{Lemma: adding an arbitrary summand}
-  \begin{block}{Lemma (Adding an arbitrary summand)}
+  \begin{block}{Lemma (Add arbitrary)}
     For $n\ge 2$ and any nonzero $X, Y, Z$, there is a path from $S$ to
     $S \uplus \{X\otimes Y\otimes Z,\ X\otimes Y\otimes Z\}$.
   \end{block}
   \vspace{1ex}
-  \textbf{What it means.} We can add a pair of \alert{any} summand we like.
-  \vspace{1ex}
 
-  \textbf{How: spanning + duplicate sum, iterated.}
+  \textbf{Proof sketch: spanning + add duplicate, iterated.}
   \begin{itemize}
     \item Carry one pair and move its $A$-component toward $X$, one
       existing $A$-component at a time:
@@ -303,13 +277,19 @@
     \item Then do the same for $B$ toward $Y$, and for $C$ toward $Z$.
   \end{itemize}
   \note{
-    \textbf{[6:00]} Third lemma: you can add a pair of any summand at all,
+    \textbf{[5:00]} Second lemma. Given two summands in the scheme, you can
+    add two copies of a new summand whose A-component is the sum of their
+    A-components.
+
+    The proof is just an explicit length-4 path: three pluses and a flip.
+
+    Third lemma: you can add a pair of any summand at all,
     $X \otimes Y \otimes Z$, for any nonzero $X$, $Y$, $Z$.
 
     This is where the first two lemmas meet. Start with a pair whose
     A-component is some $A_0$ from the scheme. Spanning tells you that
     $X$ can be reached from $A_0$ by adding A-components of summands in the
-    scheme, one at a time. Each step is one use of duplicate-sum: it gives
+    scheme, one at a time. Each step is one use of add-duplicate: it gives
     a pair with the next partial sum, and then a self-flip deletes the old
     pair. So one pair walks from $A_0$ to $X$.
 
@@ -318,48 +298,38 @@
   }
 \end{frame}
 
-\begin{frame}{Lemma: removing a zero-summing submultiset}
-  \begin{block}{Lemma (Removing a zero-summing submultiset)}
+\begin{frame}{Lemma: zero-summing}
+  \begin{block}{Lemma (Zero-summing)}
     For $n\ge 2$, if $R \subseteq S$ and the summands of $R$ sum to zero,
-    there is a path from $S$ to $S\setminus R$.
+    there is a path from
+    \[S\rightarrow S\setminus R.\]
   \end{block}
   \vspace{1ex}
-  \textbf{What it means.} Anything that contributes nothing to the sum can
-  be \alert{deleted}.
-  \vspace{1ex}
 
-  \textbf{How.}
+  \textbf{Proof sketch.}
   \begin{itemize}
-    \item Our only deletion tool is the self-flip, which needs an
-      \alert{identical pair}. $R$ may have none:
-      $(A,B,C),\ (A',B,C),\ (A+A',B,C)$.
-    \item So first break every summand of $R$ into \alert{unit summands}
+    \item Break every summand of $R$ into \textbf{unit summands}
       $E_{ab}\otimes E_{cd}\otimes E_{ef}$ (using the previous lemma and a
       flip).
     \item Unit summands are linearly independent: if they sum to zero,
-      each occurs an \alert{even} number of times.
-    \item Now $R$ is made of identical pairs. Delete them.
+      each occurs an \textbf{even} number of times.
+    \item Now $R$ is made of identical pairs, delete them via flips.
   \end{itemize}
   \note{
-    \textbf{[7:00]} Fourth lemma, the one that deletes. If some part $R$
+    \textbf{[6:45]} Fourth lemma, the one that deletes. If some part $R$
     of the scheme sums to zero, you can remove it.
 
-    The difficulty is that the only way to delete is the self-flip, which
-    needs two identical summands, and a zero-summing set doesn't need to
-    contain any. Three different summands can sum to zero.
-
-    So the proof first breaks every summand of $R$ down into unit
-    summands, where all three factors are unit matrices. That doesn't
-    change the sum, so it's still zero. But unit summands are the standard
+    The proof first breaks every summand of $R$ down into unit
+    summands, where all three factors are unit matrices. Unit summands are the standard
     basis; they're linearly independent. A sum of basis elements is zero
-    over $\F$ only if each one appears an even number of times. So now $R$
-    consists of identical pairs, and we delete them one pair at a time.
+    over $\F$ only if each one appears an even number of times. So we are guaranteed that $R$
+    consists of identical pairs, and we delete them one pair at a time via flips.
   }
 \end{frame}
 
 \begin{frame}{Putting it together}
   \begin{block}{Theorem (Flip-plus connectivity, Medley et al.)}
-    Over $\F$, for every $n\ge 2$ and any two schemes $S$, $S'$ for $\M$,
+    Over $\F$, for every $n\ge 2$ and any two schemes $S$, $S'$,
     there is a path from $S$ to $S'$ using only flips and pluses.
   \end{block}
   \vspace{1ex}
@@ -390,18 +360,16 @@
   \end{tikzpicture}
   \end{center}
   \note{
-    \textbf{[8:00]} Now the strategy. To get from $S$ to $S'$: use the
+    \textbf{[7:30]} Now the strategy. To get from $S$ to $S'$: use the
     third lemma once for each summand of $S'$, adding two copies of each.
     That gives $S$ together with two copies of $S'$. Now look at $S$ and
     one copy of $S'$. Each sums to the matrix multiplication tensor, so
     together they sum to zero. The fourth lemma removes them, and what's
     left is the other copy of $S'$.
 
-    The diagram is the dependency structure: spanning and duplicate-sum
+    The diagram is the dependency structure: spanning and add-duplicate
     give add-arbitrary; add-arbitrary is used inside removal; and the
     theorem uses both.
-
-    That's the paper proof. Now, ACL2.
   }
 \end{frame}
 
@@ -409,11 +377,11 @@
 \section{Representation in ACL2}
 
 \begin{frame}[fragile]{Bit lists and matrices: two kinds of predicate}
-  A vector is a list of bits; a matrix is a \alert{list of rows}:
+  A vector is a list of bits; a matrix is a \textbf{list of rows}:
   \code{'((1 0) (0 1))}. Addition is \code{bitxor}.
   \begin{columns}[T]
     \begin{column}{0.45\textwidth}
-      \alert{Structural}: says nothing about size.
+      \textbf{Structural}: says nothing about size.
 \begin{lstlisting}
 (define bit-list-p (x)
   (if (atom x)
@@ -424,7 +392,7 @@
       Matrices: \code{bit-list-listp}
     \end{column}
     \begin{column}{0.5\textwidth}
-      \alert{Type}: fixes the dimensions.
+      \textbf{Type}: fixes the dimensions.
 \begin{lstlisting}
 (define bit-listnp (x (n natp))
   (if (zp n)
@@ -437,32 +405,15 @@
     \end{column}
   \end{columns}
   \vspace{1ex}
-\begin{lstlisting}
-(define bit-list-add ((x bit-list-p) (y bit-list-p))   ; no size argument
-  :returns (z bit-list-p)
-  ...)                                                 ; bitxor, entry by entry
-(defrule bit-listnp-of-bit-list-add                    ; the size theorem
-  (implies (and (bit-listnp x n) (bit-listnp y n))
-           (bit-listnp (bit-list-add x y) n)))
-\end{lstlisting}
   \note{
-    \textbf{[9:00]} The base layer. Over $\F$ an entry is a bit and
+    \textbf{[8:30]} The base layer. Over $\F$ an entry is a bit and
     addition is xor. A vector is a list of bits and a matrix is a list of
-    rows.
+    lists.
 
     Each of these has two predicates. The structural one,
     \code{bit-list-p}, says ``a true list of bits'' and nothing about
     length. The type predicate, \code{bit-listnp}, also fixes the length.
     Same for matrices: \code{bit-list-listp} and \code{bit-matp}.
-
-    The base operations, like \code{bit-list-add}, don't take a size. They
-    use the structural predicate for guards and \code{:returns}, and their
-    algebra, like commutativity, holds with no hypotheses because add just
-    stops at the shorter list. Then a separate theorem says: inputs of
-    size $n$ give an output of size $n$. The connectivity proof is stated
-    entirely with the sized predicates.
-
-    \emph{(If asked why two: see the Q\&A notes at the end.)}
   }
 \end{frame}
 
@@ -486,67 +437,117 @@
 \end{lstlisting}
     \end{column}
   \end{columns}
-  \vspace{1ex}
   \begin{itemize}
-    \item A summand $A\otimes B\otimes C$ is the \alert{triple}
+    \item A summand $A\otimes B\otimes C$ is the \textbf{triple}
       \code{(A B C)}.
-    \item A scheme is an \alert{ordered bag} from \code{std/obags}: a list
+    \item A scheme is an \textbf{ordered bag} from \code{std/obags}: a list
       sorted by \code{<<}, repeats allowed.
       \begin{itemize}
         \item two schemes are the same multiset iff they are \code{equal}
-        \item no reasoning about permutations
       \end{itemize}
-    \item ``Zero summands are deleted'': every insertion goes through
+    \item Every insertion goes through
       \code{insert-all-nonzero}, which drops a summand with a zero factor.
   \end{itemize}
+\begin{lstlisting}
+(define insert-all-nonzero ((l mat-triple-listp) (s obag::bagp) (n natp))
+  (if (atom l)
+      s
+    (if (summand0p (car l) n)
+        (insert-all-nonzero (cdr l) s n)                       ; drop it
+      (obag::insert (car l) (insert-all-nonzero (cdr l) s n)))))
+\end{lstlisting}
   \note{
-    \textbf{[10:00]} A summand is a triple of matrices, and
+    \textbf{[9:15]} A summand is a triple of matrices, and
     \code{summandp} says three $n \times n$ matrices, none of them zero.
 
     A scheme is a multiset of summands. We use ordered bags from
     \code{std/obags}: a sorted list where elements can repeat. The reason
     is equality. Two schemes are the same multiset exactly when they're
-    \code{equal} as ACL2 objects, so the main theorem can say ``equal'' and
-    we never reason about permutations.
+    \code{equal} as ACL2 objects, so the main theorem can simply use ``equal''.
 
-    The paper's definition of the moves says ``with any zero summands
-    deleted''. We build that in: everything inserted into a scheme goes
-    through one function that drops zero summands.
+    For insertion, the paper's definition of the moves automatically removes any zero summands. We build that in: everything inserted into a scheme goes
+    through one function that drops zero summands. Here it is: it inserts
+    a list of summands into a bag, and skips any summand that has a zero
+    factor.
   }
 \end{frame}
 
-\begin{frame}[fragile]{Moves and paths}
-  A \alert{move} is data: \code{(:flip p s1 s2)} or \code{(:plus p s1 s2)},
-  with $p\in\{0,1,2\}$ the position. A \alert{path} is a list of moves.
+\begin{frame}[fragile]{Moves: flip and plus}
+  A \textbf{move} is data: \code{(:flip p s1 s2)} or \code{(:plus p s1 s2)},
+  with $p\in\{0,1,2\}$ the $A$, $B$, or $C$ position.
+
+  A \textbf{path} is a list of moves.
+
+  \textbf{flip} and \textbf{plus} are functions: two summands and a
+  position in, the two output summands out.
+\begin{lstlisting}
+(define flip ((s1 mat-triplep) (s2 mat-triplep) (p natp))
+  (let ((q (pos-next p))
+        (r (pos-prev p)))
+    (list (summand-set-pos s1 r (bit-mat-add (summand-get-pos s1 r)
+                                             (summand-get-pos s2 r)))
+          (summand-set-pos s2 q (bit-mat-add (summand-get-pos s2 q)
+                                             (summand-get-pos s1 q))))))
+
+(define plus ((target mat-triplep) (pivot mat-triplep) (p natp))
+  (list (summand-set-pos target p (bit-mat-add (summand-get-pos target p)
+                                               (summand-get-pos pivot p)))
+        (summand-set-pos target p (summand-get-pos pivot p))))
+\end{lstlisting}
+  \begin{itemize}
+    \item \code{summand-get-pos} / \code{summand-set-pos} read and replace
+      the factor at a position; \code{pos-next} / \code{pos-prev} step
+      through $A$, $B$, $C$ cyclically.
+  \end{itemize}
+  \note{
+    \textbf{[10:15]} Moves are data. A move is a list with a kind, flip or
+    plus, a position, and the two summands involved. A path is a list of
+    moves.
+
+    \code{flip} and \code{plus} are ordinary functions that compute the
+    two output summands, straight from the definition. Take $p$ to be the
+    A position. Flip leaves A alone, adds the two C factors into the first
+    summand, and adds the two B factors into the second. Plus replaces the
+    target by two summands: one with the two A factors added, and one with
+    the pivot's A factor. Subtraction is addition over $\F$, so there is
+    only \code{bit-mat-add}.
+
+    The other positions come from rotating: \code{pos-next} and
+    \code{pos-prev} step through A, B, C cyclically, so one definition
+    covers all three.
+  }
+\end{frame}
+
+\begin{frame}[fragile]{Applying moves and paths}
 \begin{lstlisting}
 (define apply-move ((move move-p) (sch obag::bagp) (n natp))
   (case (move-kind move)
     (:plus (insert-all-nonzero (plus (move-s1 move) (move-s2 move) (move-pos move))
-                               (obag::delete (move-s1 move) sch) n))
+                               (obag::delete (move-s1 move) sch)
+                               n))
     (:flip (insert-all-nonzero (flip (move-s1 move) (move-s2 move) (move-pos move))
                                (obag::delete (move-s1 move)
-                                             (obag::delete (move-s2 move) sch)) n))
+                                             (obag::delete (move-s2 move) sch))
+                               n))
     (t sch)))
-
-(define path-validp ((moves move-list-p) (sch obag::bagp) (n natp))
-  (if (atom moves)
-      t
-    (and (move-validp (car moves) sch)
-         (path-validp (cdr moves) (apply-move (car moves) sch n) n))))
 \end{lstlisting}
   \begin{itemize}
+    \item \code{apply-move}: delete the summands the move consumes, insert
+      its outputs (zeros dropped).
+    \item \code{apply-moves}: apply a path, move by move.
     \item \code{move-validp}: both summands are in the scheme (twice, if
       they are the same summand), and for a flip they agree at $p$.
-    \item \code{apply-moves} applies a path, move by move.
+    \item \code{path-validp}: every move is valid on the scheme produced by
+      the moves before it.
   \end{itemize}
   \note{
-    \textbf{[11:00]} Moves are data. A move is a list with a kind, flip or
-    plus, a position, and the two summands involved. A path is a list of
-    moves.
+    \textbf{[11:15]} Four functions work on moves and paths.
 
     \code{apply-move} deletes the summands the move consumes and inserts
-    its outputs. \code{flip} and \code{plus} themselves just compute the
-    two output summands from the definition.
+    its outputs. A plus consumes only its target; a flip consumes both
+    summands. The outputs go in through \code{insert-all-nonzero}, so a
+    zero output just disappears. \code{apply-moves} does this for a whole
+    path, one move after another.
 
     A move is valid on a scheme if its two summands are really there, and
     for a flip, if they agree at the position. One detail: if a move uses
@@ -557,29 +558,30 @@
 \end{frame}
 
 \begin{frame}[fragile]{Tensors and correct schemes}
-  A tensor over $n\times n$ matrices is a \alert{flat bit list of length
+  A tensor over $n\times n$ matrices is a \textbf{flat bit list of length
   $n^6$}, so the bit-list operations apply to it directly.
+  \code{(mm-tensor n)} is
+  $\sum_{i,j,k} E_{ij}\otimes E_{jk}\otimes E_{ik}$, by three nested
+  recursions.
 \begin{lstlisting}
 (define tensor ((a bit-list-listp) (b bit-list-listp) (c bit-list-listp))
-  (bit-list-outer (mat-flat a)
+  (bit-list-outer (mat-flat a)                        ; A (x) B (x) C
                   (bit-list-outer (mat-flat b) (mat-flat c))))
 
-(define mm-tensor-3 ((i natp) (j natp) (k natp) (n natp))   ; sum over k
-  (if (zp k)
+(define scheme-sum ((l mat-triple-listp) (n natp))    ; sum of the summands' tensors
+  (if (atom l)
       (bit-listn0 (* n n n n n n))
-    (bit-list-add (tensor (bit-mat-unit i j n n)            ; E_ij
-                          (bit-mat-unit j (1- k) n n)       ; E_jk
-                          (bit-mat-unit i (1- k) n n))      ; E_ik
-                  (mm-tensor-3 i j (1- k) n))))
+    (bit-list-add (summand-tensor (car l))
+                  (scheme-sum (cdr l) n))))
 
-(define correct-schemep (sch (n natp))
+(define correct-schemep (sch (n natp))                ; the paper's notion of scheme
   (and (schemep sch n)
        (equal (scheme-sum sch n) (mm-tensor n))))
+
+(defrule correct-schemep-of-apply-moves               ; a valid path preserves it
+  (implies (and (correct-schemep sch n) (path-validp moves sch n) (natp n))
+           (correct-schemep (apply-moves moves sch n) n)))
 \end{lstlisting}
-  \begin{itemize}
-    \item \code{correct-schemep} is the paper's notion of scheme.
-    \item A valid path preserves it (\code{correct-schemep-of-apply-moves}).
-  \end{itemize}
   \note{
     \textbf{[12:00]} What a scheme computes. A tensor here has six
     indices, so we represent it as a flat list of $n^6$ bits. The tensor
@@ -587,14 +589,15 @@
     Keeping it flat means we can reuse \code{bit-list-add} and the zero
     list for tensors.
 
-    The matrix multiplication tensor is defined as the triple sum of
-    $E_{ij} \otimes E_{jk} \otimes E_{ik}$, with three nested recursions;
-    this is the innermost one.
+    \code{scheme-sum} adds up the tensors of the summands of a scheme.
+    \code{mm-tensor} is the matrix multiplication tensor, defined as the
+    triple sum of $E_{ij} \otimes E_{jk} \otimes E_{ik}$ with three nested
+    recursions, one per index.
 
     A scheme is correct if it's well formed and its summands add up to
     that tensor. That's what the paper just calls a scheme. And the first
-    real theorem is that a valid path takes a correct scheme to a correct
-    scheme.
+    real theorem is the last one on the slide: a valid path takes a
+    correct scheme to a correct scheme.
   }
 \end{frame}
 
@@ -611,7 +614,7 @@
 \end{lstlisting}
   \vfill
   \begin{itemize}
-    \item ``There is a path'' becomes a \alert{function} that returns the
+    \item ``There is a path'' becomes a \textbf{function} that returns the
       path. No existential quantifier.
     \item The theorem says the path is valid and where it lands.
   \end{itemize}
@@ -631,13 +634,19 @@
 \end{frame}
 
 \begin{frame}[fragile]{Schemes are algorithms, and algorithms are schemes}
-  The theorem is about bags of matrix triples. Are those really
-  \alert{multiplication algorithms}? We proved it.
-  \vspace{0.5ex}
-
-  A small language of bilinear algorithms: $R$ products of a linear form in
-  $D$ by a linear form in $F$, and a table saying which products are summed
-  into each output entry.
+  Are bags of matrix triples really \textbf{multiplication algorithms}?
+  A small language of \textbf{bilinear algorithms}:
+  \begin{itemize}
+    \item a \textbf{linear form} in the entries of one matrix:
+      \code{(:var i j)}, \code{(:add e1 e2)}, \code{(:scale b e)}
+    \item a \textbf{product} \code{(:mul d-form f-form)}: a form in $D$
+      times a form in $F$
+    \item an \textbf{algorithm}: a list of products, and an $n\times n$
+      table listing which products are summed into each output entry
+  \end{itemize}
+\begin{lstlisting}
+(:mul (:add (:var 0 0) (:var 1 1)) (:add (:var 0 0) (:var 1 1)))   ; (D00+D11)(F00+F11)
+\end{lstlisting}
 \begin{lstlisting}
 (defun-sk algo-correctp (alg n)
   (forall (d f) (implies (and (bit-matp d n n) (bit-matp f n n))
@@ -645,40 +654,39 @@
 \end{lstlisting}
   \begin{description}[Completeness]
     \item[Soundness] a correct scheme converts to a correct algorithm
-    \item[Completeness] a correct algorithm translates to a correct scheme,
-      of rank $\le$ its number of products
+    \item[Completeness] a correct algorithm translates to a correct scheme
+      (rank $\le$ number of products)
     \item[Existence] the textbook algorithm gives a correct scheme for every
-      $n$: the main theorem is \alert{not vacuous}
-    \item[Equivalence] two algorithms are equivalent if they translate to
-      the same scheme (\code{defequiv}); the classes are in bijection with
-      schemes
+      $n$: \textbf{not vacuous}
   \end{description}
-  \vspace{0.5ex}
-  So: \alert{any correct bilinear algorithm can be turned into any other by
-  flips and pluses.}
+\begin{lstlisting}
+(defrule correct-schemep-of-naive-algo-scheme
+  (implies (natp n) (correct-schemep (algo-scheme (naive-algo n) n) n)))
+\end{lstlisting}
   \note{
     \textbf{[13:45]} One addition that the connectivity proof doesn't
     need. The theorem is about bags of matrix triples. Everyone says those
     are matrix multiplication algorithms, and the theorem is only
     interesting because of that. So we proved it.
 
-    We defined a small language of bilinear algorithms: a list of
-    products, each a linear form in the first matrix times a linear form
-    in the second, and a table saying which products are added into each
-    output entry. An algorithm is correct if it returns the matrix product
-    on all inputs.
+    We defined a small language of bilinear algorithms. A linear form is
+    built from entries of one matrix with addition and scaling by a bit.
+    A product multiplies a form in the first matrix by a form in the
+    second; the example is the first product of Strassen's algorithm. An
+    algorithm is a list of products together with a table that says, for
+    each entry of the output, which products are added into it. Only
+    bilinear algorithms can be written this way, which is why the number
+    of products is the right measure.
+
+    An algorithm is correct if it returns the matrix product on all
+    inputs.
 
     Then, in both directions. A correct scheme converts to a correct
     algorithm. A correct algorithm translates to a correct scheme, whose
-    rank is at most the number of products. The textbook algorithm gives a
-    correct scheme for every $n$, so the main theorem is never vacuous.
-    And translation forgets things like the order of the products, so two
-    algorithms are equivalent when they give the same scheme; that's a
-    real ACL2 equivalence relation, and its classes are exactly the
-    schemes.
-
-    So the main theorem says: any correct bilinear algorithm can be turned
-    into any other by flips and pluses.
+    rank is at most the number of products. And the textbook algorithm,
+    written in this language, translates to a correct scheme for every
+    $n$; that's the theorem at the bottom. So correct schemes always
+    exist, and the main theorem is never vacuous.
   }
 \end{frame}
 
@@ -686,24 +694,20 @@
 \section{Proof engineering with Claude}
 
 \begin{frame}{Who did what}
-  The proof was developed with \alert{Claude} (Anthropic) through Claude
+  The proof was developed with \textbf{Claude} (Anthropic) through Claude
   Code: mostly Claude Fable 5, with Opus 5 and Fable 5.1 for some sessions.
   \vspace{1ex}
   \begin{enumerate}
-    \item \alert{We} wrote the base: bit lists, bit matrices and their
+    \item We wrote the base: bit lists, bit matrices and their
       operations.
-    \item \alert{Claude} read the companion paper and proposed the
+    \item Claude read the companion paper and proposed the
       representations of summands, schemes, moves and paths.
-      \alert{We} reviewed them.
-    \item \alert{We} fixed a set of conventions for it to follow.
-    \item \alert{Claude} stated and proved the main theorem and every
-      intermediate lemma, \alert{within two days}.
-    \item \alert{We} asked it to explain what it built and why, and
+    \item Along the way, we built up a set of conventions for it to follow.
+    \item Claude stated and proved the main theorem and every
+      intermediate lemma, within two days.
+    \item We reviewed the whole proof, and
       ordered changes where the explanation showed a problem.
   \end{enumerate}
-  \vfill
-  The conventions are what made the result something we could read,
-  maintain and certify in a minute.
   \note{
     \textbf{[14:45]} Now the proof engineering, and I want to be clear
     about how it was done: with an AI assistant, Claude, through Claude
@@ -711,12 +715,13 @@
 
     We wrote the base library ourselves. We gave the model the companion
     paper and had it propose how to represent summands, schemes, moves and
-    paths, and we reviewed that. Then we fixed a set of conventions. With
-    those in place, the model stated and proved the main theorem and all
-    the intermediate lemmas in about two days.
+    paths. As the work went on, we built up a set of conventions for it to
+    follow. The model stated and proved the main theorem and all the
+    intermediate lemmas in about two days.
 
-    After that our role was review: ask it to explain what it built and
-    why, and order changes when the explanation showed a problem.
+    After that we reviewed the whole proof: we asked it to explain what it
+    built and why, and ordered changes when the explanation showed a
+    problem.
 
     I want to spend two slides on the conventions, because I think they're
     the reusable part.
@@ -725,20 +730,19 @@
 
 \begin{frame}[fragile]{Conventions 1: the basics}
   \begin{itemize}
-    \item \alert{\code{define} and \code{defrule}} everywhere, never
-      \code{defun} or \code{defthm}.
+    \item \textbf{\code{define} and \code{defrule}} everywhere
       \begin{itemize}
         \item 137 \code{define}s and 527 \code{defrule}s in the
           connectivity books; zero \code{defun}/\code{defthm}
       \end{itemize}
-    \item \alert{Definitions are disabled by default.} Enable one only in
+    \item \textbf{Definitions are disabled by default.} Enable one only in
       the proofs that need it.
       \begin{itemize}
         \item about 100 of the 137 functions are disabled; a proof never
           opens a recursive definition by accident
       \end{itemize}
-    \item \alert{Guards verified} for every function.
-    \item \alert{Two predicates}: structural in guards and \code{:returns},
+    \item \textbf{Guards verification} for every function.
+    \item \textbf{Two predicates}: structural in guards and \code{:returns},
       plus a separate theorem with the type predicate.
   \end{itemize}
 \begin{lstlisting}
@@ -762,37 +766,36 @@
 
     Guards are verified for every function.
 
-    And the two-predicate pattern from before is a convention the model
-    had to follow for every new operation: structural predicates in the
-    guard and \code{:returns}, and next to it a theorem with the sized
-    predicate, which is the one later proofs use.
+    And the two kinds of predicate from before. This is where they are
+    used. \code{bit-list-add} takes no size argument, so its guard and
+    its \code{:returns} use the structural predicate. Next to it is a
+    separate theorem with the type predicate: inputs of size $n$ give an
+    output of size $n$. That second theorem is the one later proofs use.
+    The model had to follow this pattern for every new operation.
   }
 \end{frame}
 
 \begin{frame}[fragile]{Conventions 2: how to prove things}
-  \textbf{Ours}
   \begin{itemize}
-    \item \alert{No new induction schemes.} Induct the way the functions
-      in the goal recurse (or with \code{std/basic/inductions}). When a
-      proof fails, read the \alert{key checkpoints} and turn them into
-      lemmas.
-    \item \alert{An invariant theorem at every step.} Every path-building
-      function comes with a theorem of the same shape:
+    \item \textbf{No new induction schemes.} At the start, Claude defined a new induction scheme for almost every proof that needed induction.
+    \item \textbf{An invariant theorem at every step.} The idea is to build up a theory around every newly defined function
   \end{itemize}
 \begin{lstlisting}
-(defrule graft-invariant
-  (implies (and (correct-schemep sch n) (natp n) (<= 2 n) (summand-listp l n))
-           (b* ((path (graft-path sch l n))
-                (res  (apply-moves path sch n)))
-             (and (path-validp path sch n)                           ; 1. valid
-                  (equal res (insert-list l (insert-list l sch)))    ; 2. lands here
-                  (correct-schemep res n)))))                        ; 3. still correct
+(defrule add-duplicate                    ; the theorem for add-duplicate-path
+  (implies (and (schemep sch n)
+                (obag::in (summand a1 b1 c1) sch) (obag::in (summand a2 b2 c2) sch))
+           (let ((path (add-duplicate-path a1 b1 c1 a2 b2 c2 n))
+                 (x (bit-mat-add a1 a2)))
+             (and (path-validp path sch n)                          ; valid
+                  (equal (apply-moves path sch n)                   ; lands here
+                         (insert-all-nonzero (list (summand x b1 c1) (summand x b1 c1))
+                                             sch n))))))
 \end{lstlisting}
   \begin{block}{What the model came up with itself}
     \begin{itemize}
-      \item \alert{Compute, don't quantify}: every ``there exists'' becomes
+      \item \textbf{Compute, don't quantify}: every ``there exists'' becomes
         a function that returns the witness.
-      \item \alert{Run before you prove}: every function is executable, so
+      \item \textbf{Run before you prove}: every function is executable, so
         it ran each construction at $n = 2$ first.
     \end{itemize}
   \end{block}
@@ -800,25 +803,25 @@
     \textbf{[16:45]} Then the higher-level ones, about how to prove
     things.
 
-    Don't define new induction schemes. Let ACL2 induct along the
-    functions already in the goal, and when a proof fails, read the key
-    checkpoints and turn what you see into an intermediate lemma. That
-    keeps the proofs in the shape ACL2 is good at.
+    No new induction schemes. At the start, the model defined a new
+    induction scheme for almost every proof that needed induction. We
+    told it to stop: let ACL2 induct along the functions already in the
+    goal, and when a proof fails, read the key checkpoints and turn what
+    you see into an intermediate lemma.
 
-    And an invariant theorem at every step. Every function that builds a
-    path has a theorem like this one: the path is valid, applying it gives
-    exactly this named scheme, and that scheme is still correct. The
-    middle line is the important one. Because the theorem says exactly
-    where you end up, the next lemma starts from a known term, and the
-    lemmas chain together.
+    And an invariant theorem at every step. The idea is to build up a
+    theory around every newly defined function. Here is the one for the
+    add-duplicate lemma from earlier. \code{add-duplicate-path} is the
+    function that returns the four moves. Its theorem says two things: the
+    path is valid, and applying it gives exactly this scheme, the original
+    with two copies of the new summand inserted. Because the theorem names
+    where you end up, the lemmas chain together.
 
-    Two more practices were not ours; the model came up with them. First,
-    compute, don't quantify: every existential in the paper proof became a
-    function that returns the witness. Second, run before you prove.
-    Since everything is executable, it ran every construction on two by
-    two schemes before trying to prove anything. When we asked what helped
-    it most, this was its answer: it could tell a wrong construction from
-    a hard proof in seconds.
+    Two more practices came from the model. Compute, don't quantify:
+    every existential in the paper proof became a function that returns
+    the witness. And run before you prove: it ran every construction on
+    two by two schemes first, so it could tell a wrong construction from a
+    hard proof in seconds.
   }
 \end{frame}
 
@@ -827,43 +830,37 @@
 
 \begin{frame}[fragile]{Spanning in ACL2}
 \begin{lstlisting}
-(defrule span-lemma
-  (implies (and (correct-schemep sch n) (natp n) (< 0 n)
-                (natp i) (natp j) (natp k) (< i n) (< j n) (< k n))
-           (equal (a-witness-sum sch i j k n)
-                  (bit-mat-unit i j n n))))                   ; E_ij
-
 (defruled a-components-span-everything
   (implies (and (correct-schemep sch n) (natp n) (< 0 n) (bit-matp y n n))
            (in-spanp y (a-components sch) n n)))
 \end{lstlisting}
   \diff{}
   \begin{itemize}
-    \item The linear combination is \alert{explicit}: \code{a-witness-sum}
+    \item The paper proof showed that there exists a linear combination
+    \item For ACL2, the linear combination is \textbf{explicit}: \code{a-witness-sum}
       adds the $A$-factors of the summands with $B[j,k]\cdot C[i,k]=1$,
       and the result is $E_{ij}$.
-    \item ``In the span'' is a \alert{recursive, executable} predicate.
-      Over $\F$ a span is the set of subset sums: skip each matrix, or use
-      it.
+    \item For each matrix in the scheme $S$, we either add it to the spanning set or ignore it.
     \item \code{span-witness} returns the coefficients, one bit per matrix.
   \end{itemize}
   \note{
-    \textbf{[17:30]} Now the lemmas as they are in ACL2. I'll only point
+    \textbf{[17:45]} The lemmas as they are in ACL2. I'll only point
     out where they differ from the paper.
 
     Spanning is the one that changed the most, because ``spans'' is an
-    existential: some linear combination exists. We can't build a path
-    from an existence statement. So the lemma is stated with the
-    combination written out: for each unit matrix $E_{ij}$, a function
-    that picks out specific summands and adds their A-factors, and the
-    theorem says the result is $E_{ij}$.
+    existential: some linear combination exists. In ACL2 the combination
+    is written out. For each unit matrix $E_{ij}$ there is a function,
+    \code{a-witness-sum}, that picks out specific summands and adds their
+    A-factors, and we prove the result is $E_{ij}$.
 
-    Then ``is in the span'' is a recursive, executable predicate. Over
-    $\F$ coefficients are 0 or 1, so you just decide for each matrix
-    whether to use it. And a second function with the same recursion
-    returns the coefficients. We considered \code{defun-sk} and Gaussian
-    elimination; this was simpler to reason about and we don't need it to
-    be fast.
+    The theorem on the slide is the lemma as the rest of the proof uses
+    it: every matrix $y$ is in the span of the A-components of a correct
+    scheme. \code{in-spanp} is a recursive, executable predicate. Over
+    $\F$ coefficients are 0 or 1, so for each matrix in the list you
+    either use it or ignore it. And \code{span-witness}, with the same
+    recursion, returns the coefficients, one bit per matrix. We considered
+    \code{defun-sk} and Gaussian elimination; this was simpler to reason
+    about and we don't need it to be fast.
   }
 \end{frame}
 
@@ -886,15 +883,13 @@
 
   \diff{}
   \begin{itemize}
-    \item Every partial sum $A_0 + A(u_1) + \dots$ must be \alert{nonzero},
+    \item Every partial sum $A_0 + A(u_1) + \dots$ must be \textbf{nonzero},
       or the carried summand vanishes.
-    \item We pick the chain from an \alert{independent} pool of
-      $A$-components, with the starting summand placed \alert{last}.
-    \item The paper's case split (is $A_0$ used in the expansion of $X$?)
-      \alert{disappears}: the order of the list handles it.
+    \item We pick the chain from an \textbf{independent} pool of
+      $A$-components.
   \end{itemize}
   \note{
-    \textbf{[18:15]} Adding summands. The statements match the paper.
+    \textbf{[18:30]} Adding summands. The statements match the paper.
     Adding a duplicate sum is the paper's four moves, and its proof is
     just symbolic execution of those moves.
 
@@ -904,56 +899,11 @@
     can be zero. Spanning alone doesn't give you that.
 
     Our construction first thins the scheme's A-components down to an
-    independent set, puts the starting summand last, and takes the chain
-    from that. Independence makes every partial sum nonzero. And putting
-    the start last has a nice effect: the paper splits into two cases
-    depending on whether $A_0$ appears in the expansion of $X$; with this
-    ordering the two cases are the same code and the same proof.
+    independent set, and takes the chain from that. Independence makes
+    every partial sum nonzero.
 
     Keep this construction in mind: the unassisted model did it
     differently.
-  }
-\end{frame}
-
-\begin{frame}[fragile]{Removing summands, and the main theorem}
-\begin{lstlisting}
-(defrule zero-subset
-  (implies (and (correct-schemep sch n) (natp n) (<= 2 n)
-                (true-listp r) (list-in-bagp r sch)
-                (equal (scheme-sum r n) (bit-listn0 (* n n n n n n))))
-           (b* ((path (zero-subset-path sch r n))
-                (res  (apply-moves path sch n)))
-             (and (path-validp path sch n)
-                  (equal res (delete-list r sch))
-                  (correct-schemep (delete-list r sch) n)))))
-
-(define main-path ((sch obag::bagp) (sch2 obag::bagp) (n natp))
-  (append (graft-path sch sch2 n)                               ; S -> S + S' + S'
-          (zero-subset-path (insert-list sch2 (insert-list sch2 sch))
-                            (append sch sch2) n)))              ; remove S + S'
-\end{lstlisting}
-  \diff{}
-  \begin{itemize}
-    \item A path is built \alert{before} any move is applied, so each stage
-      must \alert{compute} the scheme the previous stage will produce.
-    \item The main theorem needs \alert{no induction}: instantiate
-      \code{graft-invariant}, then \code{zero-subset}.
-  \end{itemize}
-  \note{
-    \textbf{[19:00]} Removal has the same statement as the paper: $r$ is
-    contained in the scheme, it sums to zero, and the path lands on the
-    scheme with $r$ deleted.
-
-    One thing that's different in kind. In the paper you do a step, look
-    at the scheme you got, and continue. Here the whole path is computed
-    up front, before any move is applied. So the second stage of removal
-    can't look at the result of the first; there has to be a function that
-    computes what the scheme will be after each stage. You can see the
-    same thing in \code{main-path}: the second half is told explicitly
-    that it starts from $S$ plus two copies of $S'$.
-
-    And because every lemma names where it lands, the main theorem is two
-    instantiations, graft and then remove, with no induction.
   }
 \end{frame}
 
@@ -963,32 +913,24 @@
 \begin{frame}{The experiment}
   \textbf{Setup.} A fresh session with Claude Fable 5.1.
   \begin{itemize}
-    \item Given: the companion paper (Medley et al.) \alert{and nothing
+    \item Given: the companion paper (Medley et al.) \textbf{and nothing
       else}.
     \item Task: formalize the paper in ACL2.
-    \item No conventions, no code from us, no human feedback. It could run
-      ACL2 and read its output.
+    \item No human feedback, only ACL2's.
   \end{itemize}
   \vspace{1ex}
   \textbf{Result.} 24 certified books, no \code{skip-proofs},
   \code{defaxiom} or trust tags.
   \begin{itemize}
-    \item The \alert{connectivity theorem}, with all four lemmas.
-    \item And the \alert{rest of the paper}, which we did not formalize:
-      \begin{itemize}
-        \item the tensor satisfies its defining equation, and is unique
-        \item generalized flips, and their optimality (the paper's
-          Appendix~B)
-        \item the rank-245 scheme for $7\times 7$, checked by evaluation
-        \item a model of one step of the search algorithm
-      \end{itemize}
+    \item The \textbf{connectivity theorem}, with all four lemmas.
+    \item And the \textbf{rest of the paper}, which we did not formalize
   \end{itemize}
   \note{
-    \textbf{[19:45]} Now the experiment. We wanted to know how much of the
+    \textbf{[19:30]} Now the experiment. We wanted to know how much of the
     result depended on us. So we started a fresh session, gave the model
     the companion paper and nothing else, and asked it to formalize the
-    paper in ACL2. No conventions, none of our code, no feedback. It
-    could run ACL2 and see the output, that's all.
+    paper in ACL2. No conventions, none of our code, no feedback from us.
+    The only feedback it had was ACL2's output.
 
     It produced 24 certified books, with no skip-proofs or axioms. It
     proved the connectivity theorem with all four lemmas. And it kept
@@ -1010,7 +952,6 @@
       main theorem ends with & \code{(equal res sch2)} & \code{(perm res S2)} \\
       events & \code{define} / \code{defrule} & \code{defun} / \code{defthm} \\
       definitions & disabled by default & enabled by default \\
-      path & computed by a function & computed by a function \\
       \bottomrule
     \end{tabular}
   \end{center}
@@ -1020,32 +961,26 @@
            (and (path-ok-p (sq n) (connect-path n S S2) S)
                 (perm (apply-path (sq n) (connect-path n S S2) S) S2))))
 \end{lstlisting}
-  \begin{itemize}
-    \item On its own it also chose to \alert{compute the path} instead of
-      using a quantifier.
-  \end{itemize}
   \note{
-    \textbf{[20:45]} It made different choices from ours almost
+    \textbf{[20:30]} It made different choices from ours almost
     everywhere. Matrices are flat vectors, not lists of rows. Schemes are
     plain lists, considered up to permutation, so its main theorem ends
     with \code{perm} where ours ends with \code{equal}. It used plain
-    \code{defun} and \code{defthm}, and left most definitions enabled.
+    \code{defun} and \code{defthm}, and left definitions enabled.
 
-    One choice was the same. Without being told, it also made the path a
-    computed function and stated the theorem about what that function
-    returns. So that seems to be the natural way to say this in ACL2.
-
-    Here's its main theorem. It's recognizably the same statement.
+    Here's its main theorem. It's recognizably the same statement. And
+    one choice was the same as ours: \code{connect-path} is a function. It
+    also computed the path instead of using a quantifier.
   }
 \end{frame}
 
 \begin{frame}[fragile]{A different way to use the spanning lemma}
-  Both need a chain $A_0 \to \dots \to X$ with \alert{nonzero partial sums}.
+  Both need a chain $A_0 \to \dots \to X$ with \textbf{nonzero partial sums}.
   \begin{columns}[T]
     \begin{column}{0.47\textwidth}
       \textbf{Guided}
       \begin{itemize}
-        \item thin the $A$-components to an \alert{independent} pool
+        \item thin the $A$-components to an \textbf{independent} pool
         \item solve for coefficients over the pool
         \item independence $\Rightarrow$ nonzero sums
       \end{itemize}
@@ -1054,28 +989,19 @@
       \textbf{Unassisted}
       \begin{itemize}
         \item take the $A$-components that sum to $A_0 + X$
-        \item \alert{cancel duplicate pairs}: now a set
-        \item walk \alert{greedily}: always pick an element different from
+        \item \textbf{cancel duplicate pairs}: now a set
+        \item walk \textbf{greedily}: always pick an element different from
           the running sum
       \end{itemize}
     \end{column}
   \end{columns}
   \vspace{1ex}
-\begin{lstlisting}
-;; The first element of Us different from cur (nil if none).
-(defun pick-U (cur Us)
-  (cond ((atom Us) nil)
-        ((equal (car Us) cur) (pick-U cur (cdr Us)))
-        (t (car Us))))
-\end{lstlisting}
   \begin{itemize}
-    \item $U \neq \mathit{cur}$ means $\mathit{cur} + U \neq 0$. One always
-      exists: otherwise the set is $\{\mathit{cur}\}$ and $X = 0$.
-    \item \alert{No independence, no span membership.} About 600 lines,
+    \item About 600 lines,
       against our 791-line span theory plus a 2505-line book.
   \end{itemize}
   \note{
-    \textbf{[21:45]} The most interesting difference is mathematical.
+    \textbf{[21:15]} The most interesting difference is mathematical.
     Remember the chain needs nonzero partial sums.
 
     We got that from independence: thin the A-components to an independent
@@ -1091,9 +1017,9 @@
     sum, the set would be just that one element, and the final result
     would be zero, which $X$ isn't.
 
-    That's the whole function. No independence, no span membership
-    predicate. Its book for this lemma is about 600 lines; ours is several
-    times that. So the unassisted run found a simpler proof of this step.
+    No independence, no span membership predicate. Its book for this
+    lemma is about 600 lines; ours is several times that. So the
+    unassisted run found a simpler proof of this step.
   }
 \end{frame}
 
@@ -1103,13 +1029,13 @@
       \toprule
       connectivity proof & books & lines & functions & theorems & certification (serial) \\
       \midrule
-      guided (this paper) & 19 & 6363 & 137 & 527 & \alert{51\,s} \\
-      unassisted          &  9 & 3005 & 108 & 409 & \alert{1240\,s} \\
+      guided (this paper) & 19 & 6363 & 137 & 527 & \textbf{51\,s} \\
+      unassisted          &  9 & 3005 & 108 & 409 & \textbf{1240\,s} \\
       \bottomrule
     \end{tabular}
   \end{center}
   \begin{itemize}
-    \item Half the lines, but \alert{24 times slower} to certify.
+    \item Half the lines, but \textbf{24 times slower} to certify.
     \item Cause: enabled definitions. Proofs open recursive functions and
       split into many cases. Six theorems and two termination proofs take
       90\% of the time.
@@ -1121,16 +1047,12 @@
     \item a translation between the two representations; random correct
       schemes for $n = 2, 3$; 300 trials per property
     \item correct schemes agree, valid moves correspond, and
-      \alert{each development's path works under the other's definitions}
+      each development's path works under the other's definitions
     \item one difference found: the flip at position $B$ has its two
       summands in the other order
   \end{itemize}
-  \vfill
-  \centering
-  \alert{The unassisted run contributed mathematics; the guidance
-  contributed proof engineering.}
   \note{
-    \textbf{[22:45]} The numbers, for the connectivity proof only, on the
+    \textbf{[22:15]} The numbers, for the connectivity proof only, on the
     same machine. The unassisted proof is half the size of ours. But it
     takes 24 times as long to certify: twenty minutes against fifty
     seconds.
@@ -1167,12 +1089,10 @@
         \item also: correct schemes are exactly the bilinear multiplication
           algorithms, up to a natural equivalence
       \end{itemize}
-    \item The path is \alert{computed}; every lemma says where its path
-      lands.
-    \item With an AI assistant: \alert{we set the conventions}, the model
+    \item With an AI assistant: we set the conventions, the model
       wrote definitions, theorems and proofs.
     \item Unassisted, the model can do the whole proof, and found a simpler
-      argument. What it lacked was \alert{how to use ACL2 well}.
+      argument. What it lacked was how to use ACL2 well.
   \end{itemize}
   \vfill
   \begin{block}{Future work}
@@ -1184,13 +1104,12 @@
     \end{itemize}
   \end{block}
   \note{
-    \textbf{[24:00]} To conclude. Flip-plus connectivity over $\F$ is
+    \textbf{[23:45]} To conclude. Flip-plus connectivity over $\F$ is
     fully proved in ACL2, with no axioms or skipped proofs, and correct
     schemes are exactly the bilinear algorithms up to a natural
     equivalence.
 
-    The proof computes its path, and every lemma says where its path
-    lands. With an AI assistant, the split that worked was: we set the
+    With an AI assistant, the split that worked was: we set the
     conventions, the model did the definitions, theorems and proofs. And
     unassisted, the model can do the whole thing and even found a simpler
     argument; what it was missing was experience with how to use ACL2
@@ -1208,11 +1127,8 @@
 \begin{frame}
   \centering
   \Large Thank you!\\[2ex]
-  \normalsize Books: \code{books/workshops/2026/luu-medley-manolios/}\\[1ex]
-  Start with \code{overview-prelims.lisp}, then \code{overview-proof.lisp}
-  and \code{overview-algo.lisp}
   \note{
-    \textbf{Q\&A notes, page 1 of 3: representation.}
+    \textbf{Q\&A notes, page 1 of 4: representation.}
     \begin{itemize}
       \item \textbf{Why two predicates? Why not just one?}
         The base theory of bit lists doesn't care about size, and
@@ -1248,7 +1164,52 @@
 \end{frame}
 
 \note{
-  \textbf{Q\&A notes, page 2 of 3: the theorem and the proof.}
+  \textbf{Q\&A notes, page 2 of 4: more on representation, and reduction
+  edges.}
+  \begin{itemize}
+    \item \textbf{Why are matrices lists of rows but tensors flat lists?}
+      History first: we wrote the matrix layer; the model added tensors
+      and made them flat so the bit-list operations apply directly. Both
+      work, and the unassisted run used flat vectors for both. We use rows
+      where we need two indices and flat where we only need a vector
+      space; the cost is a few bridge lemmas through \code{mat-flat}.
+    \item \textbf{Could matrices be flat too?} Yes. The connectivity proof
+      mostly treats a matrix as a vector in $\F^{n^2}$: add, compare to
+      zero, take spans. Rows and columns matter only for the unit
+      matrices, the entry law of \code{mm-tensor}, and matrix
+      multiplication in the algorithms part. Trade-off: with rows, entry
+      access needs no arithmetic and the shape is in the structure, but
+      matrix operations need their own lemmas. Flat gives one type and one
+      theory, but indexing is $i \cdot n + j$ with symbolic $n$, and the
+      shape is a separate fact about the length.
+    \item \textbf{Could tensors be something else?} Nested lists six deep:
+      more lifting, no gain. No tensor object, only an entry function:
+      no index arithmetic, but equality of tensors is no longer
+      \code{equal}. The set of positions holding a 1, with symmetric
+      difference as addition: neat, but a new theory to build. Flat lists
+      give \code{equal} and \code{bit-list-add} for free.
+    \item \textbf{Which is best?} It depends on which operations you
+      reason about most. Don't cite the unassisted proof's size as
+      evidence for flat: it differs in too many other ways.
+    \item \textbf{What is a reduction edge, and why remove it?}
+      A reduction rewrites a scheme into one with fewer summands when some
+      summands agree in one position and their factors in another are
+      linearly dependent. [Check the exact definition against Kauers and
+      Moosbauer.] In practice it is expensive: finding one in general
+      means Gaussian elimination. And in theory it is not needed for
+      connectivity.
+    \item \textbf{Follow-up: don't your flips already do reductions?}
+      The simplest case, yes: a flip of $A\otimes B\otimes C$ and
+      $A\otimes B\otimes C'$ gives $A\otimes B\otimes (C+C')$ and a zero
+      summand, which is dropped. The self-flip is the same effect. What we
+      never use is the general case, a dependence among several summands.
+      So the claim is that reductions are not needed as a separate kind of
+      edge.
+  \end{itemize}
+}
+
+\note{
+  \textbf{Q\&A notes, page 3 of 4: the theorem and the proof.}
   \begin{itemize}
     \item \textbf{Why only $\F$?} The proof deletes identical pairs,
       which needs $1 + 1 = 0$. The definitions extend to other fields; the
@@ -1281,7 +1242,7 @@
 }
 
 \note{
-  \textbf{Q\&A notes, page 3 of 3: the AI part.}
+  \textbf{Q\&A notes, page 4 of 4: the AI part.}
   \begin{itemize}
     \item \textbf{How do you know the model proved the right thing?}
       ACL2 checks the proofs, with no \code{skip-proofs}, axioms or trust
@@ -1316,61 +1277,5 @@
       inputs before proving them.
   \end{itemize}
 }
-
-
-% ================================================================ backup
-\global\qapagefalse
-\appendix
-
-\begin{frame}[fragile]{Backup: adding a duplicate sum}
-  $s_1 = (A_1,B_1,C_1)$, $s_2 = (A_2,B_2,C_2)$, $X = A_1 + A_2$.
-\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
-(define add-duplicate-path (a1 b1 c1 a2 b2 c2 n)
-  (let* ((x (bit-mat-add a1 a2)) (s1 (summand a1 b1 c1)) (s2 (summand a2 b2 c2)))
-    (cond ((equal x (bit-mat0 n n)) nil)
-          ((equal b1 b2)
-           (list (list :plus 0 s1 s2)
-                 (list :plus 0 (summand a2 b1 c1) (summand x b1 c1))))
-          (t
-           (list (list :plus 0 s1 s2)
-                 (list :plus 1 (summand x b1 c1) s2)
-                 (list :plus 0 (summand a2 b1 c1) (summand x (bit-mat-add b1 b2) c1))
-                 (list :flip 0 (summand x (bit-mat-add b1 b2) c1)
-                               (summand x b2 c1)))))))
-\end{lstlisting}
-  \code{add-duplicate}: the path is valid and inserts two copies of
-  $(X,B_1,C_1)$. No hypothesis $X \neq 0$: if $X = 0$ the path is empty and
-  \code{insert-all-nonzero} drops the two zero summands.
-  \note{
-    Backup, if someone asks what a concrete path looks like. Four moves in
-    the general case, two when $B_1 = B_2$, none when $X = 0$.
-  }
-\end{frame}
-
-\begin{frame}[fragile]{Backup: the chain, and running it}
-\begin{lstlisting}
-(define in-spanp ((x bit-list-listp) (mats bit-mat-list-p) (m natp) (n natp))
-  (if (atom mats)
-      (equal x (bit-mat0 m n))
-    (or (in-spanp x (cdr mats) m n)                               ; skip it
-        (in-spanp (bit-mat-add x (car mats)) (cdr mats) m n))))   ; use it
-
-;; n = 2: start from the standard scheme, add a summand twice, walk back
-(assert-event
- (let* ((x '((1 1) (0 1))) (y '((0 1) (1 1))) (z '((1 0) (1 1)))
-        (schb (apply-moves (add-arbitrary-path *arb-std2* x y z 2) *arb-std2* 2))
-        (path (main-path schb *arb-std2* 2)))
-   (and (equal (scheme-rank *arb-std2*) 8)
-        (correct-schemep schb 2)
-        (equal (scheme-rank schb) 10)
-        (path-validp path schb 2)
-        (equal (apply-moves path schb 2) *arb-std2*))))
-\end{lstlisting}
-  \note{
-    Backup. Span membership as a recursive predicate, and the main path
-    actually running at $n = 2$: from a rank-10 scheme back to the standard
-    rank-8 one.
-  }
-\end{frame}
 
 \end{document}

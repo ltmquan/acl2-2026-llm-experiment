@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: eqv-class-equal, quotient-is-partition, partition-rel-is-equivalence, quotient-of-partition-rel, partition-rel-of-quotient, quotient-map-exists
+<tmp>

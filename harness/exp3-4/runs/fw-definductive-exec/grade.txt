@@ -1,0 +1,11 @@
+work copy: <tmp>
+static: R1INFO definductive.lisp: 8521 lines; 6920 of the books' 6940 lines kept (100%); 1601 lines added or changed
+static: R1INFO other .lisp files in /work: definductive-doc.lisp definductive-tests.lisp
+static: R1S PASS
+static: R3S PASS
+R1 PASS
+R2 PASS
+R3 PASS
+R4 PASS
+H2 FAIL failed checks: H2-10-SMALL-EXEC-BOOLEANP H2-10-SMALL-EXEC-CLEAN H2-10-SMALL-EXEC-CORRECT H2-10-SMALL-EXEC-FORMALS H2-11-PAIR-OF-SMALL-EXEC-BOOLEANP H2-11-PAIR-OF-SMALL-EXEC-CLEAN H2-11-PAIR-OF-SMALL-EXEC-CORRECT H2-11-PAIR-OF-SMALL-EXEC-FORMALS H2-12-LEN-EVEN-EXEC-BOOLEANP H2-12-LEN-EVEN-EXEC-CLEAN H2-12-LEN-EVEN-EXEC-CORRECT H2-12-LEN-EVEN-EXEC-FORMALS H2-13-LE2-EXEC-BOOLEANP H2-13-LE2-EXEC-CLEAN H2-13-LE2-EXEC-CORRECT H2-13-LE2-EXEC-FORMALS H2-9-SAME-EXEC-BOOLEANP H2-9-SAME-EXEC-CLEAN H2-9-SAME-EXEC-CORRECT H2-9-SAME-EXEC-FORMALS (see <tmp>/grade-h2.cert.out)   (informative: e-correct / booleanp-of-e forms and executability for exec-tests.lisp's own definitions; not counted)
+SUMMARY fw-definductive-exec: 4 PASS, 0 FAIL, 0 MANUAL (R1-R4); informative H2 FAIL; logs in <tmp>

@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2r/saved_acl2r; required targets matched: six-phase-midpoint-row, sine-pi/12, twelve-pulse-peak, twelve-pulse-row, six-phase-midpoint-output-pulse, twelve-pulse-series-output-pulse
+<tmp>

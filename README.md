@@ -1,17 +1,23 @@
 # Can an LLM formalize and prove new ACL2 results?
 
-This repository holds two experiments on the accepted papers of the ACL2 Workshop 2026. In both, a
-current LLM (Claude Opus 5.5, medium effort, one autonomous Claude Code cloud session per paper) had to
-produce, on its own, a certified ACL2 proof of a paper's main theorem(s).
+This repository holds four experiments on the accepted papers of the ACL2 Workshop 2026. In each, a
+current LLM (Claude Opus 5.5, medium effort, one autonomous Claude Code cloud session per task) works on its
+own, and every result is re-checked by our own tools.
 
 - **Experiment 1 — English → ACL2** ([EXPERIMENT-1.md](EXPERIMENT-1.md)). The model gets the paper's
   definitions and main theorem in English. It writes the ACL2 definitions, the ACL2 statement and the proof.
 - **Experiment 2 — ACL2 statements** ([EXPERIMENT-2.md](EXPERIMENT-2.md)). The model gets the authors' own ACL2
   definitions (proofs removed) and the exact ACL2 statements of the paper's main theorems. It only has to
   prove them.
+- **Experiment 3 — paper → tool** ([EXPERIMENT-3.md](EXPERIMENT-3.md)). For six tool papers, the model gets the
+  paper (links to the authors' code removed) and builds the system it describes.
+- **Experiment 4 — future work** ([EXPERIMENT-4.md](EXPERIMENT-4.md)). Open items from the papers'
+  future-work sections and from Kaufmann's ZFC future-work list: 17 statements to prove and 3 things to build.
 
-Both experiments succeeded on the first attempt for all seven papers: 7 of 7 theorems in experiment 1, and
-24 of 24 targets in experiment 2. Every solution was re-certified independently.
+All runs were first attempts. Experiments 1–2: 7 of 7 theorems and 24 of 24 targets. Experiment 3: 6 tools
+built, with no requirement failing a mechanical check (some need a person to judge). Experiment 4: all 20
+items done. Two of our own ZFC statements were false; the models found it, and reruns with corrected
+statements proved them.
 
 **Please keep this repository private.** It contains the papers and unpublished books.
 
@@ -34,19 +40,45 @@ Both experiments succeeded on the first attempt for all seven papers: 7 of 7 the
 cannot settle this. It is the reviewers' job, and this repository deliberately gives no verdicts. In
 experiment 2 the statements are fixed, so the checker settles correctness.
 
+### Experiments 3 and 4
+
+| # | Paper | Experiment 3: requirements pass · manual | Experiment 4 |
+|---|---|---|---|
+| 01 | [Gamboa — Basel](01-gamboa-basel/) | — | Euler product: 3 / 3 |
+| 02 | [Gamboa — Stirling](02-gamboa-stirling/) | — | trapezoid error 2 / 2; ratio bounds 2 / 2; FTC macro 2 · 1 manual |
+| 07 | [Cayuela — AC machine](07-cayuela-ac-machine/) | — | inductance integral: 2 / 2 |
+| 08 | [Coglio & Jurgensen — definductive](08-coglio-jurgensen-definductive/) | 6 · 0 | executable predicates: 4 / 4 |
+| 09 | [Chen, Greenstreet & Seltzer — Smtlink 3](09-chen-smtlink3/) | 5 · 4 | — |
+| 10 | [Bora & Greenstreet — Erlang in ACL2](10-bora-erlang/) | 1 · 6 | — |
+| 11 | [Gamboa — Remora argument frames](11-gamboa-remora/) | 3 · 2 | — |
+| 12 | [Hardin — Arrayset revisited](12-hardin-arrayset/) | 4 · 1 | — |
+| 13 | [McCarthy — fixsliced AES-128](13-mccarthy-aes/) | 5 · 2 | — |
+| 14 | [Cayuela — q-pulse rectifiers](14-cayuela-rectifiers/) | — | rows 6 / 6; integral master theorem 4 / 4 |
+| 15 | [Jurgensen — treesets](15-jurgensen-treesets/) | — | multisets: 3 / 3 |
+| 16 | [Kaufmann — set theory](16-kaufmann-set-theory/) | — | ZFC T1–T11: all; T8, T9 after correcting our statements |
+
+No experiment-3 requirement failed a mechanical check. "Manual" means a person, ideally the authors, still
+has to judge it; each grader's `CHECKLIST.md` says how. All 28 experiment 3–4 transcripts passed the audit.
+
 ## Repository layout
 
 ```
 README.md            this file: papers, harness, how to reproduce
 EXPERIMENT-1.md      report: English definitions and theorem → ACL2
 EXPERIMENT-2.md      report: authors' ACL2 definitions and statements → proofs (incl. how definitions were extracted)
-tools/               every script used (setup, checkers, audit, prompt and definitions generators, …)
-NN-<paper>/          one folder per paper: only what reviewers need to review the Lisp files
-  README.md          short paper summary, what each experiment asked, the prompts
+EXPERIMENT-3.md      report: paper → tool
+EXPERIMENT-4.md      report: future work; also the harness of experiments 3–4 and their audit
+tools/               every script used (setup, checkers, graders, audit, prompt and definitions generators, …)
+NN-<paper>/          one folder per paper (01–16): only what reviewers need to review the Lisp files
+  README.md          short paper summary, what each experiment asked, what to review
   source/            paper PDF, and the authors' ACL2 books where they exist
   exp1/              prompt.txt, solution.lisp
   exp2/              prompt.txt, definitions.lisp (annotated with source locations), targets.lisp, solution.lisp
-harness/NN-<paper>/  our records (reviewers do not need these)
+  exp3/              prompt.txt (paper text + requirements), solution/ (the model's work)
+  exp4/<item>/       prompt.txt, our defs.lisp / targets.lisp / admit.lisp for prove tasks, solution/
+harness/exp3-4/      our records for experiments 3–4: runs/<task>/ (grade.txt, audit.txt, run.md), the task
+                     drafts (planning/), the statement checks, and the scripts that generated the prompts
+harness/NN-<paper>/  our records for experiments 1–2 (reviewers do not need these)
   NOTES.md           results table, how the prompt and the exp2 package were made, changes from the
                      paper's / authors' text, checker file hashes, run notes
   exp1/, exp2/       audit.txt, run.md (timing, audit, how the solution was recovered, the model's route);
@@ -54,7 +86,9 @@ harness/NN-<paper>/  our records (reviewers do not need these)
                      file the model was given, where different) and extraction/ (scripts and logs)
 ```
 
-Session transcripts are not included. The prompts are exactly the text that was sent.
+Session transcripts are not included. The prompts are exactly the text that was sent. The branches
+`results/<task>` hold what each experiment 3–4 session saved, exactly as it pushed it; `task/<task>` holds the
+prompt each session read.
 
 ## 1. Papers
 
@@ -76,7 +110,11 @@ a library interface, or a system.
 Experiment 2 covers more of each paper: all the theorems we judged to be main results (24 targets in all;
 listed in each paper's README).
 
-### Excluded (9)
+### Excluded from experiments 1–2 (9)
+
+These papers have folders 08–16, and appear in experiments 3–4 instead: the six tool papers in experiment 3,
+and the rectifier, treeset and set-theory papers (plus definductive, Basel, Stirling and the AC machine) through
+their future work in experiment 4.
 
 | Paper | Why |
 |---|---|
@@ -102,7 +140,10 @@ listed in each paper's README).
 
 Copies are in each paper's `source/authors-books/`.
 
-## 2. The harness (common to both experiments)
+## 2. The harness of experiments 1–2
+
+Experiments 3–4 use the same model, rules and audit, with a prebuilt toolchain and a different way of saving
+results; see [EXPERIMENT-4.md](EXPERIMENT-4.md#harness-shared-by-experiments-3-and-4).
 
 ### Model and runs
 - **Model:** Claude Opus 5.5, effort medium. Each run is a Claude Code cloud session, one per paper,
@@ -177,8 +218,19 @@ All scripts are in [`tools/`](tools/); see [`tools/README.md`](tools/README.md) 
      allows only `(include-book "defs")` and `:dir :system` books, requires every target with exactly its
      statement, and certifies.
 
-Paths inside the scripts (`/opt/acl2`, `/opt/acl2r`, `/home/user/acl2-exp`) are the ones we used. Adjust
-them for another machine.
+Experiments 3–4:
+
+1. **Environment.** Use the setup script of [EXPERIMENT-4.md](EXPERIMENT-4.md#harness-shared-by-experiments-3-and-4):
+   it runs `setup/install.sh` from the public toolchain repository with `--acl2 8.7` or `--acl2 master`.
+2. **Start one session per task** on the branch `task/<task>` and send "Your task is in the file TASK.md in
+   your working directory. Read all of it, then do exactly what it says." The model saves its work with
+   `submit <task>`.
+3. **Audit** as above.
+4. **Check:** prove tasks with `python3 -I tools/check-prove.py <solution-dir> <task-folder>`; build tasks with
+   `bash tools/graders/<task>/grade.sh <solution-dir>`.
+
+Paths inside the scripts (`/opt/acl2`, `/opt/acl2r`, `/opt/acl2-master`, `/home/user/acl2-exp`) are the ones
+we used. Adjust them for another machine.
 
 ## 4. Re-checking on current ACL2
 

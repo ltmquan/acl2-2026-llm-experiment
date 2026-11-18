@@ -1,0 +1,1 @@
+fw-ftc-macro: CLEAN  pages=3 run_tool_calls=70 run_end=2026-11-14T19:27:32.726084Z post_run_calls=0 flags=0

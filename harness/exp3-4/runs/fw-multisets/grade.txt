@@ -1,0 +1,124 @@
+GRADER: work copy in <tmp>/work
+  R1/grade-r1-defs OK guard MSET::BAGP verified
+  R1/grade-r1-defs OK guard MSET::BFIX verified
+  R1/grade-r1-defs OK guard MSET::BEQUIV verified
+  R1/grade-r1-defs OK guard MSET::EMPTY verified
+  R1/grade-r1-defs OK guard MSET::EMPTYP verified
+  R1/grade-r1-defs OK guard MSET::COUNT verified
+  R1/grade-r1-defs OK guard MSET::IN verified
+  R1/grade-r1-defs OK guard MSET::INSERT verified
+  R1/grade-r1-defs OK guard MSET::INSERT-N verified
+  R1/grade-r1-defs OK guard MSET::DELETE verified
+  R1/grade-r1-defs OK guard MSET::DELETE-ALL verified
+  R1/grade-r1-defs OK guard MSET::CARDINALITY verified
+  R1/grade-r1-defs OK guard MSET::SUPPORT verified
+  R1/grade-r1-defs OK guard MSET::SUBBAG verified
+  R1/grade-r1-defs OK guard MSET::SUM verified
+  R1/grade-r1-defs OK guard MSET::UNION verified
+  R1/grade-r1-defs OK guard MSET::INTERSECT verified
+  R1/grade-r1-defs OK guard MSET::DIFF verified
+  R1/grade-r1-defs OK guard MSET::FROM-LIST verified
+  R1/grade-r1-defs OK guard MSET::TO-LIST verified
+  R1/grade-r1-defs OK MSET::BEQUIV is an equivalence relation
+  R1/grade-r1-defs OK congruence MSET::EMPTYP respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::COUNT respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::IN respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::INSERT respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::INSERT-N respects MSET::BEQUIV in argument 3
+  R1/grade-r1-defs OK congruence MSET::DELETE respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::DELETE-ALL respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::CARDINALITY respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::SUPPORT respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::SUBBAG respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::SUBBAG respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::SUM respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::SUM respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::UNION respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::UNION respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::INTERSECT respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::INTERSECT respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::DIFF respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK congruence MSET::DIFF respects MSET::BEQUIV in argument 2
+  R1/grade-r1-defs OK congruence MSET::TO-LIST respects MSET::BEQUIV in argument 1
+  R1/grade-r1-defs OK nolist MSET::COUNT (reachable: (OMAP::ASSOC RETURN-LAST OMAP::TAIL POSP OMAP::HEAD-VAL OMAP::EMPTYP MSET::BAG-VALS-P OMAP::MAPP MSET::BAGP MSET::BFIX IF CDR MSET::COUNT))
+  R1/grade-r1-defs OK nolist MSET::INSERT (reachable: (OMAP::UPDATE BINARY-+ OMAP::ASSOC RETURN-LAST OMAP::TAIL POSP OMAP::HEAD-VAL OMAP::EMPTYP MSET::BAG-VALS-P OMAP::MAPP MSET::BAGP MSET::BFIX IF CDR MSET::COUNT MSET::INSERT))
+  R1/grade-r1-defs OK nolist MSET::DELETE (reachable: (OMAP::ASSOC CDR MSET::COUNT OMAP::UPDATE RETURN-LAST IF OMAP::TAIL POSP OMAP::HEAD-VAL OMAP::EMPTYP MSET::BAG-VALS-P OMAP::MAPP MSET::BAGP MSET::BFIX BINARY-+ OMAP::DELETE NOT < MSET::DELETE))
+  R1/grade-r1-thms OK GR-BAGP-OF-BFIX (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-EMPTY (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-INSERT (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-INSERT-N (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-DELETE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-DELETE-ALL (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-SUM (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-UNION (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-INTERSECT (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-DIFF (as stated, model's rules)
+  R1/grade-r1-thms OK GR-BAGP-OF-FROM-LIST (as stated, model's rules)
+  R1/grade-r1-thms OK GR-NATP-OF-COUNT (as stated, model's rules)
+  R1/grade-r1-thms OK MSET::COUNT-OF-EMPTY exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-INSERT exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-INSERT-N exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-DELETE exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-DELETE-ALL exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-SUM exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-UNION exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-INTERSECT exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-DIFF exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-FROM-LIST exists
+  R1/grade-r1-thms OK MSET::COUNT-OF-EMPTY is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-INSERT is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-INSERT-N is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-DELETE is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-DELETE-ALL is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-SUM is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-UNION is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-INTERSECT is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-DIFF is a rewrite rule
+  R1/grade-r1-thms OK MSET::COUNT-OF-FROM-LIST is a rewrite rule
+  R1/grade-r1-thms OK GR-COUNT-OF-EMPTY (as stated, :by COUNT-OF-EMPTY)
+  R1/grade-r1-thms OK GR-COUNT-OF-INSERT (as stated, model's rules)
+  R1/grade-r1-thms OK GR-COUNT-OF-INSERT-N (as stated, model's rules)
+  R1/grade-r1-thms OK GR-COUNT-OF-DELETE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-COUNT-OF-DELETE-ALL (as stated, :by COUNT-OF-DELETE-ALL)
+  R1/grade-r1-thms OK GR-COUNT-OF-SUM (as stated, :by COUNT-OF-SUM)
+  R1/grade-r1-thms OK GR-COUNT-OF-UNION (as stated, :by COUNT-OF-UNION)
+  R1/grade-r1-thms OK GR-COUNT-OF-INTERSECT (as stated, :by COUNT-OF-INTERSECT)
+  R1/grade-r1-thms OK GR-COUNT-OF-DIFF (as stated, :by COUNT-OF-DIFF)
+  R1/grade-r1-thms OK GR-COUNT-OF-FROM-LIST (as stated, :by COUNT-OF-FROM-LIST)
+  R1/grade-r1-thms OK GR-IN-IFF-COUNT (as stated, model's rules)
+  R1/grade-r1-thms OK GR-SETP-OF-SUPPORT (as stated, model's rules)
+  R1/grade-r1-thms OK MSET::BAG-EXTENSIONALITY exists
+  R1/grade-r1-thms OK MSET::SUBBAG-WHEN-COUNTS-LE exists
+  R1/grade-r1-thms OK MSET::COUNT-LE-WHEN-SUBBAG exists
+  R1/grade-r1-thms OK GR-BAG-EXTENSIONALITY (as stated, :by BAG-EXTENSIONALITY)
+  R1/grade-r1-thms OK GR-SUBBAG-WHEN-COUNTS-LE (as stated, :by SUBBAG-WHEN-COUNTS-LE)
+  R1/grade-r1-thms OK GR-COUNT-LE-WHEN-SUBBAG (as stated, :by COUNT-LE-WHEN-SUBBAG)
+  R1/grade-r1-thms OK GR-SUBBAG-REFLEXIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-SUBBAG-ANTISYMMETRIC (as stated, model's rules)
+  R1/grade-r1-thms OK GR-SUBBAG-TRANSITIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-CARDINALITY-OF-EMPTY (as stated, model's rules)
+  R1/grade-r1-thms OK GR-CARDINALITY-OF-INSERT (as stated, model's rules)
+  R1/grade-r1-thms OK GR-CARDINALITY-OF-DELETE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-CARDINALITY-OF-SUM (as stated, model's rules)
+  R1/grade-r1-thms OK GR-FROM-LIST-OF-TO-LIST (as stated, model's rules)
+  R1/grade-r1-thms OK GR-LEN-OF-TO-LIST (as stated, model's rules)
+  R1/grade-r1-thms OK GR-SUM-COMMUTATIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-SUM-ASSOCIATIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-UNION-COMMUTATIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-UNION-ASSOCIATIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-INTERSECT-COMMUTATIVE (as stated, model's rules)
+  R1/grade-r1-thms OK GR-INTERSECT-ASSOCIATIVE (as stated, model's rules)
+  R1/grade-r1-thms FAIL GR-SUPPORT-IS-KEYS: not proved
+R1 FAIL grade-r1-thms: GR-SUPPORT-IS-KEYS: not proved
+R2 PASS 59 assertions cover all 20 functions
+R3 PASS
+SUMMARY fw-multisets: 2 PASS, 1 FAIL, 0 MANUAL
+
+
+## Review of the reported FAIL (by us, after the run)
+
+R1 reported FAIL on one of its 110 checks, `gr-support-is-keys`. Review: the model defines
+`support` as `(omap::keys (bfix b))`, so the statement holds by definition. It fails only because the
+grader's hint policy disables the required definitions. It proves at once with `support` enabled:
+`(defthm ... (implies (bagp b) (equal (support b) (omap::keys (bfix b)))) :hints (("Goal" :in-theory (enable support))))`
+certifies on top of the model's book. Counted as passed; the other 109 checks passed.

@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2r/saved_acl2r; required targets matched: euler-zeta2-product-lower, euler-zeta2-product-upper, euler-product-close-to-basel-series
+<tmp>

@@ -1,0 +1,4 @@
+tool-remora: FLAGGED  pages=5 run_tool_calls=109 run_end=2026-11-14T19:41:53.495725Z post_run_calls=0 flags=1
+    - tool not allowed  @ 2026-11-14T19:09:06.593729Z ToolSearch {"max_results": 1, "query": "select:Monitor"}
+Flags:
+  {"why": "tool not allowed", "t": "2026-11-14T19:09:06.593729Z", "name": "ToolSearch", "input": "{'max_results': 1, 'query': 'select:Monitor'}"}

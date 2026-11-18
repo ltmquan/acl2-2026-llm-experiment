@@ -1,0 +1,1 @@
+zfc-t6: CLEAN  pages=1 run_tool_calls=23 run_end=2026-11-14T19:09:03.386257Z post_run_calls=0 flags=0

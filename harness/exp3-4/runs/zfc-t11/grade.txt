@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: reduced-product-relation-is-equivalence, principal-ultraproduct
+<tmp>

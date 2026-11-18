@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2r/saved_acl2r; required targets matched: stirling-ratio-decreasing, stirling-ratio-decrease-bounded
+<tmp>

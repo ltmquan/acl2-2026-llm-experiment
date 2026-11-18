@@ -1,0 +1,15 @@
+grading copy: <tmp>/work
+model books: 12; not certified: none (log <tmp>/cert-model.log)
+grader book grade-r2: certified (log <tmp>/cert-grade-r2.log)
+grader book grade-r3: certified (log <tmp>/cert-grade-r3.log)
+attachments added by the model's books: ((ERL-SCHEDULER . ERL-SCHEDULER-EXEC))
+grader book grade-r5: certified (log <tmp>/cert-grade-r5.log)
+grader book grade-r6: certified (log <tmp>/cert-grade-r6.log)
+R1 MANUAL use README.md's convert command and run form with run-erl.sh on erlang/*.erl (CHECKLIST R1)
+R2 MANUAL eval-cont-list is a recursive logic-mode function; check fuel, out-of-fuel status and receive yield (CHECKLIST R2)
+R3 MANUAL attachment(s) to constrained functions exist; check the encapsulate's exported constraint is the fairness condition (CHECKLIST R3)
+R4 MANUAL 15 assert forms in examples.lisp; check they cover add_pairs, the two-process exchange and reduce; rerun add_pairs via run-erl.sh (CHECKLIST R4)
+R5 MANUAL sum-of-nats-correct exists and the closed form follows by :by; check its statement (printed in grader/grade-r5.cert.out) per CHECKLIST R5
+R6 MANUAL reduce-invariant-preserved, reduce-no-blocked-worker, reduce-root-value exist; check their statements (printed in grader/grade-r6.cert.out) per CHECKLIST R6
+R7 PASS
+SUMMARY tool-erlang: 1 PASS, 0 FAIL, 6 MANUAL; files in <tmp>

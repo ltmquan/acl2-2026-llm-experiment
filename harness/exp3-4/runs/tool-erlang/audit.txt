@@ -1,0 +1,1 @@
+tool-erlang: CLEAN  pages=7 run_tool_calls=187 run_end=2026-11-14T20:20:13.011232Z post_run_calls=0 flags=0

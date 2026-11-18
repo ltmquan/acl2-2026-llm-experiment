@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: eqnum-reflexive, eqnum-symmetric, eqnum-transitive, injects-both-ways-implies-eqnum, set-injects-into-powerset, powerset-does-not-inject, pigeonhole, eqnum-naturals-equal, omega-not-finite, finite-iff-eqnum-to-nat
+<tmp>

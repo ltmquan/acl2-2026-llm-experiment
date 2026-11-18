@@ -1,0 +1,17 @@
+grading copy: <tmp>
+R1 PASS (compiles with 'rustc --edition 2021 --crate-type lib'; struct and the five functions match Sec. 5.1/Figs. 5-6 token for token)
+R2 PASS several files define ASET_DEL (gen/arrayset.lisp gen/arrayset6.lisp); checked gen/arrayset.lisp; Fig. 7: PASS identical to Figure 7 up to (BITS x 63 0) wrappers; rac -a gen/arrayset.cpp reproduces gen/arrayset.lisp and certifies against rtl/rel11/lib/rac; also inspect CHECKLIST R2(e): the RAC source corresponds to src/arrayset.rs; 
+R3 MANUAL examples.lisp certifies, 49 assert-event forms; inspect it per CHECKLIST R3 (grader's own Fig. 4(b) execution check (grade-r3x) not run)
+R4 FAIL the model's books cannot be included together (see <tmp>/cert-grader-model.log)
+R5 PASS (9 books: arrayset-defs.lisp arrayset-invariants.lisp arrayset-thms.lisp arrayset6-defs.lisp arrayset6-invariants.lisp arrayset6-thms.lisp examples.lisp gen/arrayset.lisp gen/arrayset6.lisp)
+SUMMARY: FAIL (1 requirement(s) failed, 1 MANUAL)
+
+
+## Review of the reported FAIL (by us, after the run)
+
+R4 reported FAIL because the grader could not include all of the model's books together. The
+model built a second copy of its books with `ARR_SZ` = 6 for the Figure 4 example, as the prompt asked, and the
+two copies define the same names. Regrade on a copy without the `ARR_SZ` = 6 books: R4 PASS (all four
+Figure 8-9 theorems verbatim by `:by`; their hypotheses are satisfiable on the Figure 4 instance). R3 and R5
+fail in that regrade only because `examples.lisp` includes the removed books; in the full run R3 is MANUAL and
+R5 passes. Counted: R1, R2, R4, R5 pass; R3 manual.

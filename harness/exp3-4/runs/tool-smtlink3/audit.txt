@@ -1,0 +1,1 @@
+tool-smtlink3: CLEAN  pages=3 run_tool_calls=84 run_end=2026-11-14T19:36:15.144079Z post_run_calls=0 flags=0

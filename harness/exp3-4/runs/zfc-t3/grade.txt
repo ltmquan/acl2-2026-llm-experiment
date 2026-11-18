@@ -1,0 +1,3 @@
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: principal-filter-is-ultrafilter, ultra-iff-maximal, ultrafilter-prime, ultrafilter-with-finite-member-is-principal, ultrafilter-on-finite-set-is-principal
+optional nonprincipal-ultrafilter-exists: proved
+<tmp>

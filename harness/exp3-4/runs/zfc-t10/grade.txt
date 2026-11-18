@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: metric-topology-is-topology, metric-topology-is-hausdorff, rationals-metric
+<tmp>

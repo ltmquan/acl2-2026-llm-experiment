@@ -1,0 +1,14 @@
+GRADER: work copy in <tmp>/work
+  R1/grade-r1-lin PASS
+  R1/grade-r1-exp PASS
+  R1/grade-r1-sym PASS
+  R1/grade-r1-fail PASS
+  R2/a call sq: PASS
+  R2/b call cosine: PASS
+  R2/c call invsq: PASS
+  R2/d call xlnx: PASS
+  R2/e must-fail call bad: antiderivative numerically wrong: PASS
+R1 MANUAL mechanical checks passed; inspect <tmp>/work/grader-logs/r1-failed-call.log (CHECKLIST R1-M: the failed call must stop with an error that prints the derivative obligation)
+R2 PASS
+R3 PASS
+SUMMARY fw-ftc-macro: 2 PASS, 0 FAIL, 1 MANUAL

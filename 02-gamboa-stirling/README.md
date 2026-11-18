@@ -112,3 +112,34 @@ questions; work until you are done. When you are done, print the final contents 
 ```
 
 </details>
+
+## Experiment 4 — future work
+
+### General trapezoid-rule error theorem
+
+`exp4/trapezoid/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
+(`targets.lisp`; `admit.lisp`: the integral, to admit verbatim), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+every target verbatim against our `defs.lisp`.
+
+**Result:** 2 / 2 targets.
+
+**To review:** whether our statement captures the future-work item. The checker settles the proof.
+
+### Explicit bounds on Stirling's ratio
+
+`exp4/stirling-bounds/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
+(`targets.lisp`), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+every target verbatim against our `defs.lisp`.
+
+**Result:** 2 / 2 targets: n!/(√n·nⁿ·e⁻ⁿ) decreases, with the Robbins step bound.
+
+**To review:** whether our statement captures the future-work item. The checker settles the proof.
+
+### The `def-ftc-integral` macro
+
+`exp4/ftc-macro/`: the prompt (`prompt.txt`) and the model's work (`solution/`). The grader is
+[`tools/graders/fw-ftc-macro/`](../tools/graders/fw-ftc-macro/).
+
+**Result:** R2, R3 PASS, and our hidden calls pass; R1 MANUAL.
+
+**To review:** R1: does a failed call stop with an error that prints its obligation (the grader saves the output)?

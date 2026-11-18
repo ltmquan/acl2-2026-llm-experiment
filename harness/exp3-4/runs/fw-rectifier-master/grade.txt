@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2r/saved_acl2r; required targets matched: master-theorem-vdc, master-theorem-vrms, three-phase-midpoint-row, three-phase-bridge-row
+<tmp>

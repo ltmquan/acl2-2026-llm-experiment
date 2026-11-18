@@ -1,0 +1,1 @@
+tool-definductive: CLEAN  pages=5 run_tool_calls=130 run_end=2026-11-14T19:34:50.771391Z post_run_calls=0 flags=0

@@ -1,0 +1,2 @@
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: continuous-compose, continuous-image-of-compact, hausdorff-singleton-closed, compact-subset-of-hausdorff-is-closed
+<tmp>

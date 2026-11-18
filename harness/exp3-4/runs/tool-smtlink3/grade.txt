@@ -1,0 +1,21 @@
+grading copy: <tmp>/work
+trusted clause processor book: trusted.lisp; ttag-allowed books: base.lisp, smt-theory.lisp, trusted.lisp
+model books: 6; not certified: none (log <tmp>/cert-model.log)
+grader book grader-common (real z3): certified (log <tmp>/cert-grader-common.log)
+grader book grade-r3 (real z3): certified (log <tmp>/cert-grade-r3.log)
+grader book grade-r4 (real z3): certified (log <tmp>/cert-grade-r4.log)
+grader book grade-r6 (real z3): certified (log <tmp>/cert-grade-r6.log)
+grader book grade-r7 (real z3): FAILED (log <tmp>/cert-grade-r7.log)
+grader book grade-r3-unknown (unknown z3): certified (log <tmp>/cert-grade-r3-unknown.log)
+grader book grade-r3-error (error z3): certified (log <tmp>/cert-grade-r3-error.log)
+R2 world: trusted after F: (SMT::SMTLINK-TRUSTED-CP); trusted after all: (SMT::SMTLINK-TRUSTED-CP); verified cl-procs: (SMT::SIMPLIFY-CP-CORRECT SMT::TYPE-EXTRACT-CP-CORRECT SMT::TERM-REWRITE-CP-CORRECT SMT::TYPE-FIX-CP-CORRECT SMT::TYPE-INFERENCE-CP-CORRECT SMT::STRIP-SIDE-CP-CORRECT SMT::SMTLINK-ENTRY-CP-CORRECT); ttags-seen: ((:SMTLINK "<tmp>/work/trusted.lisp")); not via F: NIL
+R1 MANUAL inspect the clause-processor chain (CHECKLIST R1); no file mentions python
+R2 MANUAL one trusted CP (SMT::SMTLINK-TRUSTED-CP); verified CP rules (SMT::SIMPLIFY-CP-CORRECT SMT::TYPE-EXTRACT-CP-CORRECT SMT::TERM-REWRITE-CP-CORRECT SMT::TYPE-FIX-CP-CORRECT SMT::TYPE-INFERENCE-CP-CORRECT SMT::STRIP-SIDE-CP-CORRECT SMT::SMTLINK-ENTRY-CP-CORRECT): inspect side goals per CHECKLIST R2
+R3 PASS
+R4 PASS
+R5 PASS
+R6 PASS
+R7 MANUAL alist goal proved by alist-to-array-example; but the grader's restatement (grade-r7) did not prove with a z3 unsat answer: see CHECKLIST R7
+R8 MANUAL follow README.md to print the SMT-LIB script and rewritten term of poly-ineq-example (CHECKLIST R8)
+R9 PASS
+SUMMARY tool-smtlink3: 5 PASS, 0 FAIL, 4 MANUAL; files in <tmp>

@@ -1,0 +1,7 @@
+grading copy: <tmp>
+R1 PASS (seven helpers defined with the paper's arities; on [1 2] + [[1 2] [3 4]] the hypotheses of the R2 theorems hold and the right-hand side of the final theorem gives [[2 3] [5 6]])
+R2 PASS propagate-not-reserrp-cells-at-depth-in-expr-value-list-when-vector: verbatim (:by); eval-app-list-when-primop-binary-and-bases: verbatim (:by); eval-app-when-funval-is-binary-op: verbatim (:by); undo-expr-value-with-nonempty-dims-3: verbatim (:by); eval-app-when-funval-is-binary-op-fully: verbatim (:by); 
+R3 MANUAL find the commutativity corollary in README.md / the books and judge it per CHECKLIST R3 (candidates found automatically: eval-app-of-int-add-commutative-strong (commutativity-total.lisp) eval-app-of-int-add-commutative (commutativity.lisp) )
+R4 MANUAL examples.lisp certifies, 25 assert-event forms; check it evaluates the three Sec. 2 examples per CHECKLIST R4 (grader's own Sec. 2 evaluations (grade-r4) pass on the interpreter)
+R5 PASS (6 books: commutativity-total.lisp commutativity.lisp examples.lisp helpers.lisp lifting.lisp top.lisp)
+SUMMARY: PASS (2 MANUAL item(s) to inspect, see CHECKLIST.md)

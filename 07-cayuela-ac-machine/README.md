@@ -264,3 +264,15 @@ questions; work until you are done. When you are done, print the final contents 
 ```
 
 </details>
+
+## Experiment 4 — future work
+
+### The air-gap inductance integral (Sections 5, 9)
+
+`exp4/inductance/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
+(`targets.lisp`; `admit.lisp`: the integral, to admit verbatim), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+every target verbatim against our `defs.lisp`.
+
+**Result:** 2 / 2 targets: as a limit of Riemann sums and as a definite integral.
+
+**To review:** whether our statement captures the future-work item. The checker settles the proof.

@@ -1,0 +1,1 @@
+zfc-t8-r2: CLEAN  pages=2 run_tool_calls=39 run_end=2026-11-14T20:46:34.323929Z post_run_calls=0 flags=0

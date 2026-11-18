@@ -97,6 +97,21 @@ def calls_in(forms):
         walk(f, False)
     return out
 
+def transient_calls(forms):
+    """ids of definductive forms inside must-succeed, must-succeed* or must-fail: they leave no events."""
+    out = set()
+    def walk(f, tr):
+        if not isinstance(f, list) or not f:
+            return
+        if f[0] == "definductive":
+            if tr: out.add(id(f))
+            return
+        for g in f[1:] if isinstance(f[0], str) else f:
+            walk(g, tr or f[0] in ("must-succeed", "must-succeed*", "must-fail"))
+    for f in forms:
+        walk(f, False)
+    return out
+
 def preds_of(c):
     p = kw(c, ":preds")
     return {q[0]: q[1:] for q in p if isinstance(q, list) and q and isinstance(q[0], str)} if isinstance(p, list) else {}
@@ -262,9 +277,10 @@ def main():
             elif missing:
                 bad.append("(v): no assert-event evaluating " + " ".join(missing))
             print("R3S " + ("PASS" if not bad else "FAIL " + "; ".join(bad)))
-            # ---------------- H2 world checks
+            # ---------------- H2 world checks (only definitions that persist in the book's world)
             k = 0
-            for c in good:
+            trans = transient_calls(forms)
+            for c in [c for c in good if id(c) not in trans]:
                 pr = preds_of(c)
                 for p, nm in exec_entries(c).items():
                     k += 1

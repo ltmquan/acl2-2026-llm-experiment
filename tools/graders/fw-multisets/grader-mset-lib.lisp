@@ -76,13 +76,19 @@
 ;      functions disabled and no induction;
 ;   3. :by each model theorem mentioning the statement's MSET functions;
 ;   4. :use each such theorem (or the required lemma), definitions disabled,
-;      no induction.
-(defun gr-attempts (name stmt by cands label)
+;      no induction;
+;   5. the model's rules with the definitions of the statement's MSET functions
+;      enabled, no induction: for facts that hold by the model's definitions
+;      (for example support = keys), which 2-4 cannot see.
+(defun gr-attempts (name stmt by cands fns label)
   (append (and by (gr-by-attempts name stmt (list by) label))
           (list (gr-attempt name stmt `(("Goal" :do-not-induct t :in-theory ,(gr-theory-off)))
                             (concatenate 'string label ", model's rules")))
           (gr-by-attempts name stmt (remove-eq by cands) label)
-          (gr-use-attempts name stmt (if by (cons by (remove-eq by cands)) cands) label)))
+          (gr-use-attempts name stmt (if by (cons by (remove-eq by cands)) cands) label)
+          (and fns
+               (list (gr-attempt name stmt `(("Goal" :do-not-induct t :in-theory (enable ,@fns)))
+                                 (concatenate 'string label ", by the model's definitions"))))))
 
 (defun gr-thm-fn (name stmt hyps by state)
   (let ((stmt2 (and hyps `(implies (and ,@hyps) ,stmt)))
@@ -93,10 +99,11 @@
           (value `(value-triple
                    (cw "GRADER-FAIL ~x0: the statement does not translate (missing function?) GRADEREND~%"
                        ',name)))
-        (let ((cands (gr-candidates (gr-mset-fns (all-fnnames tstmt)) thms)))
+        (let* ((fns (gr-mset-fns (all-fnnames tstmt)))
+               (cands (gr-candidates fns thms)))
           (value
-           `(:or ,@(gr-attempts name stmt by cands "as stated")
-                 ,@(and hyps (gr-attempts name stmt2 by cands "with hypotheses"))
+           `(:or ,@(gr-attempts name stmt by cands fns "as stated")
+                 ,@(and hyps (gr-attempts name stmt2 by cands fns "with hypotheses"))
                  (value-triple (cw "GRADER-FAIL ~x0: not proved GRADEREND~%" ',name)))))))))
 
 (defmacro gr-thm (name stmt &key hyps by)

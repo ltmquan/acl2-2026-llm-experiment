@@ -1,0 +1,7 @@
+Full check (all targets):
+MISMATCH: complex-construction-is-field: missing; complex-i-squared: missing
+<tmp>
+
+Check of the targets the model kept (the statements it reported false removed):
+CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: rationals-form-field
+<tmp>

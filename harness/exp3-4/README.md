@@ -5,13 +5,14 @@ they review. The reports are [EXPERIMENT-3.md](../../EXPERIMENT-3.md) and [EXPER
 
 | Path | What it is |
 |---|---|
-| `runs/<task>/run.md` | timing, tool calls, audit result, grade summary, and our review of any reported FAIL |
+| `runs/<task>/run.md` | timing, tool calls, audit result, grade summary, and a note on any correction made after the run |
 | `runs/<task>/grade.txt` | the output of `tools/check-prove.py` or `tools/graders/<task>/grade.sh` on the model's work (temporary paths shown as `<tmp>`) |
 | `runs/<task>/audit.txt` | the output of `tools/audit.py` on the full transcript, with any flagged tool calls |
 | `planning/` | the task drafts (`tool-specs.md`, `future-work-tasks.md`, `zfc-tasks.md`) and the plan approved before the runs (`TASKS.md`) |
 | `statement-checks/` | the files used to check that the drafted statements load; `zfc-task-specs-check.lisp` has the corrected T8/T9 statements |
 | `build/` | `make-tasks.py` (writes every prompt), `redact.py` (paper text with links to the authors' code removed), `split-zfc.py` (ZFC packages) |
 | `tasks-index.json` | the task list with environment and prompt size |
+| `first-attempts/zfc-t8/`, `first-attempts/zfc-t9/` | the first attempts on our original T8/T9 statements: prompt, files, the model's work and its records |
 
 ## Task ids
 
@@ -28,12 +29,12 @@ they review. The reports are [EXPERIMENT-3.md](../../EXPERIMENT-3.md) and [EXPER
 | `fw-inductance` | `07-cayuela-ac-machine/exp4/inductance/` |
 | `fw-rectifier-rows`, `fw-rectifier-master` | `14-cayuela-rectifiers/exp4/{rectifier-rows,rectifier-master}/` |
 | `fw-multisets` | `15-jurgensen-treesets/exp4/multisets/` |
-| `zfc-t1` … `zfc-t11`, `zfc-t8-r2`, `zfc-t9-r2` | `16-kaufmann-set-theory/exp4/zfc-*/` |
+| `zfc-t1` … `zfc-t11` (T8 and T9 on the corrected statements; the sessions saved them as `zfc-t8-r2`, `zfc-t9-r2`) | `16-kaufmann-set-theory/exp4/zfc-*/` |
 
 ## The two environments' setup scripts
 
 Both: network "Limited" with package registries allowed, no extra hosts, MCP servers not allowed; the
-experiment repository attached and checked out on `task/<task>`.
+experiment repository attached, checked out on a branch holding only the task's `TASK.md`.
 
 8.7 tasks (all except Remora, executable `definductive` and ZFC):
 

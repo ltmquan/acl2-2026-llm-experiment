@@ -23,10 +23,12 @@ defs.lisp holds the definitions the theorems use. Do not modify these files.
 (defun nonzeros (s zero) (diff s (singleton zero)))
 
 (defun fieldp (s add mul zero one neg recip)
-  (and (abelian-group-p s add zero neg)
+  (and (funp add) (funp mul) (funp neg) (funp recip)
+       (abelian-group-p s add zero neg)
        (not (equal zero one))
        (equal (domain mul) (prod2 s s))
        (subset (image mul) s)
+       (abelian-p s mul)
        (abelian-group-p (nonzeros s zero)
                         (restrict mul (prod2 (nonzeros s zero)
                                              (nonzeros s zero)))
@@ -122,5 +124,5 @@ ACL2 (`acl2`) and ACL2(r) (`acl2r`) are installed at a development version newer
 /work/solution.lisp must certify with `cert.pl`.
 Do not use skip-proofs, defaxiom, trust tags, or redefinition. Do not use the internet. No one will answer
 questions; work until you are done.
-When you are done, run `submit zfc-t9`, which saves /work. Then print a short summary: the files you
+When you are done, run `submit zfc-t9-r2`, which saves /work. Then print a short summary: the files you
 wrote, and for each theorem whether it is proved.

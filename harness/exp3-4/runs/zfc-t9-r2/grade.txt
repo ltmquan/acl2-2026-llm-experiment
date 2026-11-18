@@ -1,2 +1,0 @@
-CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: complex-construction-is-field, complex-i-squared, rationals-form-field
-<tmp>

@@ -127,13 +127,23 @@ gen_model_book() {  # $@ = model books to include
   [ -f $Z/grader-model.cert ]
 }
 OKB=(); for b in "${BOOKS[@]}"; do certified "$b" && OKB+=("$b"); done
-MODEL_OK=no
+MODEL_OK=no; MODEL_NOTE=
 if gen_model_book "${OKB[@]}"; then MODEL_OK=yes
 else
   mapfile -t DEF < <($PY defines "$W" aset_add-val-at-used_head--thm aset_del-val-at-free_head--thm \
     aset_del_head-used-list--thm aset_del_head-free-list--thm asetp)
   OKD=(); for b in "${DEF[@]}"; do certified "$b" && OKD+=("$b"); done
-  [ ${#OKD[@]} -gt 0 ] && gen_model_book "${OKD[@]}" && MODEL_OK=yes
+  if [ ${#OKD[@]} -gt 0 ] && gen_model_book "${OKD[@]}"; then MODEL_OK=yes
+  else
+    # The defining books may themselves conflict, e.g. two instances of the arrayset with different
+    # ARR_SZ that define the same names. Use the first defining book that loads on its own.
+    mapfile -t DEFT < <($PY defines "$W" aset_add-val-at-used_head--thm aset_del-val-at-free_head--thm \
+      aset_del_head-used-list--thm aset_del_head-free-list--thm)
+    for b in "${DEFT[@]}"; do
+      certified "$b" || continue
+      if gen_model_book "$b"; then MODEL_OK=yes; MODEL_NOTE="graded on $b alone (the model's books define the same names in several instances)"; break; fi
+    done
+  fi
 fi
 # grader-init: how to build an initial arrayset with the model's aset_init (the paper does not fix its arity)
 INIT=NONE
@@ -156,7 +166,7 @@ else
   elif [ "$INIT" != 0 ] && [ "$INIT" != 1 ]; then
     say 4 "MANUAL the four theorems hold verbatim; non-vacuity not run (aset_init has ${INIT} formals): CHECKLIST R4"
   elif cert_grader grade-r4v; then
-    say 4 "PASS (four theorems verbatim by :by; hypotheses satisfiable on the Fig. 4(a) instance built with aset_init/aset_add)"
+    say 4 "PASS (four theorems verbatim by :by; hypotheses satisfiable on the Fig. 4(a) instance built with aset_init/aset_add${MODEL_NOTE:+; $MODEL_NOTE})"
   else
     say 4 "FAIL theorems hold, but the non-vacuity check failed: hypotheses false on the Fig. 4(a) instance (see $T/cert-grade-r4v.log)"
   fi

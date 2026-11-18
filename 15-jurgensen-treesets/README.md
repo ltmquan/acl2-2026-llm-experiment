@@ -13,6 +13,6 @@ Not in experiments 1–2: a library paper; most key theorems were already in ACL
 `exp4/multisets/`: the prompt (`prompt.txt`) and the model's work (`solution/`). The grader is
 [`tools/graders/fw-multisets/`](../tools/graders/fw-multisets/).
 
-**Result:** 3 / 3 requirements. One of 110 R1 checks failed only because of the grader; see `harness/exp3-4/runs/fw-multisets/run.md`. Built on 8.7's `std/omaps`: master already contains the authors' version (`kestrel/data/treebag`).
+**Result:** 2 PASS, 1 MANUAL, 0 FAIL: all 110 theorem, guard and congruence checks pass. Built on 8.7's `std/omaps`: master already contains the authors' version (`kestrel/data/treebag`).
 
 **To review:** the documentation of behaviour on non-bags (R1).

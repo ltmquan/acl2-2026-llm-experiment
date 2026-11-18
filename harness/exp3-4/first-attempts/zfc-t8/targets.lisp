@@ -10,7 +10,7 @@
   :props (zfc prod2$prop domain$prop inverse$prop))
 
 (defthmz subgroup-is-group
-  (implies (and (groupp s op e inv) (funp op) (funp inv) (subgroup-p h s op e inv))
+  (implies (and (groupp s op e inv) (subgroup-p h s op e inv))
            (groupp h (restrict op (prod2 h h)) e (restrict inv h)))
   :props (zfc prod2$prop domain$prop inverse$prop restrict$prop diff$prop))
 

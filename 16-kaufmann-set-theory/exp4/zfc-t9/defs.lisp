@@ -16,10 +16,12 @@
 (defun nonzeros (s zero) (diff s (singleton zero)))
 
 (defun fieldp (s add mul zero one neg recip)
-  (and (abelian-group-p s add zero neg)
+  (and (funp add) (funp mul) (funp neg) (funp recip)
+       (abelian-group-p s add zero neg)
        (not (equal zero one))
        (equal (domain mul) (prod2 s s))
        (subset (image mul) s)
+       (abelian-p s mul)
        (abelian-group-p (nonzeros s zero)
                         (restrict mul (prod2 (nonzeros s zero)
                                              (nonzeros s zero)))

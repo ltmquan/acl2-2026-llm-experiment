@@ -12,7 +12,7 @@ The model received `exp3/prompt.txt`: the paper's text (links to the authors' co
 list of requirements. Its work is in `exp3/solution/`. The grader is [`tools/graders/tool-definductive/`](../tools/graders/tool-definductive/);
 its `CHECKLIST.md` says how to judge each MANUAL requirement.
 
-**Result:** 6 of 6 requirements pass. R3 passes after review: the grader's own filling of a hint the paper leaves open failed, the model's proof is correct (see `harness/exp3-4/runs/tool-definductive/run.md`).
+**Result:** 6 of 6 requirements pass.
 
 **To review:** nothing is MANUAL. The grader's filled-in hints are listed in its `NOTES.md` (marked FILL).
 

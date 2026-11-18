@@ -76,3 +76,7 @@ the model's `cert.acl2` does not apply to them. The generated `ASET_DEL` file is
 - `grade-r3x.lisp` had one wrong assertion on the first run (the circular used list of (a)); fixed and rerun.
 - Not validated: proofs of the real theorems (no solution written); a README-driven layout where the RAC
   source has a different base name (falls back to MANUAL).
+
+## Correction after the runs
+
+When the model's books cannot all be included together, the grader now also tries each book that defines the four Figure 8-9 theorems on its own. The model built two instances of the arrayset (`ARR_SZ` = 1024, and 6 for the Figure 4 example as the prompt asks) that define the same names; the first grading reported R4 as failed for that reason.

@@ -3,7 +3,7 @@
 - Task folder: [`12-hardin-arrayset/exp3/`](../../../../12-hardin-arrayset/exp3/) (prompt, our files, and the model's work under `solution/`)
 - Model run: 2026-11-14 19:03 to 2026-11-14 19:30 UTC, 27 min, 112 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit tool-arrayset` to branch `results/tool-arrayset` of this repository.
+- Saved by the model with `submit tool-arrayset`; the saved work is the task folder's `solution/`.
 - Audit (`audit.txt`): FLAGGED.
 
 ## Grade
@@ -11,19 +11,14 @@
 ```
 R1 PASS (compiles with 'rustc --edition 2021 --crate-type lib'; struct and the five functions match Sec. 5.1/Figs. 5-6 token for token)
 R2 PASS several files define ASET_DEL (gen/arrayset.lisp gen/arrayset6.lisp); checked gen/arrayset.lisp; Fig. 7: PASS identical to Figure 7 up to (BITS x 63 0) wrappers; rac -a gen/arrayset.cpp reproduces gen/arrayset.li
-R3 MANUAL examples.lisp certifies, 49 assert-event forms; inspect it per CHECKLIST R3 (grader's own Fig. 4(b) execution check (grade-r3x) not run)
-R4 FAIL the model's books cannot be included together (see <tmp>/cert-grader-model.log)
+R3 MANUAL examples.lisp certifies, 49 assert-event forms; inspect it per CHECKLIST R3 (grader's own Fig. 4(b) execution check PASSES)
+R4 PASS (four theorems verbatim by :by; hypotheses satisfiable on the Fig. 4(a) instance built with aset_init/aset_add; graded on arrayset-thms.lisp alone (the model's books define the same names in several instances))
 R5 PASS (9 books: arrayset-defs.lisp arrayset-invariants.lisp arrayset-thms.lisp arrayset6-defs.lisp arrayset6-invariants.lisp arrayset6-thms.lisp examples.lisp gen/arrayset.lisp gen/arrayset6.lisp)
-SUMMARY: FAIL (1 requirement(s) failed, 1 MANUAL)
+SUMMARY: PASS (1 MANUAL item(s) to inspect, see CHECKLIST.md)
 ```
 
 Full output: `grade.txt`.
 
-## Review
+## Note
 
-R4 reported FAIL because the grader could not include all of the model's books together. The
-model built a second copy of its books with `ARR_SZ` = 6 for the Figure 4 example, as the prompt asked, and the
-two copies define the same names. Regrade on a copy without the `ARR_SZ` = 6 books: R4 PASS (all four
-Figure 8-9 theorems verbatim by `:by`; their hypotheses are satisfiable on the Figure 4 instance). R3 and R5
-fail in that regrade only because `examples.lisp` includes the removed books; in the full run R3 is MANUAL and
-R5 passes. Counted: R1, R2, R4, R5 pass; R3 manual.
+The grader was corrected after the run: when the model's books cannot all be loaded together (here, two instances of the arrayset with `ARR_SZ` = 1024 and 6, as the prompt asked, defining the same names), it grades on the first book that defines the four theorems.

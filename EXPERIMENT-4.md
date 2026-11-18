@@ -57,7 +57,7 @@ It was tested on toy tasks against a correct solution and six kinds of wrong one
 
 ## 3. Results
 
-All first attempts, 2026-11-14 from 19:03 UTC, except the two T8/T9 reruns.
+All first attempts, 2026-11-14 from 19:03 UTC, except T8 and T9: see below.
 
 | Task | Time | Tool calls | Result |
 |---|---|---|---|
@@ -69,7 +69,7 @@ All first attempts, 2026-11-14 from 19:03 UTC, except the two T8/T9 reruns.
 | Cayuela — rectifiers: integral master theorem | 12 min | 93 | 4 / 4 |
 | Gamboa — Stirling: FTC macro | 23 min | 70 | 2 PASS · 1 MANUAL (does a failed call print its obligation?) |
 | Coglio & Jurgensen — definductive: executable predicates | 52 min | 108 | 4 / 4 PASS, including our hidden `:exec` tests |
-| Jurgensen — treesets: multisets | 11 min | 52 | 3 / 3 (one R1 check failed only because of the grader; see its `run.md`) |
+| Jurgensen — treesets: multisets | 11 min | 52 | 2 PASS · 1 MANUAL (is the behaviour on non-bags documented?) |
 | Kaufmann ZFC T1 equivalence relations | 5 min | 44 | 6 / 6 |
 | T2 indexed products | 5 min | 31 | 4 / 4 |
 | T3 ultrafilters | 20 min | 84 | 5 / 5, and the optional non-principal ultrafilter on ω |
@@ -77,16 +77,15 @@ All first attempts, 2026-11-14 from 19:03 UTC, except the two T8/T9 reruns.
 | T5 transfinite recursion | 4 min | 30 | 2 / 2 |
 | T6 infinite Ramsey | 4 min | 23 | 2 / 2 |
 | T7 topology | 9 min | 67 | 4 / 4 |
-| T8 groups | 9 min | 63 | 7 / 8; the 8th is false as we stated it (below) |
-| T8, rerun with the corrected statement | 7 min | 39 | 8 / 8 |
-| T9 fields | 5 min | 31 | 1 / 3; the other 2 are false as we stated them, refuted in ACL2 (below) |
-| T9, rerun with the corrected statement | 18 min | 94 | 3 / 3 |
+| T8 groups (corrected statement) | 7 min | 39 | 8 / 8 |
+| T9 fields (corrected statement) | 18 min | 94 | 3 / 3 |
 | T10 metric spaces | 12 min | 49 | 3 / 3 |
 | T11 ultraproducts | 16 min | 55 | 2 / 2 |
 
 ### Two of our statements were wrong
 
-Our ZFC statements had been checked only to load, not proved. The models found two errors:
+Our ZFC statements had been checked only to load, not proved. On the first attempt, the models found two
+errors, and proved everything else (T8: 7 of 8 targets; T9: 1 of 3):
 
 - **T8, `subgroup-is-group`.** The books' `groupp` does not require the operation or the inverse to be a
   function. `apply` on a relation that is not a function picks a value by choice, so the statement cannot be
@@ -95,17 +94,18 @@ Our ZFC statements had been checked only to load, not proved. The models found t
   distributivity, so 0·x = 0 did not follow. The model proved, in ACL2, a counterexample to
   `complex-construction-is-field` and `complex-i-squared`: a structure on the rationals with 0·y = y.
 
-The corrected tasks (`zfc-t8-r2`, `zfc-t9-r2`) add these hypotheses: `(funp op)` and `(funp inv)` for T8, and,
-in `fieldp`, `funp` for all four operations and commutativity of multiplication on all of S. Both passed the
-same load checks as the other packages, and the reruns proved every target. These reruns are not blind first
-attempts. The corrected statements are also in `harness/exp3-4/statement-checks/zfc-task-specs-check.lisp`.
+The corrected statements add `(funp op)` and `(funp inv)` to T8, and, in `fieldp`, `funp` for all four
+operations and commutativity of multiplication on all of S. They passed the same load checks as the other
+packages. `zfc-t8` and `zfc-t9` are the corrected tasks; a second attempt on each proved every target (these
+are not blind first attempts). The first attempts are kept in `harness/exp3-4/first-attempts/`, and the
+corrected statements also in `harness/exp3-4/statement-checks/zfc-task-specs-check.lisp`.
 
 ## Harness shared by experiments 3 and 4
 
 - **Model and runs:** as in experiments 1–2: one autonomous cloud session per task, medium effort, 6-hour
-  limit, no retries needed. The prompt is delivered as the file `TASK.md` on the session's own branch
-  `task/<id>` (the opening message says to read it), because some prompts are up to 67 KB. The content is
-  the same as `prompt.txt`.
+  limit, no retries needed. The prompt was delivered as the file `TASK.md` on a branch made for the session
+  (the opening message said to read it), because some prompts are up to 67 KB. The content is that of
+  `prompt.txt`.
 - **Environments:** two, both with the network of experiments 1–2. Each installs a prebuilt toolchain from the
   public repository [`ltmquan/acl2-2026-llm-toolchains`](https://github.com/ltmquan/acl2-2026-llm-toolchains)
   (branch `env-v1`, commit `2e3f27c`), which holds only open-source builds:
@@ -115,9 +115,10 @@ attempts. The corrected statements are also in `harness/exp3-4/statement-checks/
     `definductive` and ZFC.
 
   Setup takes 18–48 s instead of the 11–14 min of experiments 1–2.
-- **Saving results:** each prompt ends with `submit <id>`, which commits the model's `/work` (without build
-  outputs) to the branch `results/<id>` of this repository. Each session starts on a nearly empty branch, so
-  none of our files are on its disk. The task folders' `solution/` directories are copies of those branches.
+- **Saving results:** each prompt ends with `submit <id>`, which committed the model's `/work` (without build
+  outputs) to a branch of this repository made for that task. Each session started on a nearly empty branch,
+  so none of our files were on its disk. The task folders' `solution/` directories are copies of what the
+  sessions saved; the per-task branches were deleted afterwards.
 - **Leakage:** for these tasks, ACL2 master contains no answer. Some answers are public on GitHub: the master
   `definductive`, `treebag`, and the Erlang and AES authors' repositories. GitHub stayed reachable, as in
   experiments 1–2.

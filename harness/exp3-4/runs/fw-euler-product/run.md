@@ -3,7 +3,7 @@
 - Task folder: [`01-gamboa-basel/exp4/euler-product/`](../../../../01-gamboa-basel/exp4/euler-product/) (prompt, our files, and the model's work under `solution/`)
 - Model run: 2026-11-14 19:04 to 2026-11-14 19:22 UTC, 18 min, 99 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit fw-euler-product` to branch `results/fw-euler-product` of this repository.
+- Saved by the model with `submit fw-euler-product`; the saved work is the task folder's `solution/`.
 - Audit (`audit.txt`): FLAGGED.
 
 ## Grade

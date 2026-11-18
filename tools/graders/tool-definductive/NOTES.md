@@ -63,7 +63,7 @@ book fail if any check failed), `grader-arith.lisp` (one arithmetic lemma, arith
 - Sec. 5.4 does not show how f is introduced; we use `(encapsulate (((f *) => *)) (local (defun f (x) x))
   (defthm r-of-f ...))`, and require the model's f to be constrained exactly by r-of-f.
 - FILLs in grade-r3-paper.lisp (where the paper elides or shows no hints); each is marked FILL in the file:
-  trans-base-right: `(enable r*-base r*-trans)`; trans-base-left: `:use r*-base`, `(enable r*-trans)`;
+  trans-base-right: `(enable r*-base r*-trans)`; trans-base-left: `:use r*-base`, `(e/d (r*-trans) (r*-base))` (r*-base disabled so the used hypothesis survives; the first version left it enabled, which made the proof fail);
   r*-of-f: "..." = r-of-f, r*-when-proof-validp and every generated `...-VALIDP` definition;
   even-add-2: `:use (odd-from-even (:instance even-from-odd (n (1+ n))))`; even-add-double: induction on a
   decrement scheme with a computed `:use` of even-add-2, placed after Sec. 5.3 (its base case needs
@@ -108,3 +108,7 @@ book fail if any check failed), `grader-arith.lisp` (one arithmetic lemma, arith
   * R5: grade-r5-hostile PASS. (History: an earlier R5 also required `(in-theory nil)`. The authors' tool
     failed that on every paper call, partly inside FTY's own events, so it was dropped from the prompt.)
   * Run time on master: about 75 s for the whole grade.sh.
+
+## Correction after the runs
+
+The filling of the `trans-base-left` hint (footnote 11, `:use r*-base`) now disables `r*-base`, so the hypothesis the `:use` adds is not rewritten away. The first filling left it enabled and failed on the model's tool. The corrected grader still passes R2-R6 on the authors' implementation on master, as before.

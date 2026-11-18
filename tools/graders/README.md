@@ -14,8 +14,9 @@ Each folder has:
 - `NOTES.md`: how the grader was validated before the runs (stubs, mocks, deliberately broken
   implementations, and real implementations where one existed locally), and every interpretation it makes.
 
-The run of each grader on the model's work is in `harness/exp3-4/runs/<task>/grade.txt`. Three reported FAILs
-turned out to be the graders' fault, not the models'; each is written up in that task's `run.md`.
+The run of each grader on the model's work is in `harness/exp3-4/runs/<task>/grade.txt`. Four graders were
+corrected after the runs, for cases the grader got wrong; each correction is described at the end of its
+`NOTES.md`.
 
 `tool-aes-mir/grade.py` looks for Charon and the `aes` 0.9.1 crate at the paths of the task environment
 (`charon` on the `PATH`, `/opt/inputs/`), unless `GRADER_CHARON` or `GRADER_AES_CRATE` is set, and falls back to the paths of our build machine.

@@ -25,10 +25,12 @@
   (defthm trans-base-right (implies (and (r* x y) (r y z)) (r* x z))
     :hints (("Goal" :in-theory (enable r*-base r*-trans)))))
 
-; Footnote 11: "needs a :use hint with r*-base".
+; Footnote 11: "needs a :use hint with r*-base, because of the way ACL2 finds instantiations for free
+; variables". FILL: r*-base is disabled, so that the hypothesis (r* x y) the :use contributes is not
+; rewritten away before r*-trans can use it to instantiate its free variable.
 (grader-try r3p-trans-base-left
   (defthm trans-base-left (implies (and (r x y) (r* y z)) (r* x z))
-    :hints (("Goal" :use r*-base :in-theory (enable r*-trans)))))
+    :hints (("Goal" :use r*-base :in-theory (e/d (r*-trans) (r*-base))))))
 
 ; Section 5.4: "given ... a function f that preserves r".
 ; FILL: f is introduced by an encapsulate whose only constraint is r-of-f.

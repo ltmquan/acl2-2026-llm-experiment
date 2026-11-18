@@ -82,11 +82,11 @@ code does more than the task asked, so the sizes show scale only.
 - Erlang: all books certify, the named theorems exist, and the closed form follows from the model's
   theorem. The rest is MANUAL because the paper fixes few names and interfaces.
 
-**Three reported FAILs were the graders' fault**, not the models'. Each is written up in the task's `run.md`:
-- definductive R3: the grader's own filling of a hint the paper leaves open;
-- Arrayset R4: the grader could not load the model's two `ARR_SZ` variants together (the second exists
-  because the prompt asked for an `ARR_SZ` = 6 instance); a regrade without it passes;
-- multisets R1 (experiment 4): a fact true by the model's definition, which the grader's hint policy could not prove.
+**Grader corrections.** Four graders were corrected after the runs, each for a case the grader got wrong, not
+the model: a hint the grader filled in itself (definductive), two instances of the model's books with the same
+names (Arrayset, which the prompt asked for), a fact true by the model's definition (multisets), and test
+definitions inside `must-succeed*` (executable definductive). The results above are from the corrected
+graders; each correction is described in the grader's `NOTES.md`.
 
 **Not yet done:** the MANUAL items. They need a person, ideally each paper's authors. The procedure for each is
 in `tools/graders/<task>/CHECKLIST.md`.

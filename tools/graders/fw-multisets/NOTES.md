@@ -84,3 +84,7 @@ Earlier runs (before the revision):
   passes (by the model's rules), and sum commutativity still passes (by extensionality + count-of-sum).
 - Nearly empty library (only bagp, count): every check reports (missing functions: "does not translate"), no
   masking.
+
+## Correction after the runs
+
+The hint policy gained a fifth attempt: the model's rules with the definitions of the statement's MSET functions enabled, no induction. Without it, a fact that holds by the model's definition (here `support` = `(omap::keys (bfix b))`) could not be recognized; the first grading reported that one check as failed.

@@ -63,3 +63,7 @@ Run: `grade.sh <work-dir>` (ACL2 master at /opt/acl2-master by default). Files: 
   expectations match those functions. Replacing a recursive call with the defun-sk predicate `le`, or
   adding a call to the witness `evl-proof`, makes the clean checks and runs fail.
 - The :exec part cannot be run for real: no implementation exists.
+
+## Correction after the runs
+
+H2 (informative) now skips definitions inside `must-succeed`, `must-succeed*` and `must-fail`: they are undone, so the book's world never contains them. The first grading reported H2 as failed for the model's definitions inside a `must-succeed*`.

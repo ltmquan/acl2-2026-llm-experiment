@@ -16,8 +16,8 @@ own, and every result is re-checked by our own tools.
 
 All runs were first attempts. Experiments 1–2: 7 of 7 theorems and 24 of 24 targets. Experiment 3: 6 tools
 built, with no requirement failing a mechanical check (some need a person to judge). Experiment 4: all 20
-items done. Two of our own ZFC statements were false; the models found it, and reruns with corrected
-statements proved them.
+items done. Two of our own ZFC statements were false; the models found it, and second attempts on the
+corrected statements proved them.
 
 **Please keep this repository private.** It contains the papers and unpublished books.
 
@@ -54,10 +54,10 @@ experiment 2 the statements are fixed, so the checker settles correctness.
 | 12 | [Hardin — Arrayset revisited](12-hardin-arrayset/) | 4 · 1 | — |
 | 13 | [McCarthy — fixsliced AES-128](13-mccarthy-aes/) | 5 · 2 | — |
 | 14 | [Cayuela — q-pulse rectifiers](14-cayuela-rectifiers/) | — | rows 6 / 6; integral master theorem 4 / 4 |
-| 15 | [Jurgensen — treesets](15-jurgensen-treesets/) | — | multisets: 3 / 3 |
-| 16 | [Kaufmann — set theory](16-kaufmann-set-theory/) | — | ZFC T1–T11: all; T8, T9 after correcting our statements |
+| 15 | [Jurgensen — treesets](15-jurgensen-treesets/) | — | multisets: 2 · 1 manual |
+| 16 | [Kaufmann — set theory](16-kaufmann-set-theory/) | — | ZFC T1–T11: all targets (T8, T9 on corrected statements) |
 
-No experiment-3 requirement failed a mechanical check. "Manual" means a person, ideally the authors, still
+No requirement failed a mechanical check. "Manual" means a person, ideally the authors, still
 has to judge it; each grader's `CHECKLIST.md` says how. All 28 experiment 3–4 transcripts passed the audit.
 
 ## Repository layout
@@ -86,9 +86,7 @@ harness/NN-<paper>/  our records for experiments 1–2 (reviewers do not need th
                      file the model was given, where different) and extraction/ (scripts and logs)
 ```
 
-Session transcripts are not included. The prompts are exactly the text that was sent. The branches
-`results/<task>` hold what each experiment 3–4 session saved, exactly as it pushed it; `task/<task>` holds the
-prompt each session read.
+Session transcripts are not included. The prompts are exactly the text that was sent.
 
 ## 1. Papers
 
@@ -222,9 +220,9 @@ Experiments 3–4:
 
 1. **Environment.** Use the setup script of [EXPERIMENT-4.md](EXPERIMENT-4.md#harness-shared-by-experiments-3-and-4):
    it runs `setup/install.sh` from the public toolchain repository with `--acl2 8.7` or `--acl2 master`.
-2. **Start one session per task** on the branch `task/<task>` and send "Your task is in the file TASK.md in
-   your working directory. Read all of it, then do exactly what it says." The model saves its work with
-   `submit <task>`.
+2. **Start one session per task** on a branch holding only `TASK.md` (the task's `prompt.txt`), and send "Your
+   task is in the file TASK.md in your working directory. Read all of it, then do exactly what it says." The
+   model saves its work with `submit <task>`.
 3. **Audit** as above.
 4. **Check:** prove tasks with `python3 -I tools/check-prove.py <solution-dir> <task-folder>`; build tasks with
    `bash tools/graders/<task>/grade.sh <solution-dir>`.

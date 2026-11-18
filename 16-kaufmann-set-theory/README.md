@@ -21,11 +21,11 @@ One folder per item, `exp4/zfc-tN/`: prompt, our definitions, targets (`optional
 | T5 | transfinite recursion | 2 / 2 |
 | T6 | infinite Ramsey | 2 / 2 |
 | T7 | topology | 4 / 4 |
-| T8 | groups | 7 / 8; `zfc-t8-r2` (corrected statement): 8 / 8 |
-| T9 | fields, ℂ as pairs | 1 / 3; `zfc-t9-r2` (corrected statement): 3 / 3 |
+| T8 | groups | 8 / 8 (corrected statement) |
+| T9 | fields, ℂ as pairs | 3 / 3 (corrected statement) |
 | T10 | metric spaces | 3 / 3 |
 | T11 | ultraproducts | 2 / 2 |
 
-T8 and T9: two of our statements were false, and the first-run models found it. See [EXPERIMENT-4.md](../EXPERIMENT-4.md#two-of-our-statements-were-wrong).
+T8 and T9: two of our original statements were false; the first attempts found it, and these folders hold the corrected tasks and the second attempts. The prompts there say `submit zfc-t8-r2` and `submit zfc-t9-r2`, the names those sessions saved under. See [EXPERIMENT-4.md](../EXPERIMENT-4.md#two-of-our-statements-were-wrong).
 
 **To review:** whether each statement captures its item on the list.

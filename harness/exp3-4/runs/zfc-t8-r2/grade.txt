@@ -1,2 +1,0 @@
-CERTIFIED with /opt/acl2-master/saved_acl2; required targets matched: group-identity-unique, group-inverse-unique, subgroup-is-group, intersection-of-subgroups, hom-preserves-identity-and-inverse, kernel-is-normal-subgroup, image-is-subgroup, injective-iff-trivial-kernel
-<tmp>

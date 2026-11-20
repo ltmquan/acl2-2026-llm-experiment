@@ -1,9 +1,9 @@
 # fw-multisets
 
-- Task folder: [`15-jurgensen-treesets/exp4/multisets/`](../../../../15-jurgensen-treesets/exp4/multisets/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`15-jurgensen-treesets/exp4/multisets/`](../../../../15-jurgensen-treesets/exp4/multisets/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:04 to 2026-11-14 19:15 UTC, 11 min, 52 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit fw-multisets`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit fw-multisets`; the saved work is in the task folder.
 - Audit (`audit.txt`): CLEAN.
 
 ## Grade

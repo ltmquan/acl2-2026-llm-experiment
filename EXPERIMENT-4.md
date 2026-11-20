@@ -9,7 +9,7 @@ since its authors have already done that work in Lean), and the tractable items 
 **Prove tasks (17).** We fixed exact ACL2 statements, as in experiment 2. They are our statements, not the
 authors': each task folder has `defs.lisp` (definitions we give, certified with no `skip-proofs`),
 `targets.lisp` (theorems to prove), and, where needed, `admit.lisp` (definitions the model must admit
-verbatim, e.g. the `defun-std` integrals) or `optional.lisp`.
+verbatim, e.g. the `defun-std` integrals) or `optional.lisp`, and the model's `solution.lisp`.
 
 | Task | Source | Statement |
 |---|---|---|
@@ -43,7 +43,8 @@ Choices made in writing the tasks (from `harness/exp3-4/planning/`):
 
 ## 2. Checking
 
-**Prove tasks:** `python3 -I tools/check-prove.py <solution-dir> <task-folder>`. It:
+**Prove tasks:** `python3 -I tools/check-prove.py <task-folder> <task-folder>` (the first argument is the
+folder holding the model's `solution.lisp`). It:
 1. copies our `defs.lisp` (and `cert.acl2`), ignoring the model's copy;
 2. rejects banned events, and for ZFC also direct `zfc-table` edits, `table-redo` and `with-props`;
 3. allows only `(include-book "defs")` and community books;
@@ -117,8 +118,8 @@ corrected statements also in `harness/exp3-4/statement-checks/zfc-task-specs-che
   Setup takes 18–48 s instead of the 11–14 min of experiments 1–2.
 - **Saving results:** each prompt ends with `submit <id>`, which committed the model's `/work` (without build
   outputs) to a branch of this repository made for that task. Each session started on a nearly empty branch,
-  so none of our files were on its disk. The task folders' `solution/` directories are copies of what the
-  sessions saved; the per-task branches were deleted afterwards.
+  so none of our files were on its disk. The task folders hold what the sessions saved: `solution.lisp` for
+  prove tasks (the saved `defs.lisp` was identical to ours), `solution/` for build tasks; the per-task branches were deleted afterwards.
 - **Leakage:** for these tasks, ACL2 master contains no answer. Some answers are public on GitHub: the master
   `definductive`, `treebag`, and the Erlang and AES authors' repositories. GitHub stayed reachable, as in
   experiments 1–2.

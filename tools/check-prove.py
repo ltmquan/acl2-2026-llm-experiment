@@ -3,7 +3,7 @@
 
 Usage: python3 -I check-prove.py <work-dir> <task-dir>
 
-<work-dir>  the model's /work (as saved on branch results/<id>); only solution.lisp is used
+<work-dir>  the folder holding the model's solution.lisp (the task folder itself); only solution.lisp is used
 <task-dir>  the task folder NN-<paper>/exp4/<item>/: defs.lisp, targets.lisp, and admit.lisp / optional.lisp / cert.acl2 if present
 
 Checks, in order:

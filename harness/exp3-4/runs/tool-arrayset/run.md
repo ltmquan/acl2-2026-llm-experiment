@@ -1,9 +1,9 @@
 # tool-arrayset
 
-- Task folder: [`12-hardin-arrayset/exp3/`](../../../../12-hardin-arrayset/exp3/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`12-hardin-arrayset/exp3/`](../../../../12-hardin-arrayset/exp3/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:03 to 2026-11-14 19:30 UTC, 27 min, 112 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit tool-arrayset`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit tool-arrayset`; the saved work is in the task folder.
 - Audit (`audit.txt`): FLAGGED.
 
 ## Grade

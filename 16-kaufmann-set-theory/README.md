@@ -10,7 +10,7 @@ Not in experiments 1–2: an extended abstract on the integration of set theory 
 
 ### ZFC future-work items T1–T11
 
-One folder per item, `exp4/zfc-tN/`: prompt, our definitions, targets (`optional.lisp` for T3(e)), and the model's work (`solution/`). Checked by `tools/check-prove.py` on ACL2 master.
+One folder per item, `exp4/zfc-tN/`: prompt, our definitions, targets (`optional.lisp` for T3(e)), and the model's proof (`solution.lisp`). Checked by `tools/check-prove.py` on ACL2 master.
 
 | Item | Topic | Result |
 |---|---|---|

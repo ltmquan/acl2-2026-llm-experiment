@@ -1,9 +1,9 @@
 # fw-definductive-exec
 
-- Task folder: [`08-coglio-jurgensen-definductive/exp4/definductive-exec/`](../../../../08-coglio-jurgensen-definductive/exp4/definductive-exec/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`08-coglio-jurgensen-definductive/exp4/definductive-exec/`](../../../../08-coglio-jurgensen-definductive/exp4/definductive-exec/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:04 to 2026-11-14 19:56 UTC, 52 min, 108 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit fw-definductive-exec`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit fw-definductive-exec`; the saved work is in the task folder.
 - Audit (`audit.txt`): CLEAN.
 
 ## Grade

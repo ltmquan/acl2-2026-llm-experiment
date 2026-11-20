@@ -118,7 +118,7 @@ questions; work until you are done. When you are done, print the final contents 
 ### General trapezoid-rule error theorem
 
 `exp4/trapezoid/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
-(`targets.lisp`; `admit.lisp`: the integral, to admit verbatim), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+(`targets.lisp`; `admit.lisp`: the integral, to admit verbatim), and the model's proof (`solution.lisp`). The checker (`tools/check-prove.py`) requires
 every target verbatim against our `defs.lisp`.
 
 **Result:** 2 / 2 targets.
@@ -128,7 +128,7 @@ every target verbatim against our `defs.lisp`.
 ### Explicit bounds on Stirling's ratio
 
 `exp4/stirling-bounds/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
-(`targets.lisp`), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+(`targets.lisp`), and the model's proof (`solution.lisp`). The checker (`tools/check-prove.py`) requires
 every target verbatim against our `defs.lisp`.
 
 **Result:** 2 / 2 targets: n!/(√n·nⁿ·e⁻ⁿ) decreases, with the Robbins step bound.

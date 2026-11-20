@@ -1,2 +1,0 @@
-(include-book "projects/set-theory/portcullis" :dir :system)
-; cert_param: (non-acl2r)

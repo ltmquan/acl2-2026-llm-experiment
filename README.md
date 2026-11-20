@@ -75,7 +75,8 @@ NN-<paper>/          one folder per paper (01–16): only what reviewers need to
   exp1/              prompt.txt, solution.lisp
   exp2/              prompt.txt, definitions.lisp (annotated with source locations), targets.lisp, solution.lisp
   exp3/              prompt.txt (paper text + requirements), solution/ (the model's work)
-  exp4/<item>/       prompt.txt, our defs.lisp / targets.lisp / admit.lisp for prove tasks, solution/
+  exp4/<item>/       prompt.txt; prove tasks: our defs.lisp, targets.lisp (admit.lisp) and the model's
+                     solution.lisp; build tasks: solution/ (the model's work)
 harness/exp3-4/      our records for experiments 3–4: runs/<task>/ (grade.txt, audit.txt, run.md), the task
                      drafts (planning/), the statement checks, and the scripts that generated the prompts
 harness/NN-<paper>/  our records for experiments 1–2 (reviewers do not need these)
@@ -224,7 +225,7 @@ Experiments 3–4:
    task is in the file TASK.md in your working directory. Read all of it, then do exactly what it says." The
    model saves its work with `submit <task>`.
 3. **Audit** as above.
-4. **Check:** prove tasks with `python3 -I tools/check-prove.py <solution-dir> <task-folder>`; build tasks with
+4. **Check:** prove tasks with `python3 -I tools/check-prove.py <task-folder> <task-folder>`; build tasks with
    `bash tools/graders/<task>/grade.sh <solution-dir>`.
 
 Paths inside the scripts (`/opt/acl2`, `/opt/acl2r`, `/opt/acl2-master`, `/home/user/acl2-exp`) are the ones

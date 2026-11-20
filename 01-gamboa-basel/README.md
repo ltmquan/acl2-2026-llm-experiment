@@ -95,7 +95,7 @@ questions; work until you are done. When you are done, print the final contents 
 ### Euler product for ζ(2) (conclusion's future work)
 
 `exp4/euler-product/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
-(`targets.lisp`), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+(`targets.lisp`), and the model's proof (`solution.lisp`). The checker (`tools/check-prove.py`) requires
 every target verbatim against our `defs.lisp`.
 
 **Result:** 3 / 3 targets: the finite two-sided bound and its nonstandard form.

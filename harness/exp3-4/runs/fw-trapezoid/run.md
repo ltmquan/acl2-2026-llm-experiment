@@ -1,9 +1,9 @@
 # fw-trapezoid
 
-- Task folder: [`02-gamboa-stirling/exp4/trapezoid/`](../../../../02-gamboa-stirling/exp4/trapezoid/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`02-gamboa-stirling/exp4/trapezoid/`](../../../../02-gamboa-stirling/exp4/trapezoid/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:03 to 2026-11-14 19:49 UTC, 45 min, 81 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit fw-trapezoid`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit fw-trapezoid`; the saved work is in the task folder.
 - Audit (`audit.txt`): CLEAN.
 
 ## Grade

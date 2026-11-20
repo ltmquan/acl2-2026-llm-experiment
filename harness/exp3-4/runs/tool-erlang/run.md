@@ -1,9 +1,9 @@
 # tool-erlang
 
-- Task folder: [`10-bora-erlang/exp3/`](../../../../10-bora-erlang/exp3/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`10-bora-erlang/exp3/`](../../../../10-bora-erlang/exp3/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:04 to 2026-11-14 20:20 UTC, 76 min, 187 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit tool-erlang`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit tool-erlang`; the saved work is in the task folder.
 - Audit (`audit.txt`): CLEAN.
 
 ## Grade

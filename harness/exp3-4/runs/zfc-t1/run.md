@@ -1,9 +1,9 @@
 # zfc-t1
 
-- Task folder: [`16-kaufmann-set-theory/exp4/zfc-t1/`](../../../../16-kaufmann-set-theory/exp4/zfc-t1/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`16-kaufmann-set-theory/exp4/zfc-t1/`](../../../../16-kaufmann-set-theory/exp4/zfc-t1/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:04 to 2026-11-14 19:09 UTC, 5 min, 44 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit zfc-t1`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit zfc-t1`; the saved work is in the task folder.
 - Audit (`audit.txt`): CLEAN.
 
 ## Grade

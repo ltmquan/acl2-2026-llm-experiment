@@ -23,8 +23,7 @@ run with `python3 -I`.
 |---|---|
 | `check-exp1.sh` | Experiment 1. Copies the solution into a fresh directory, rejects banned events, requires the last event to be `(defthm MAIN …)`, certifies with ACL2 8.7 and then with ACL2(r) 8.7. |
 | `check-exp2.py` | Experiment 2. Copies the solution and the checker's `defs.lisp`/`cert.acl2`, rejects banned events, requires `(include-book "defs")` and allows only community books otherwise, requires every target with exactly its statement (top level or exported from `encapsulate`/`progn`, never `local`), certifies. |
-
-| `check-prove.py` | Experiments 3–4, prove tasks. Like `check-exp2.py`, plus: definitions in `admit.lisp` must keep their kind, name, formals and body; ZFC targets are `defthmz` with open `:props`, and direct `zfc-table` edits, `table-redo` and `with-props` are banned. Usage: `python3 -I check-prove.py <solution-dir> <task-folder>`. |
+| `check-prove.py` | Experiments 3–4, prove tasks. Like `check-exp2.py`, plus: definitions in `admit.lisp` must keep their kind, name, formals and body; ZFC targets are `defthmz` with open `:props`, and direct `zfc-table` edits, `table-redo` and `with-props` are banned. Usage: `python3 -I check-prove.py <task-folder> <task-folder>` (the first argument is the folder holding `solution.lisp`). |
 | `graders/` | Experiments 3–4, build tasks: one grader per task, with `CHECKLIST.md` for what a person must judge. See [`graders/README.md`](graders/README.md). |
 
 The experiment 3–4 environments install a prebuilt toolchain from the public repository

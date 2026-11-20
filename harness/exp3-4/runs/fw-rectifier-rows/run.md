@@ -1,9 +1,9 @@
 # fw-rectifier-rows
 
-- Task folder: [`14-cayuela-rectifiers/exp4/rectifier-rows/`](../../../../14-cayuela-rectifiers/exp4/rectifier-rows/) (prompt, our files, and the model's work under `solution/`)
+- Task folder: [`14-cayuela-rectifiers/exp4/rectifier-rows/`](../../../../14-cayuela-rectifiers/exp4/rectifier-rows/) (prompt, our files, and the model's work)
 - Model run: 2026-11-14 19:04 to 2026-11-14 19:09 UTC, 5 min, 31 tool calls.
   First attempt; no retry.
-- Saved by the model with `submit fw-rectifier-rows`; the saved work is the task folder's `solution/`.
+- Saved by the model with `submit fw-rectifier-rows`; the saved work is in the task folder.
 - Audit (`audit.txt`): CLEAN.
 
 ## Grade

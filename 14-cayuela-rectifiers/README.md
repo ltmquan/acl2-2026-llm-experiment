@@ -11,7 +11,7 @@ Not in experiments 1–2: the proved results are exact evaluations of sin(x)/x a
 ### Six-phase and twelve-pulse rows (Section 8 future work)
 
 `exp4/rectifier-rows/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
-(`targets.lisp`), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+(`targets.lisp`), and the model's proof (`solution.lisp`). The checker (`tools/check-prove.py`) requires
 every target verbatim against our `defs.lisp`.
 
 **Result:** 6 / 6 targets. The task fixes explicit conventions for the peak, since the printed twelve-pulse entry does not fit the master equation; the task does not mention this.
@@ -21,7 +21,7 @@ every target verbatim against our `defs.lisp`.
 ### The integral master theorem (Section 6)
 
 `exp4/rectifier-master/`: the prompt (`prompt.txt`), our definitions (`defs.lisp`), the theorems to prove
-(`targets.lisp`; `admit.lisp`: the integrals, to admit verbatim), and the model's work (`solution/`). The checker (`tools/check-prove.py`) requires
+(`targets.lisp`; `admit.lisp`: the integrals, to admit verbatim), and the model's proof (`solution.lisp`). The checker (`tools/check-prove.py`) requires
 every target verbatim against our `defs.lisp`.
 
 **Result:** 4 / 4 targets: V_DC and V_RMS as integrals equal the closed forms for every real firing angle, plus the three-phase midpoint and bridge instances.
